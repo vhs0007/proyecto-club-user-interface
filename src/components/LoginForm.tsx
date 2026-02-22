@@ -42,61 +42,63 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="page-wrapper page-dark flex-center">
-      <div className="card card-sm">
-        <h2 className="title title-center mt-0">
-          Iniciar sesión
-        </h2>
+    <div className="bg-club-dark page-fullscreen d-flex align-items-center justify-content-center">
+      <div className="card shadow" style={{ maxWidth: '400px', width: '100%' }}>
+        <div className="card-body p-4">
+          <h2 className="card-title text-center mb-4">
+            Iniciar sesión
+          </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="form-group">
-            <label className="form-label">
-              Email
-            </label>
-            <input
-              type="email"
-              {...register('email')}
-              className={`form-input ${errors.email ? 'form-input-error' : ''}`}
-              placeholder="ejemplo@email.com"
-            />
-            {errors.email && (
-              <p className="form-error">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              {...register('password')}
-              className={`form-input ${errors.password ? 'form-input-error' : ''}`}
-              placeholder="••••••••"
-            />
-            {errors.password && (
-              <p className="form-error">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-
-          {errors.root && (
-            <div className="alert alert-error">
-              {errors.root.message}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-3">
+              <label className="form-label">
+                Email
+              </label>
+              <input
+                type="email"
+                {...register('email')}
+                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                placeholder="ejemplo@email.com"
+              />
+              {errors.email && (
+                <div className="invalid-feedback">
+                  {errors.email.message}
+                </div>
+              )}
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn btn-primary btn-block btn-lg"
-          >
-            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </button>
-        </form>
+            <div className="mb-3">
+              <label className="form-label">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                {...register('password')}
+                className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                placeholder="••••••••"
+              />
+              {errors.password && (
+                <div className="invalid-feedback">
+                  {errors.password.message}
+                </div>
+              )}
+            </div>
+
+            {errors.root && (
+              <div className="alert alert-danger text-center py-2">
+                {errors.root.message}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn btn-club-primary w-100 py-2"
+            >
+              {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )

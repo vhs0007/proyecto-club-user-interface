@@ -5,27 +5,46 @@ export default function Navbar() {
   const location = useLocation()
 
   const getLinkClass = (path: string) => {
-    return `navbar-link ${location.pathname === path ? 'navbar-link-active' : ''}`
+    return `nav-link nav-link-club ${location.pathname === path ? 'active' : ''}`
   }
 
   return (
-    <nav className="navbar">
-      <div className="container flex-between">
-        <h2
+    <nav className="navbar navbar-expand-lg navbar-club py-3">
+      <div className="container">
+        <span
           onClick={() => navigate('/home')}
-          className="navbar-brand"
+          className="navbar-brand navbar-brand-club fs-4"
         >
           Peñarol
-        </h2>
+        </span>
 
-        <div className="flex-row gap-xl">
-          <Link to="/usuarios" className={getLinkClass('/usuarios')}>
-            Usuarios
-          </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-          <Link to="/actividades" className={getLinkClass('/actividades')}>
-            Actividades
-          </Link>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto gap-3">
+            <li className="nav-item">
+              <Link to="/usuarios" className={getLinkClass('/usuarios')}>
+                Usuarios
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/actividades" className={getLinkClass('/actividades')}>
+                Actividades
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/instalaciones" className={getLinkClass('/instalaciones')}>
+                Instalaciones
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
