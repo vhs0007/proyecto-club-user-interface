@@ -4,54 +4,26 @@ export default function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const getLinkClass = (path: string) => {
+    return `navbar-link ${location.pathname === path ? 'navbar-link-active' : ''}`
+  }
+
   return (
-    <nav style={{
-      backgroundColor: 'white',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '15px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+    <nav className="navbar">
+      <div className="container flex-between">
         <h2
           onClick={() => navigate('/home')}
-          style={{
-            fontSize: '20px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            margin: 0
-          }}
+          className="navbar-brand"
         >
           Peñarol
         </h2>
 
-        <div style={{
-          display: 'flex',
-          gap: '30px'
-        }}>
-          <Link
-            to="/usuarios"
-            style={{
-              textDecoration: 'none',
-              color: location.pathname === '/usuarios' ? '#000' : '#666',
-              fontWeight: location.pathname === '/usuarios' ? 'bold' : 'normal'
-            }}
-          >
+        <div className="flex-row gap-xl">
+          <Link to="/usuarios" className={getLinkClass('/usuarios')}>
             Usuarios
           </Link>
 
-          <Link
-            to="/actividades"
-            style={{
-              textDecoration: 'none',
-              color: location.pathname === '/actividades' ? '#000' : '#666',
-              fontWeight: location.pathname === '/actividades' ? 'bold' : 'normal'
-            }}
-          >
+          <Link to="/actividades" className={getLinkClass('/actividades')}>
             Actividades
           </Link>
         </div>

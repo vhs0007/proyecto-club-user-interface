@@ -42,93 +42,49 @@ export default function LoginForm() {
   }
 
   return (
-    <div style={{
-      width: '100%',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#1e293b',
-      padding: '20px'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '400px',
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        padding: '30px',
-        border: '1px solid white'
-      }}>
-        <h2 style={{
-          fontSize: '24px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          marginBottom: '20px',
-          marginTop: 0
-        }}>
+    <div className="page-wrapper page-dark flex-center">
+      <div className="card card-sm">
+        <h2 className="title title-center mt-0">
           Iniciar sesión
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>
+          <div className="form-group">
+            <label className="form-label">
               Email
             </label>
             <input
               type="email"
               {...register('email')}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: `1px solid ${errors.email ? 'red' : '#ccc'}`,
-                borderRadius: '4px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              className={`form-input ${errors.email ? 'form-input-error' : ''}`}
               placeholder="ejemplo@email.com"
             />
             {errors.email && (
-              <p style={{ fontSize: '12px', color: 'red', marginTop: '4px', marginBottom: 0 }}>
+              <p className="form-error">
                 {errors.email.message}
               </p>
             )}
           </div>
 
-          <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px' }}>
+          <div className="form-group">
+            <label className="form-label">
               Contraseña
             </label>
             <input
               type="password"
               {...register('password')}
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: `1px solid ${errors.password ? 'red' : '#ccc'}`,
-                borderRadius: '4px',
-                fontSize: '16px',
-                boxSizing: 'border-box'
-              }}
+              className={`form-input ${errors.password ? 'form-input-error' : ''}`}
               placeholder="••••••••"
             />
             {errors.password && (
-              <p style={{ fontSize: '12px', color: 'red', marginTop: '4px', marginBottom: 0 }}>
+              <p className="form-error">
                 {errors.password.message}
               </p>
             )}
           </div>
 
           {errors.root && (
-            <div style={{
-              backgroundColor: '#fee',
-              color: 'red',
-              fontSize: '14px',
-              padding: '10px',
-              borderRadius: '4px',
-              textAlign: 'center',
-              marginBottom: '15px'
-            }}>
+            <div className="alert alert-error">
               {errors.root.message}
             </div>
           )}
@@ -136,18 +92,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            style={{
-              width: '100%',
-              backgroundColor: '#eab308',
-              color: 'white',
-              padding: '10px',
-              borderRadius: '4px',
-              border: 'none',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              opacity: isSubmitting ? 0.6 : 1,
-              fontSize: '16px',
-              fontWeight: '500'
-            }}
+            className="btn btn-primary btn-block btn-lg"
           >
             {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
           </button>
