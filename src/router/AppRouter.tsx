@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import Login from '../pages/Login';
-import Home from '../pages/Home';
-import Facilities from '../pages/Facilities';
-import Users from '../pages/Users';
-import Activities from '../pages/Activities';
-import Navbar from '../components/Navbar';
+import Login from '../pages/login/Login';
+import Home from '../pages/home/Home';
+import Facilities from '../pages/facilities/Facilities';
+import Users from '../pages/users/Users';
+import Activities from '../pages/activities/Activities';
+import Navbar from '../components/shared/Navbar';
+import Membership from '../pages/memberships/Membership';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -52,6 +53,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Activities />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/membresias"
+          element={
+            <ProtectedRoute>
+              <Membership />
             </ProtectedRoute>
           }
         />

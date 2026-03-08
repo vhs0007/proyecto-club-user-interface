@@ -44,6 +44,11 @@ export default function Navbar() {
                 Instalaciones
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/membresias" className={getLinkClass('/membresias')}>
+                Membresías
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
