@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import api from '../config/api';
-import { useAuthStore } from '../store/authStore';
-import UserList from '../components/users/UserList';
-import UserDetailModal from '../components/users/UserDetailModal';
-import UserFormModal from '../components/users/UserFormModal';
+import api from '../../config/api';
+import { useAuthStore } from '../../store/store';
+import UserList from '../../components/users/UserList';
+import UserDetailModal from '../../components/users/UserDetailModal';
+import UserFormModal from '../../components/users/UserFormModal';
 
 interface User {
   id: number;

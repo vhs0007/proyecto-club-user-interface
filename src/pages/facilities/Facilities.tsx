@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import api from '../config/api';
-import { useAuthStore } from '../store/authStore';
-import FacilityList from '../components/facilities/FacilityList';
-import FacilityFormModal from '../components/facilities/FacilityFormModal';
+import api from '../../config/api';
+import { useAuthStore } from '../../store/store';
+import FacilityList from '../../components/facilities/FacilityList';
+import FacilityFormModal from '../../components/facilities/FacilityFormModal';
 
 interface Facility {
   id: number;

@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import api from '../../config/api'
-import { useAuthStore } from '../../store/authStore'
+import { useAuthStore } from '../../store/store'
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -28,12 +28,15 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const response = await api.post('/auth/login', data)
+      console.log(response)
+      console.log(response.data)
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setToken(response.data.accessToken)
-        navigate('/home')
+        navigate('/sync')
       }
     } catch (error: any) {
+      console.log(error)
       setError('root', {
         message:
           error.response?.data?.message || 'Credenciales inválidas',

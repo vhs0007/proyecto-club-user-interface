@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import api from '../config/api';
-import { useAuthStore } from '../store/authStore';
-import ActivityList from '../components/activities/ActivityList';
-import ActivityFormModal from '../components/activities/ActivityFormModal';
+import api from '../../config/api';
+import { useAuthStore } from '../../store/store';
+import ActivityList from '../../components/activities/ActivityList';
+import ActivityFormModal from '../../components/activities/ActivityFormModal';
 
 interface Activity {
   id: number;

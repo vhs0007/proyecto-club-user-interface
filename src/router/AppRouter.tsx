@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../store/store';
 import Login from '../pages/login/Login';
 import Home from '../pages/home/Home';
 import Facilities from '../pages/facilities/Facilities';
@@ -7,6 +7,7 @@ import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
 import Navbar from '../components/shared/Navbar';
 import Membership from '../pages/memberships/Membership';
+import CreateMembership from '../pages/memberships/CreateMembership';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -61,6 +62,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Membership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/membresias/crear"
+          element={
+            <ProtectedRoute>
+              <CreateMembership />
             </ProtectedRoute>
           }
         />
