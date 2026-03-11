@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../config/api';
+import api from '../../config/axios';
 import { useAuthStore } from '../../store/store';
 
 interface User {

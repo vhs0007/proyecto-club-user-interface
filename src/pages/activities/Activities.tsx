@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../../config/api';
+import api from '../../config/axios';
 import { useAuthStore } from '../../store/store';
 import ActivityList from '../../components/activities/ActivityList';
 import ActivityFormModal from '../../components/activities/ActivityFormModal';

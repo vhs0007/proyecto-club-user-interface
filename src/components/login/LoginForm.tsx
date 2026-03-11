@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
-import api from '../../config/api'
+import api from '../../config/axios'
 import { useAuthStore } from '../../store/store'
 
 const loginSchema = z.object({
@@ -33,7 +33,7 @@ export default function LoginForm() {
 
       if (response.status === 201) {
         setToken(response.data.accessToken)
-        navigate('/sync')
+        navigate('/sincronizar')
       }
     } catch (error: any) {
       console.log(error)

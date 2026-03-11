@@ -14,7 +14,8 @@ export interface MembershipType {
 }*/
 
 export interface Membership {
-    id: number;
-    type: MembershipType;
+    id?: number;
+    type: number;
     price: number;
+    facilitiesIncluded: string;
 }

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 export default function MembershipList() {
   const navigate = useNavigate();
   return (
+    <div className="container">
+        <h1>Membresías</h1>
+        <button className="btn btn-primary" onClick={() => navigate(`/membresias/crear`)}>Crear Membresía</button>
     <table className="table table-striped table-hover table-responsive">
         <thead>
             <tr>
@@ -24,5 +27,6 @@ export default function MembershipList() {
             </tr>
         </tbody>
     </table>
+    </div>
   )
 }

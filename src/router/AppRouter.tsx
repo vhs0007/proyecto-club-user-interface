@@ -8,6 +8,9 @@ import Activities from '../pages/activities/Activities';
 import Navbar from '../components/shared/Navbar';
 import Membership from '../pages/memberships/Membership';
 import CreateMembership from '../pages/memberships/CreateMembership';
+import EditMembership from '../pages/memberships/EditMembership';
+import DeleteMembership from '../pages/memberships/DeleteMembership';
+import Sync from '../pages/sync/Sync';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -23,7 +26,7 @@ export default function AppRouter() {
       <Routes>
         <Route
           path="/login"
-          element={token ? <Navigate to="/home" replace /> : <Login />}
+          element={token ? <Navigate to="/sincronizar" replace /> : <Login />}
         />
         <Route
           path="/home"
@@ -70,6 +73,30 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <CreateMembership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/membresias/editar/:id"
+          element={
+            <ProtectedRoute>
+              <EditMembership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/membresias/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteMembership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sincronizar"
+          element={
+            <ProtectedRoute>
+              <Sync />
             </ProtectedRoute>
           }
         />

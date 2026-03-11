@@ -45,7 +45,7 @@ export const useMembershipTypeStore = create<MembershipTypeState>((set) => ({
     set((state) => ({ membershipTypes: state.membershipTypes.filter((membershipType) => membershipType.id !== id) }));
   },
   updateMembershipType: (membershipType: MembershipType) => {
-    set((state) => ({ membershipTypes: state.membershipTypes.map((membershipType) => membershipType.id === membershipType.id ? membershipType : membershipType) }));
+    set((state) => ({ membershipTypes: state.membershipTypes.map((mt) => mt.id === membershipType.id ? membershipType : mt) }));
   },
 }));
 
@@ -58,4 +58,6 @@ export const useMembershipStore = create<MembershipState>((set) => ({
     set((state) => ({ memberships: [...state.memberships, membership] }));
   },
 }));
+
+
 

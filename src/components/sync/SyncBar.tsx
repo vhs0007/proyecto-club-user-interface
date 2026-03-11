@@ -1,10 +1,13 @@
-export default function SyncBar({ progress }: { progress: number }, {dataName}: {dataName: string}) {
+export default function SyncBar({ progress, dataName }: { progress: number; dataName: string }) {
   return (
     <div className="sync-bar">
-      <div className="sync-bar-inner">
-        <span>{dataName}</span>
-        <div className="sync-bar-inner-progress" style={{ width: `${progress}%` }}></div>
+      <span className="sync-bar-label">{dataName}</span>
+      <div className="sync-bar-track">
+        <div
+          className="sync-bar-fill"
+          style={{ width: `${progress}%` }}
+        />
       </div>
     </div>
-  )
+  );
 }
