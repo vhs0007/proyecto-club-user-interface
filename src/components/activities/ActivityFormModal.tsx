@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../config/axios';
-import { useAuthStore } from '../../store/store';
+import AxiosInstance from '../../config/axios';
 
 interface Activity {
   id: number;
@@ -19,7 +18,6 @@ interface ActivityFormModalProps {
 }
 
 export default function ActivityFormModal({ activity, onClose, onSuccess }: ActivityFormModalProps) {
-  const token = useAuthStore((state) => state.token);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -48,29 +46,40 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     setLoading(true);
     setError('');
 
+    const startDate = new Date(startAt);
+    const endDate = new Date(endAt);
+
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      setError('Las fechas no son válidas. Revisá inicio y fin.');
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       name,
       type,
-      startAt: new Date(startAt).toISOString(),
-      endAt: new Date(endAt).toISOString(),
+      startAt: startDate.toISOString(),
+      endAt: endDate.toISOString(),
       userId: Number(userId),
       cost: Number(cost),
     };
 
     try {
       if (isEditing && activity) {
-        await api.patch(`/activities/${activity.id}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log('[ActivityFormModal] PATCH payload', payload);
+        const response = await AxiosInstance.patch(`/activities/${activity.id}`, payload);
+        console.log('[EditActivity] response data', response.data);
       } else {
-        await api.post('/activities', payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log('[ActivityFormModal] POST payload', payload);
+        const response = await AxiosInstance.post('/activities', payload);
+        console.log('[CreateActivityModal] response data', response.data);
       }
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al guardar actividad');
+    } catch (error: any) {
+      console.error('[ActivityFormModal] error', error);
+      console.error('[ActivityFormModal] response data', error?.response?.data);
+      setError(error?.response?.data?.message || 'Error al guardar actividad');
     } finally {
       setLoading(false);
     }

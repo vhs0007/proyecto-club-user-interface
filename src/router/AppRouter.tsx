@@ -5,6 +5,7 @@ import Home from '../pages/home/Home';
 import Facilities from '../pages/facilities/Facilities';
 import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
+import CreateActivity from '../pages/activities/CreateActivity';
 import Navbar from '../components/shared/Navbar';
 import Membership from '../pages/memberships/MembershipList';
 import CreateMembership from '../pages/memberships/CreateMembership';
@@ -57,6 +58,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Activities />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades/crear"
+          element={
+            <ProtectedRoute>
+              <CreateActivity />
             </ProtectedRoute>
           }
         />

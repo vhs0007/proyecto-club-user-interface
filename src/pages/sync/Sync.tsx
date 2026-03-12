@@ -2,45 +2,51 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useMembershipStore, useMembershipTypeStore } from "../../store/store";
-import type { MembershipType } from "../../entities/Entities";
-import type { Membership } from "../../entities/Entities";
+import { useActivityStore, useMembershipStore, useMembershipTypeStore } from "../../store/store";
+import type { Activity, Membership, MembershipType } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
   const [membershipTypesProgress, setMembershipTypesProgress] = useState<number>(0);
   const [membershipsProgress, setMembershipsProgress] = useState<number>(0);
+  const [activitiesProgress, setActivitiesProgress] = useState<number>(0);
   const [membershipTypes, setMembershipTypesState] = useState<MembershipType[]>([]);
   const [memberships, setMembershipsState] = useState<Membership[]>([]);
+  const [activities, setActivitiesState] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const setMembershipTypes = useMembershipTypeStore((state) => state.setMembershipTypes);
   const setMemberships = useMembershipStore((state) => state.setMemberships);
+  const setActivities = useActivityStore((state) => state.setActivities);
   useEffect(() => {
-    const fetchMembershipTypes = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const responseMembershipTypes = await AxiosInstance.get<MembershipType[]>("/membership-type");
-        const responseMemberships = await AxiosInstance.get<Membership[]>("/membership");
+        const [responseMembershipTypes, responseMemberships, responseActivities] = await Promise.all([
+          AxiosInstance.get<MembershipType[]>("/membership-type"),
+          AxiosInstance.get<Membership[]>("/membership"),
+          AxiosInstance.get<Activity[]>("/activities"),
+        ]);
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
         const dataMemberships = responseMemberships.data ?? [];
+        const dataActivities = responseActivities.data ?? [];
         setMembershipTypesState(dataMembershipTypes);
         setMembershipsState(dataMemberships);
+        setActivitiesState(dataActivities);
         setMembershipTypes(dataMembershipTypes);
         setMemberships(dataMemberships);
+        setActivities(dataActivities);
       } catch (err) {
-        setError("Error al cargar los tipos de membresía");
-        setError("Error al cargar las membresías");
+        setError("Error al cargar los datos");
       } finally {
-        setLoading(false);
         setLoading(false);
       }
     };
 
-    fetchMembershipTypes();
-  }, []);
+    fetchData();
+  }, [setMembershipTypes, setMemberships, setActivities]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
     for (let i = 0; i < totalMembershipTypes; i++) {
@@ -60,16 +66,29 @@ export default function Sync() {
     setMembershipsProgress(100);
   };
 
+  const runSyncActivities = async (totalActivities: number, activitiesData: Activity[]) => {
+    const total = totalActivities || 1;
+    for (let i = 0; i < total; i++) {
+      await new Promise((r) => setTimeout(r, 1));
+      setActivitiesProgress(((i + 1) / total) * 100);
+    }
+    setActivities(activitiesData);
+    setActivitiesProgress(100);
+  };
+
   useEffect(() => {
     if (loading || membershipTypes.length === 0) {
       if (!loading) setMembershipTypesProgress(100);
+      if (!loading) setActivitiesProgress(100);
       return;
     }
     const totalMembershipTypes = membershipTypes.length;
     const totalMemberships = memberships.length;
+    const totalActivities = activities.length;
     const runSync = async () => {
       await runSyncMembershipTypes(totalMembershipTypes, membershipTypes);
       await runSyncMemberships(totalMemberships, memberships);
+      await runSyncActivities(totalActivities, activities);
       navigate('/home');
     }
     console.log(membershipTypes);
@@ -81,8 +100,10 @@ export default function Sync() {
     console.log(memberships.length);
     console.log(membershipTypes);
     console.log(memberships);
+    console.log(activities);
+    console.log(activitiesProgress);
     runSync();
-  }, [loading, membershipTypes, memberships, setMembershipTypes, setMemberships]);
+  }, [loading, membershipTypes, memberships, activities, setMembershipTypes, setMemberships, setActivities]);
 
   return (
     <div className="container">
@@ -91,6 +112,7 @@ export default function Sync() {
       {error && <p className="text-danger">{error}</p>}
       <SyncBar progress={membershipTypesProgress} dataName="Tipos de membresía" />
       <SyncBar progress={membershipsProgress} dataName="Membresías" />
+      <SyncBar progress={activitiesProgress} dataName="Actividades" />
     </div>
   );
 }
