@@ -5,8 +5,8 @@ interface Activity {
   startAt: string;
   endAt: string;
   userId: number;
-  cost: number;
-  isActive: boolean;
+  cost?: number | null;
+  isActive?: boolean;
 }
 
 interface ActivityListProps {
@@ -57,7 +57,11 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
                 <small className="text-muted">{formatTime(activity.endAt)}</small>
               </td>
               <td>{activity.userId}</td>
-              <td>${activity.cost.toLocaleString()}</td>
+              <td>
+                {typeof activity.cost === 'number'
+                  ? `$${activity.cost.toLocaleString()}`
+                  : '-'}
+              </td>
               <td>
                 <span className={`badge ${activity.isActive ? 'bg-success' : 'bg-danger'}`}>
                   {activity.isActive ? 'Activa' : 'Inactiva'}

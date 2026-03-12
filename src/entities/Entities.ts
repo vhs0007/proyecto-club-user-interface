@@ -19,3 +19,15 @@ export interface Membership {
     price: number;
     facilitiesIncluded: string;
 }
+
+export interface Activity {
+    id?: number;
+    name: string;
+    type: string;
+    startAt: string;
+    endAt: string;
+    userId: number;
+    cost: number;
+    facilityId: number;
+    isActive?: boolean;
+}

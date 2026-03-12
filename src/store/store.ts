@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Membership, MembershipType } from '../entities/Entities';
+import type { Activity, Membership, MembershipType } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -24,6 +24,15 @@ interface MembershipState {
   getMembership: (id: number) => Membership | null;
   deleteMembership: (id: number) => void;
   updateMembership: (membership: Membership) => void;
+}
+
+interface ActivityState {
+  activities: Activity[];
+  setActivities: (activities: Activity[]) => void;
+  setActivity: (activity: Activity) => void;
+  getActivity: (id: number) => Activity | null;
+  deleteActivity: (id: number) => void;
+  updateActivity: (activity: Activity) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -79,6 +88,29 @@ export const useMembershipStore = create<MembershipState>()(
       name: 'memberships-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ memberships: state.memberships }),
+    }
+  )
+);
+
+export const useActivityStore = create<ActivityState>()(
+  persist(
+    (set, get) => ({
+      activities: [],
+      setActivities: (activities: Activity[]) => set({ activities }),
+      setActivity: (activity: Activity) =>
+        set((state) => ({ activities: [...state.activities, activity] })),
+      getActivity: (id: number) => get().activities.find((a) => a.id === id) ?? null,
+      deleteActivity: (id: number) =>
+        set((state) => ({ activities: state.activities.filter((a) => a.id !== id) })),
+      updateActivity: (activity: Activity) =>
+        set((state) => ({
+          activities: state.activities.map((a) => (a.id === activity.id ? activity : a)),
+        })),
+    }),
+    {
+      name: 'activities-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ activities: state.activities }),
     }
   )
 );

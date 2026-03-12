@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import api from '../../config/axios';
-import { useAuthStore } from '../../store/store';
+import { Link } from 'react-router-dom';
+import AxiosInstance from '../../config/axios';
 import ActivityList from '../../components/activities/ActivityList';
 import ActivityFormModal from '../../components/activities/ActivityFormModal';
 
@@ -11,14 +11,11 @@ interface Activity {
   startAt: string;
   endAt: string;
   userId: number;
-  cost: number;
-  createdAt: string;
-  updatedAt: string | null;
-  isActive: boolean;
+  cost?: number | null;
+  isActive?: boolean;
 }
 
 export default function Activities() {
-  const token = useAuthStore((state) => state.token);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,10 +26,21 @@ export default function Activities() {
   const fetchActivities = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/activities', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setActivities(response.data);
+      const response = await AxiosInstance.get('/activities');
+      const raw = response.data ?? [];
+      const mapped: Activity[] = Array.isArray(raw)
+        ? raw.map((a: any) => ({
+            id: a.id ?? a._id,
+            name: a.name ?? a._name,
+            type: a.type ?? a._type,
+            startAt: a.startAt || a._startAt ? new Date(a.startAt ?? a._startAt).toISOString() : '',
+            endAt: a.endAt || a._endAt ? new Date(a.endAt ?? a._endAt).toISOString() : '',
+            userId: a.userId ?? a._userId,
+            cost: a.cost ?? a._cost ?? null,
+            isActive: a.isActive ?? a._isActive ?? true,
+          }))
+        : [];
+      setActivities(mapped);
     } catch (err) {
       setError('Error al cargar actividades');
     } finally {
@@ -44,11 +52,6 @@ export default function Activities() {
     fetchActivities();
   }, []);
 
-  const handleCreate = () => {
-    setEditingActivity(null);
-    setShowFormModal(true);
-  };
-
   const handleEdit = (activity: Activity) => {
     setEditingActivity(activity);
     setShowFormModal(true);
@@ -58,9 +61,7 @@ export default function Activities() {
     if (!confirm('¿Estás seguro de eliminar esta actividad?')) return;
     
     try {
-      await api.delete(`/activities/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await AxiosInstance.delete(`/activities/${id}`);
       fetchActivities();
     } catch (err) {
       setError('Error al eliminar actividad');
@@ -76,10 +77,10 @@ export default function Activities() {
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gestión de Actividades</h2>
-        <button className="btn btn-club-primary" onClick={handleCreate}>
+        <Link to="/actividades/crear" className="btn btn-club-primary">
           <i className="bi bi-plus-lg me-2"></i>
           Nueva Actividad
-        </button>
+        </Link>
       </div>
 
       {error && (
