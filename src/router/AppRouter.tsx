@@ -6,7 +6,7 @@ import Facilities from '../pages/facilities/Facilities';
 import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
 import Navbar from '../components/shared/Navbar';
-import Membership from '../pages/memberships/Membership';
+import Membership from '../pages/memberships/MembershipList';
 import CreateMembership from '../pages/memberships/CreateMembership';
 import EditMembership from '../pages/memberships/EditMembership';
 import DeleteMembership from '../pages/memberships/DeleteMembership';
