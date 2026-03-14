@@ -32,6 +32,11 @@ export default function Sync() {
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
         const dataMemberships = responseMemberships.data ?? [];
         const dataActivities = responseActivities.data ?? [];
+
+        console.log("data de membership types", dataMembershipTypes);
+        console.log("data de memberships", dataMemberships);
+        console.log("data de activities", dataActivities);
+
         setMembershipTypesState(dataMembershipTypes);
         setMembershipsState(dataMemberships);
         setActivitiesState(dataActivities);
@@ -49,6 +54,13 @@ export default function Sync() {
   }, [setMembershipTypes, setMemberships, setActivities]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
+    console.log(totalMembershipTypes);
+    console.log(membershipTypes);
+    if (totalMembershipTypes === 0) {
+      setMembershipTypes([]);
+      setMembershipTypesProgress(100);
+      return;
+    }
     for (let i = 0; i < totalMembershipTypes; i++) {
       await new Promise((r) => setTimeout(r, 1));
       setMembershipTypesProgress(((i + 1) / totalMembershipTypes) * 1);
@@ -58,6 +70,11 @@ export default function Sync() {
   };
 
   const runSyncMemberships = async (totalMemberships: number, memberships: Membership[]) => {
+    if (totalMemberships === 0) {
+      setMemberships([]);
+      setMembershipsProgress(100);
+      return;
+    }
     for (let i = 0; i < totalMemberships; i++) {
       await new Promise((r) => setTimeout(r, 1));
       setMembershipsProgress(((i + 1) / totalMemberships) * 1);
@@ -68,6 +85,11 @@ export default function Sync() {
 
   const runSyncActivities = async (totalActivities: number, activitiesData: Activity[]) => {
     const total = totalActivities || 1;
+    if (totalActivities === 0) {
+      setActivities([]);
+      setActivitiesProgress(100);
+      return;
+    }
     for (let i = 0; i < total; i++) {
       await new Promise((r) => setTimeout(r, 1));
       setActivitiesProgress(((i + 1) / total) * 100);
@@ -77,11 +99,7 @@ export default function Sync() {
   };
 
   useEffect(() => {
-    if (loading || membershipTypes.length === 0) {
-      if (!loading) setMembershipTypesProgress(100);
-      if (!loading) setActivitiesProgress(100);
-      return;
-    }
+    if (loading) return;
     const totalMembershipTypes = membershipTypes.length;
     const totalMemberships = memberships.length;
     const totalActivities = activities.length;
@@ -91,17 +109,16 @@ export default function Sync() {
       await runSyncActivities(totalActivities, activities);
       navigate('/home');
     }
-    console.log(membershipTypes);
-    console.log(membershipTypesProgress);
-    console.log(loading);
-    console.log(setMembershipTypes);
-    console.log(error);
-    console.log(membershipTypes.length);
-    console.log(memberships.length);
-    console.log(membershipTypes);
-    console.log(memberships);
-    console.log(activities);
-    console.log(activitiesProgress);
+    console.log("membership types", membershipTypes);
+    console.log("membership types progress", membershipTypesProgress);
+    console.log("loading", loading);
+    console.log("setMembershipTypes", setMembershipTypes);
+    console.log("error", error);
+    console.log("membership types length", membershipTypes.length);
+    console.log("memberships length", memberships.length);
+    console.log("activities length", activities.length);
+    console.log("activities", activities);
+    console.log("activities progress", activitiesProgress);
     runSync();
   }, [loading, membershipTypes, memberships, activities, setMembershipTypes, setMemberships, setActivities]);
 

@@ -3,7 +3,7 @@ import type { Activity } from '../../entities/Entities';
 interface ActivityListProps {
   activities: Activity[];
   onEdit: (activity: Activity) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number | undefined) => void;
 }
 
 const formatDate = (date: string): string => {
