@@ -9,6 +9,7 @@ interface User {
   id: number;
   name: string;
   type: 'worker' | 'athlete' | 'member';
+  typeId?: number;
   email: string | null;
   createdAt: string;
   updatedAt: string | null;
@@ -45,6 +46,7 @@ function normalizeUserFromApi(item: any): User {
     id,
     name: item?.name ?? item?._name ?? '',
     type: TYPE_ID_TO_TYPE[typeId] ?? 'member',
+    typeId: typeId != null ? typeId : undefined,
     email: item?.email ?? item?._email ?? null,
     createdAt: item?.createdAt ?? item?._createdAt ?? '',
     updatedAt: item?.updatedAt ?? item?._updatedAt ?? null,

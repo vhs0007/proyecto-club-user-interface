@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, Membership, MembershipType } from '../entities/Entities';
+import type { Activity, Membership, MembershipType, UserType } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -15,6 +15,15 @@ interface MembershipTypeState {
   deleteMembershipType: (id: number) => void;
   getMembershipType: (id: number) => MembershipType | null;
   updateMembershipType: (membershipType: MembershipType) => void;
+}
+
+interface UserTypeState {
+  userTypes: UserType[];
+  setUserTypes: (userTypes: UserType[]) => void;
+  setUserType: (userType: UserType) => void;
+  deleteUserType: (id: number) => void;
+  getUserType: (id: number) => UserType | null;
+  updateUserType: (userType: UserType) => void;
 }
 
 interface MembershipState {
@@ -69,6 +78,29 @@ export const useMembershipTypeStore = create<MembershipTypeState>()(
       name: 'membership-types-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ membershipTypes: state.membershipTypes }),
+    }
+  )
+);
+
+export const useUserTypeStore = create<UserTypeState>()(
+  persist(
+    (set, get) => ({
+      userTypes: [],
+      setUserTypes: (userTypes: UserType[]) => set({ userTypes }),
+      setUserType: (userType: UserType) =>
+        set((state) => ({ userTypes: [...state.userTypes, userType] })),
+      deleteUserType: (id: number) =>
+        set((state) => ({ userTypes: state.userTypes.filter((ut) => ut.id !== id) })),
+      updateUserType: (userType: UserType) =>
+        set((state) => ({
+          userTypes: state.userTypes.map((ut) => (ut.id === userType.id ? userType : ut)),
+        })),
+      getUserType: (id: number) => get().userTypes.find((ut) => ut.id === id) ?? null,
+    }),
+    {
+      name: 'user-types-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ userTypes: state.userTypes }),
     }
   )
 );

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../../config/axios';
-import { useAuthStore } from '../../store/store';
+import { useAuthStore, useUserTypeStore } from '../../store/store';
 
 interface User {
   id: number;
   name: string;
   type: 'worker' | 'athlete' | 'member';
+  typeId?: number;
   email: string | null;
   role?: string;
   salary?: number;
@@ -37,15 +38,23 @@ const roleLabels: Record<string, string> = {
   athlete: 'Atleta',
 };
 
+const TYPE_TO_ID: Record<string, number> = {
+  worker: 1,
+  athlete: 2,
+  member: 3,
+};
+
 export default function UserFormModal({ user, onClose, onSuccess }: UserFormModalProps) {
   const token = useAuthStore((state) => state.token);
+  const userTypes = useUserTypeStore((state) => state.userTypes);
+  const getUserType = useUserTypeStore((state) => state.getUserType);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [type, setType] = useState<'member' | 'worker'>('member');
+  const [typeId, setTypeId] = useState<number>(0);
   const [role, setRole] = useState('');
   const [salary, setSalary] = useState('');
   const [hoursToWorkPerDay, setHoursToWorkPerDay] = useState('');
@@ -68,7 +77,7 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     if (user) {
       setName(user.name);
       setEmail(user.email || '');
-      setType(user.type === 'worker' ? 'worker' : 'member');
+      setTypeId(user.typeId ?? TYPE_TO_ID[user.type] ?? 0);
       setRole(user.role || '');
       setSalary(user.salary?.toString() || '');
       setHoursToWorkPerDay(user.hoursToWorkPerDay?.toString() || '');
@@ -87,34 +96,33 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     }
   }, [user]);
 
+  const selectedTypeName = getUserType(typeId)?.name?.toLowerCase() ?? '';
+  const isWorker = selectedTypeName === 'worker';
+  const isAthlete = selectedTypeName === 'athlete' || role === 'athlete';
+  const isMemberRoleVisible = !isWorker;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const typeId = type === 'worker' ? 1 : role === 'athlete' ? 2 : 3;
-    const roleId = isEditing && user && 'roleId' in user && typeof (user as any).roleId === 'number'
-      ? (user as any).roleId
-      : 1;
-
     const payload: any = {
       name,
-      typeId,
-      roleId,
+      typeId: typeId || undefined,
       isActive: isEditing ? undefined : true,
       email: email || undefined,
     };
 
     if (password) payload.password = password;
 
-    if (type === 'worker') {
+    if (isWorker) {
       if (salary) payload.salary = Number(salary);
       if (hoursToWorkPerDay) payload.hoursToWorkPerDay = Number(hoursToWorkPerDay);
       if (startWorkAt) payload.startWorkAt = new Date(startWorkAt).toISOString();
       if (endWorkAt) payload.endWorkAt = new Date(endWorkAt).toISOString();
     }
 
-    if (role === 'athlete') {
+    if (isAthlete) {
       if (weight) payload.weight = Number(weight);
       if (height) payload.height = Number(height);
       if (gender) payload.gender = gender;
@@ -204,12 +212,14 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                   <select
                     id="type"
                     className="form-select"
-                    value={type}
-                    onChange={(e) => setType(e.target.value as 'member' | 'worker')}
+                    value={typeId}
+                    onChange={(e) => setTypeId(Number(e.target.value))}
                     required
                   >
-                    <option value="member">Miembro</option>
-                    <option value="worker">Trabajador</option>
+                    <option value={0}>Seleccionar...</option>
+                    {userTypes.map((ut) => (
+                      <option key={ut.id} value={ut.id}>{ut.name}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-md-6">
@@ -221,13 +231,13 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                     onChange={(e) => setRole(e.target.value)}
                   >
                     <option value="">Seleccionar rol</option>
-                    {type === 'member' && memberRoles.map((r) => (
+                    {isMemberRoleVisible && memberRoles.map((r) => (
                       <option key={r} value={r}>{roleLabels[r]}</option>
                     ))}
                   </select>
                 </div>
 
-                {type === 'worker' && (
+                {isWorker && (
                   <>
                     <div className="col-12">
                       <hr />
@@ -276,7 +286,7 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                   </>
                 )}
 
-                {role === 'athlete' && (
+                {isAthlete && (
                   <>
                     <div className="col-12">
                       <hr />

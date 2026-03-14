@@ -1,7 +1,10 @@
+import { useUserTypeStore } from '../../store/store';
+
 interface User {
   id: number;
   name: string;
   type: 'worker' | 'athlete' | 'member';
+  typeId?: number;
   email: string | null;
   createdAt: string;
   updatedAt: string | null;
@@ -65,12 +68,21 @@ const roleLabels: Record<string, string> = {
   cleaner: 'Limpieza',
 };
 
+function getTypeDisplay(user: User, getUserType: (id: number) => { name: string } | null): string {
+  if (user.typeId != null) {
+    const ut = getUserType(user.typeId);
+    if (ut) return ut.name;
+  }
+  return typeLabels[user.type] ?? '-';
+}
+
 export default function UserList({
   users,
   onViewDetails = () => {},
   onEdit,
   onDelete,
 }: UserListProps) {
+  const getUserType = useUserTypeStore((state) => state.getUserType);
   return (
     <div className="table-responsive">
       <table className="table table-hover align-middle">
@@ -93,7 +105,7 @@ export default function UserList({
               </td>
               <td>
                 <span className={`badge bg-${user.type === 'worker' ? 'primary' : user.type === 'athlete' ? 'success' : 'secondary'}`}>
-                  {typeLabels[user.type]}
+                  {getTypeDisplay(user, getUserType)}
                 </span>
               </td>
               <td>{getRoleDisplay(user)}</td>

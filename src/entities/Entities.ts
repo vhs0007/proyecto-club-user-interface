@@ -5,10 +5,10 @@ export interface MembershipType {
     facilitiesIncluded?: string;
 }
 
-/*export interface UserType {
+export interface UserType {
     id: number;
     name: string;
-}*/
+}
 
 /*export interface UserRole {
     id: number;

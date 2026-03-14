@@ -1,7 +1,10 @@
+import { useUserTypeStore } from '../../store/store';
+
 interface User {
   id: number;
   name: string;
   type: 'worker' | 'athlete' | 'member';
+  typeId?: number;
   email: string | null;
   createdAt: string;
   updatedAt: string | null;
@@ -78,6 +81,8 @@ const formatDate = (date: string | null | undefined): string => {
 };
 
 export default function UserDetailModal({ user, onClose }: UserDetailModalProps) {
+  const getUserType = useUserTypeStore((state) => state.getUserType);
+  const typeDisplay = user.typeId != null ? (getUserType(user.typeId)?.name ?? typeLabels[user.type]) : typeLabels[user.type];
   return (
     <div className="modal fade show d-block modal-backdrop-custom">
       <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -100,7 +105,7 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                     <p><strong>ID:</strong> {user.id}</p>
                     <p><strong>Nombre:</strong> {user.name}</p>
                     <p><strong>Email:</strong> {user.email || '-'}</p>
-                    <p><strong>Tipo:</strong> {typeLabels[user.type]}</p>
+                    <p><strong>Tipo:</strong> {typeDisplay}</p>
                     <p><strong>Rol:</strong> {getRoleDisplay(user)}</p>
                     <p>
                       <strong>Estado:</strong>{' '}
