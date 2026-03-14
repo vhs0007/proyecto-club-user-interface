@@ -16,7 +16,7 @@ const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership 
   const [error, setError] = useState<string | null>(null);
 
   const typeName = membership ? getMembershipType(membership.type)?.name ?? `Tipo #${membership.type}` : "";
-
+  const userName = membership ? membership.userId : "";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!membership?.id) return;
@@ -43,12 +43,8 @@ const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership 
         <input type="text" value={typeName} readOnly disabled className="form-control" />
       </div>
       <div className="mb-3">
-        <label className="form-label">Precio</label>
-        <input type="number" value={membership.price} readOnly disabled className="form-control" />
-      </div>
-      <div className="mb-3">
-        <label className="form-label">Facilidades incluidas</label>
-        <input type="text" value={membership.facilitiesIncluded} readOnly disabled className="form-control" />
+        <label className="form-label">Usuario</label>
+        <input type="text" value={userName} readOnly disabled className="form-control" />
       </div>
       {error && <p className="text-danger mb-2">{error}</p>}
       <div className="d-flex gap-2">

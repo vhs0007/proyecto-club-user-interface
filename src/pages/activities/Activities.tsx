@@ -3,17 +3,7 @@ import { Link } from 'react-router-dom';
 import AxiosInstance from '../../config/axios';
 import ActivityList from '../../components/activities/ActivityList';
 import ActivityFormModal from '../../components/activities/ActivityFormModal';
-
-interface Activity {
-  id: number;
-  name: string;
-  type: string;
-  startAt: string;
-  endAt: string;
-  userId: number;
-  cost?: number | null;
-  isActive?: boolean;
-}
+import type { Activity } from '../../entities/Entities';
 
 export default function Activities() {
   const [activities, setActivities] = useState<Activity[]>([]);

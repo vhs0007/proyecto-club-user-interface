@@ -16,8 +16,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
             <tr>
                 <th>ID</th>
                 <th>Tipo</th>
-                <th>Facilidades Incluidas</th>
-                <th>Precio</th>
+                <th>Usuario</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -26,8 +25,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
                 <tr key={membership.id}>
                     <td>{membership.id}</td>
                     <td>{membership.type}</td>
-                    <td>{membership.facilitiesIncluded}</td>
-                    <td>{membership.price}</td>
+                    <td>{membership.userId}</td>
                     <td><button className="btn btn-primary" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>
                     <button className="btn btn-danger" onClick={() => navigate(`/membresias/eliminar/${membership.id}`)}>Eliminar</button></td>
                 </tr>

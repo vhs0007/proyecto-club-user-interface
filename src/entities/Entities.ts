@@ -1,6 +1,8 @@
 export interface MembershipType {
     id: number;
     name: string;
+    price: number;
+    facilitiesIncluded?: string;
 }
 
 /*export interface UserType {
@@ -16,8 +18,8 @@ export interface MembershipType {
 export interface Membership {
     id?: number;
     type: number;
-    price: number;
-    facilitiesIncluded: string;
+    userId: number;
+
 }
 
 export interface Activity {

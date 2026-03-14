@@ -6,8 +6,7 @@ import Axios from '../../config/axios';
 
 const schema = z.object({
   type: z.number().min(1, "Seleccioná un tipo de membresía"),
-  price: z.number().min(1, "El precio debe ser mayor a 0"),
-  facilitiesIncluded: z.string().min(1, "Las facilidades son requeridas"),
+  userId: z.number().min(1, "El usuario es requerido"),
 });
 
 export type CreateMembershipFormData = z.infer<typeof schema>;
@@ -23,8 +22,7 @@ export default function CreateMembershipForm() {
     resolver: zodResolver(schema),
     defaultValues: {
       type: 0,
-      price: 0,
-      facilitiesIncluded: "",
+      userId: 0,
     },
   });
 
@@ -59,30 +57,15 @@ export default function CreateMembershipForm() {
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Precio</label>
+        <label className="form-label">Usuario</label>
         <input
           type="number"
-          step="0.01"
-          min={0}
-          placeholder="Precio"
-          className={`form-control ${errors.price ? "is-invalid" : ""}`}
-          {...register("price", { valueAsNumber: true })}
+          placeholder="ID del usuario"
+          className={`form-control ${errors.userId ? "is-invalid" : ""}`}
+          {...register("userId", { valueAsNumber: true })}
         />
-        {errors.price && (
-          <div className="invalid-feedback">{errors.price.message}</div>
-        )}
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label">Facilidades incluidas</label>
-        <input
-          type="text"
-          placeholder="Facilidades incluidas en la membresía"
-          className={`form-control ${errors.facilitiesIncluded ? "is-invalid" : ""}`}
-          {...register("facilitiesIncluded")}
-        />
-        {errors.facilitiesIncluded && (
-          <div className="invalid-feedback">{errors.facilitiesIncluded.message}</div>
+        {errors.userId && (
+          <div className="invalid-feedback">{errors.userId.message}</div>
         )}
       </div>
 

@@ -1,13 +1,4 @@
-interface Activity {
-  id: number;
-  name: string;
-  type: string;
-  startAt: string;
-  endAt: string;
-  userId: number;
-  cost?: number | null;
-  isActive?: boolean;
-}
+import type { Activity } from '../../entities/Entities';
 
 interface ActivityListProps {
   activities: Activity[];

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { useAuthStore } from '../store/store';
 
 const AxiosInstance = axios.create({
@@ -29,7 +29,7 @@ AxiosInstance.interceptors.request.use(async (config) => {
   }
 
   if (!config.headers) {
-    config.headers = {};
+    config.headers = new AxiosHeaders();
   }
 
   if (token) {
