@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useMembershipStore, useMembershipTypeStore } from "../../store/store";
-import type { Activity, Membership, MembershipType } from "../../entities/Entities";
+import { useActivityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore } from "../../store/store";
+import type { Activity, Membership, MembershipType, UserType } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -19,19 +19,22 @@ export default function Sync() {
   const setMembershipTypes = useMembershipTypeStore((state) => state.setMembershipTypes);
   const setMemberships = useMembershipStore((state) => state.setMemberships);
   const setActivities = useActivityStore((state) => state.setActivities);
+  const setUserTypes = useUserTypeStore((state) => state.setUserTypes);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [responseMembershipTypes, responseMemberships, responseActivities] = await Promise.all([
+        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes] = await Promise.all([
           AxiosInstance.get<MembershipType[]>("/membership-type"),
           AxiosInstance.get<Membership[]>("/membership"),
           AxiosInstance.get<Activity[]>("/activities"),
+          AxiosInstance.get<UserType[]>("/user-type"),
         ]);
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
         const dataMemberships = responseMemberships.data ?? [];
         const dataActivities = responseActivities.data ?? [];
+        const dataUserTypes = responseUserTypes?.data ?? [];
 
         console.log("data de membership types", dataMembershipTypes);
         console.log("data de memberships", dataMemberships);
@@ -43,6 +46,7 @@ export default function Sync() {
         setMembershipTypes(dataMembershipTypes);
         setMemberships(dataMemberships);
         setActivities(dataActivities);
+        setUserTypes(dataUserTypes);
       } catch (err) {
         setError("Error al cargar los datos");
       } finally {
@@ -51,7 +55,7 @@ export default function Sync() {
     };
 
     fetchData();
-  }, [setMembershipTypes, setMemberships, setActivities]);
+  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
     console.log(totalMembershipTypes);

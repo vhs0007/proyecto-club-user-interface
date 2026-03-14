@@ -1,21 +1,52 @@
+import { useUserTypeStore } from '../../store/store';
+
 interface User {
   id: number;
   name: string;
   type: 'worker' | 'athlete' | 'member';
+  typeId?: number;
   email: string | null;
   createdAt: string;
   updatedAt: string | null;
   isActive: boolean;
   role?: string;
+  roleId?: number;
   gender?: 'male' | 'female';
 }
 
 interface UserListProps {
   users: User[];
-  loading: boolean;
-  onViewDetails: (user: User) => void;
+  onViewDetails?: (user: User) => void;
   onEdit: (user: User) => void;
-  onDeactivate: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+const roleIdToLabel: Record<number, string> = {
+  1: 'Estándar',
+  2: 'VIP',
+  3: 'Atleta',
+  4: 'Administrador',
+  5: 'Entrenador',
+  6: 'Nutricionista',
+  7: 'Psicólogo',
+  8: 'Fisioterapeuta',
+  9: 'Administrativo',
+  10: 'Limpieza',
+};
+
+function getRoleDisplay(user: User): string {
+  if (user.role) return roleLabels[user.role] || user.role;
+  if (user.roleId != null) return roleIdToLabel[user.roleId] ?? `Rol ${user.roleId}`;
+  return '-';
+}
+
+function formatDate(date: string | null | undefined): string {
+  if (!date) return '-';
+  try {
+    return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch {
+    return '-';
+  }
 }
 
 const typeLabels: Record<string, string> = {
@@ -37,28 +68,21 @@ const roleLabels: Record<string, string> = {
   cleaner: 'Limpieza',
 };
 
-const genderLabels: Record<string, string> = {
-  male: 'Masculino',
-  female: 'Femenino',
-};
+function getTypeDisplay(user: User, getUserType: (id: number) => { name: string } | null): string {
+  if (user.typeId != null) {
+    const ut = getUserType(user.typeId);
+    if (ut) return ut.name;
+  }
+  return typeLabels[user.type] ?? '-';
+}
 
 export default function UserList({
   users,
-  loading,
-  onViewDetails,
+  onViewDetails = () => {},
   onEdit,
-  onDeactivate,
+  onDelete,
 }: UserListProps) {
-  if (loading) {
-    return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-warning" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    );
-  }
-
+  const getUserType = useUserTypeStore((state) => state.getUserType);
   return (
     <div className="table-responsive">
       <table className="table table-hover align-middle">
@@ -67,7 +91,7 @@ export default function UserList({
             <th>Nombre</th>
             <th>Tipo</th>
             <th>Rol</th>
-            <th>Género</th>
+            <th>Fecha registro</th>
             <th>Estado</th>
             <th className="text-center">Acciones</th>
           </tr>
@@ -81,11 +105,11 @@ export default function UserList({
               </td>
               <td>
                 <span className={`badge bg-${user.type === 'worker' ? 'primary' : user.type === 'athlete' ? 'success' : 'secondary'}`}>
-                  {typeLabels[user.type]}
+                  {getTypeDisplay(user, getUserType)}
                 </span>
               </td>
-              <td>{user.role ? roleLabels[user.role] || user.role : '-'}</td>
-              <td>{user.gender ? genderLabels[user.gender] : '-'}</td>
+              <td>{getRoleDisplay(user)}</td>
+              <td>{formatDate(user.createdAt)}</td>
               <td>
                 <span className={`badge ${user.isActive ? 'bg-success' : 'bg-danger'}`}>
                   {user.isActive ? 'Activo' : 'Inactivo'}
@@ -110,7 +134,7 @@ export default function UserList({
                   {user.isActive && (
                     <button
                       className="btn btn-sm btn-outline-danger"
-                      onClick={() => onDeactivate(user.id)}
+                      onClick={() => onDelete(user.id)}
                       title="Dar de baja"
                     >
                       <i className="bi bi-person-x"></i>
