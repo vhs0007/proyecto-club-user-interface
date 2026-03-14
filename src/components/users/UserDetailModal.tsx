@@ -7,6 +7,7 @@ interface User {
   updatedAt: string | null;
   isActive: boolean;
   role?: string;
+  roleId?: number;
   salary?: number;
   hoursToWorkPerDay?: number;
   startWorkAt?: string;
@@ -47,6 +48,25 @@ const roleLabels: Record<string, string> = {
   cleaner: 'Limpieza',
 };
 
+const roleIdToLabel: Record<number, string> = {
+  1: 'Estándar',
+  2: 'VIP',
+  3: 'Atleta',
+  4: 'Administrador',
+  5: 'Entrenador',
+  6: 'Nutricionista',
+  7: 'Psicólogo',
+  8: 'Fisioterapeuta',
+  9: 'Administrativo',
+  10: 'Limpieza',
+};
+
+function getRoleDisplay(user: User): string {
+  if (user.role) return roleLabels[user.role] || user.role;
+  if (user.roleId != null) return roleIdToLabel[user.roleId] ?? `Rol ${user.roleId}`;
+  return '-';
+}
+
 const genderLabels: Record<string, string> = {
   male: 'Masculino',
   female: 'Femenino',
@@ -81,13 +101,16 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                     <p><strong>Nombre:</strong> {user.name}</p>
                     <p><strong>Email:</strong> {user.email || '-'}</p>
                     <p><strong>Tipo:</strong> {typeLabels[user.type]}</p>
-                    <p><strong>Rol:</strong> {user.role ? roleLabels[user.role] || user.role : '-'}</p>
+                    <p><strong>Rol:</strong> {getRoleDisplay(user)}</p>
                     <p>
                       <strong>Estado:</strong>{' '}
                       <span className={`badge ${user.isActive ? 'bg-success' : 'bg-danger'}`}>
                         {user.isActive ? 'Activo' : 'Inactivo'}
                       </span>
                     </p>
+                    {user.gender != null && (
+                      <p><strong>Género:</strong> {genderLabels[user.gender] || user.gender}</p>
+                    )}
                   </div>
                 </div>
               </div>

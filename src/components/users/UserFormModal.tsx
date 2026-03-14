@@ -101,11 +101,17 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     setLoading(true);
     setError('');
 
+    const typeId = type === 'worker' ? 1 : role === 'athlete' ? 2 : 3;
+    const roleId = isEditing && user && 'roleId' in user && typeof (user as any).roleId === 'number'
+      ? (user as any).roleId
+      : 1;
+
     const payload: any = {
       name,
-      type,
+      typeId,
+      roleId,
+      isActive: isEditing ? undefined : true,
       email: email || undefined,
-      role: role || undefined,
     };
 
     if (password) payload.password = password;
@@ -113,15 +119,15 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     if (type === 'worker') {
       if (salary) payload.salary = Number(salary);
       if (hoursToWorkPerDay) payload.hoursToWorkPerDay = Number(hoursToWorkPerDay);
-      if (startWorkAt) payload.startWorkAt = startWorkAt;
-      if (endWorkAt) payload.endWorkAt = endWorkAt;
+      if (startWorkAt) payload.startWorkAt = new Date(startWorkAt).toISOString();
+      if (endWorkAt) payload.endWorkAt = new Date(endWorkAt).toISOString();
     }
 
     if (role === 'athlete') {
       if (weight) payload.weight = Number(weight);
       if (height) payload.height = Number(height);
       if (gender) payload.gender = gender;
-      if (birthDate) payload.birthDate = birthDate;
+      if (birthDate) payload.birthDate = new Date(birthDate).toISOString();
       if (diet) payload.diet = diet;
       if (trainingPlan) payload.trainingPlan = trainingPlan;
       if (medicalHistory) payload.medicalHistory = medicalHistory;
