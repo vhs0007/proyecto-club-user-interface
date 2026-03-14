@@ -31,19 +31,10 @@ interface UserFormModalProps {
 }
 
 const memberRoles = ['standard', 'vip', 'athlete'];
-const workerRoles = ['admin', 'coach', 'nutritionist', 'psychologist', 'physical_therapist', 'administrative', 'cleaner'];
-
 const roleLabels: Record<string, string> = {
   standard: 'Estándar',
   vip: 'VIP',
   athlete: 'Atleta',
-  admin: 'Administrador',
-  coach: 'Entrenador',
-  nutritionist: 'Nutricionista',
-  psychologist: 'Psicólogo',
-  physical_therapist: 'Fisioterapeuta',
-  administrative: 'Administrativo',
-  cleaner: 'Limpieza',
 };
 
 export default function UserFormModal({ user, onClose, onSuccess }: UserFormModalProps) {
@@ -231,9 +222,6 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                   >
                     <option value="">Seleccionar rol</option>
                     {type === 'member' && memberRoles.map((r) => (
-                      <option key={r} value={r}>{roleLabels[r]}</option>
-                    ))}
-                    {type === 'worker' && workerRoles.map((r) => (
                       <option key={r} value={r}>{roleLabels[r]}</option>
                     ))}
                   </select>

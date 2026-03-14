@@ -1,8 +1,10 @@
 import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { useAuthStore } from '../../store/store'
 
 export default function Navbar() {
   const navigate = useNavigate()
   const location = useLocation()
+  const logout = useAuthStore((state) => state.logout)
 
   const getLinkClass = (path: string) => {
     return `nav-link nav-link-club ${location.pathname === path ? 'active' : ''}`
@@ -48,6 +50,19 @@ export default function Navbar() {
               <Link to="/membresias" className={getLinkClass('/membresias')}>
                 Membresías
               </Link>
+            </li>
+            <li className="nav-item">
+              <button
+                type="button"
+                className="nav-link nav-link-club border-0 bg-transparent p-0"
+                aria-label="Cerrar sesión"
+                onClick={() => {
+                  logout()
+                  navigate('/login', { replace: true })
+                }}
+              >
+                Cerrar sesión
+              </button>
             </li>
           </ul>
         </div>
