@@ -13,6 +13,7 @@ export type CreateMembershipFormData = z.infer<typeof schema>;
 
 export default function CreateMembershipForm() {
   const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
+  console.log("membership types en el form", membershipTypes);
 
   const {
     register,
