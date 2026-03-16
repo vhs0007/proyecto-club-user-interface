@@ -1,69 +1,76 @@
 import { useState, useEffect } from 'react';
 import api from '../../config/axios';
-import { useAuthStore } from '../../store/store';
-
-interface Facility {
-  id: number;
-  tipo: string;
-  horarioDisponible: string;
-  aforo: number;
-  trabajadorEncargado: number;
-  trabajadorAyudante: number | null;
-}
+import { useAuthStore, useMembershipTypeStore } from '../../store/store';
+import type { Facility, FacilityResponse } from '../../entities/Entities';
 
 interface FacilityFormModalProps {
-  facility: Facility | null;
+  facility: FacilityResponse | null;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (facility: FacilityResponse) => void;
 }
 
 export default function FacilityFormModal({ facility, onClose, onSuccess }: FacilityFormModalProps) {
   const token = useAuthStore((state) => state.token);
+  const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const [tipo, setTipo] = useState('');
-  const [horarioDisponible, setHorarioDisponible] = useState('');
-  const [aforo, setAforo] = useState('');
-  const [trabajadorEncargado, setTrabajadorEncargado] = useState('');
-  const [trabajadorAyudante, setTrabajadorAyudante] = useState('');
+  const [type, setType] = useState('');
+  const [capacity, setCapacity] = useState('');
+  const [responsibleWorker, setResponsibleWorker] = useState('');
+  const [assistantWorker, setAssistantWorker] = useState('');
+  const [isActive, setIsActive] = useState(true);
+  const [membershipTypeIds, setMembershipTypeIds] = useState<number[]>([]);
 
   const isEditing = facility !== null;
 
   useEffect(() => {
     if (facility) {
-      setTipo(facility.tipo);
-      setHorarioDisponible(facility.horarioDisponible);
-      setAforo(facility.aforo.toString());
-      setTrabajadorEncargado(facility.trabajadorEncargado.toString());
-      setTrabajadorAyudante(facility.trabajadorAyudante?.toString() || '');
+      setType(facility.type);
+      setCapacity(facility.capacity.toString());
+      setResponsibleWorker(facility.responsibleWorker.id.toString());
+      setAssistantWorker(facility.assistantWorker?.id?.toString() ?? '');
+      setIsActive(facility.isActive);
+      setMembershipTypeIds(facility.membershipTypes?.map((m) => m.id) ?? []);
+    } else {
+      setIsActive(true);
+      setMembershipTypeIds([]);
     }
   }, [facility]);
+
+  const toggleMembershipType = (id: number) => {
+    setMembershipTypeIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const payload = {
-      tipo,
-      horarioDisponible,
-      aforo: Number(aforo),
-      trabajadorEncargado: Number(trabajadorEncargado),
-      trabajadorAyudante: trabajadorAyudante ? Number(trabajadorAyudante) : undefined,
+    const payload: Facility = {
+      type: type.trim(),
+      capacity: Math.max(4, Number(capacity)),
+      responsibleWorker: Number(responsibleWorker),
+      assistantWorker: assistantWorker ? Number(assistantWorker) : null,
+      isActive,
+      membershipTypeIds,
     };
+    if (isEditing && facility?.id) payload.id = facility.id;
 
     try {
-      if (isEditing && facility) {
-        await api.patch(`/facilities/${facility.id}`, payload, {
+      if (isEditing && facility?.id) {
+        const response = await api.patch<FacilityResponse>(`/facilities/${facility.id}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        onSuccess(response.data);
       } else {
-        await api.post('/facilities', payload, {
+        const response = await api.post<FacilityResponse>('/facilities', payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        onSuccess(response.data);
       }
-      onSuccess();
       onClose();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al guardar instalación');
@@ -92,63 +99,90 @@ export default function FacilityFormModal({ facility, onClose, onSuccess }: Faci
               )}
               <div className="row g-3">
                 <div className="col-12">
-                  <label htmlFor="tipo" className="form-label">Tipo *</label>
+                  <label htmlFor="type" className="form-label">Tipo *</label>
                   <input
                     type="text"
-                    id="tipo"
+                    id="type"
                     className="form-control"
-                    value={tipo}
-                    onChange={(e) => setTipo(e.target.value)}
-                    placeholder="Ej: Piscina, Gimnasio"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    placeholder="Ej: Sala de musculación, Piscina"
                     required
                   />
                 </div>
                 <div className="col-12">
-                  <label htmlFor="horarioDisponible" className="form-label">Horario Disponible *</label>
-                  <input
-                    type="text"
-                    id="horarioDisponible"
-                    className="form-control"
-                    value={horarioDisponible}
-                    onChange={(e) => setHorarioDisponible(e.target.value)}
-                    placeholder="08:00-22:00"
-                    required
-                  />
-                </div>
-                <div className="col-12">
-                  <label htmlFor="aforo" className="form-label">Aforo *</label>
+                  <label htmlFor="capacity" className="form-label">Capacidad (mín. 4) *</label>
                   <input
                     type="number"
-                    id="aforo"
+                    id="capacity"
                     className="form-control"
-                    value={aforo}
-                    onChange={(e) => setAforo(e.target.value)}
+                    min={4}
+                    value={capacity}
+                    onChange={(e) => setCapacity(e.target.value)}
                     placeholder="Capacidad máxima"
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="trabajadorEncargado" className="form-label">Encargado (ID) *</label>
+                  <label htmlFor="responsibleWorker" className="form-label">Trabajador responsable (ID) *</label>
                   <input
                     type="number"
-                    id="trabajadorEncargado"
+                    id="responsibleWorker"
                     className="form-control"
-                    value={trabajadorEncargado}
-                    onChange={(e) => setTrabajadorEncargado(e.target.value)}
-                    placeholder="ID del encargado"
+                    min={1}
+                    value={responsibleWorker}
+                    onChange={(e) => setResponsibleWorker(e.target.value)}
+                    placeholder="ID del trabajador"
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="trabajadorAyudante" className="form-label">Ayudante (ID)</label>
+                  <label htmlFor="assistantWorker" className="form-label">Trabajador asistente (ID)</label>
                   <input
                     type="number"
-                    id="trabajadorAyudante"
+                    id="assistantWorker"
                     className="form-control"
-                    value={trabajadorAyudante}
-                    onChange={(e) => setTrabajadorAyudante(e.target.value)}
+                    min={1}
+                    value={assistantWorker}
+                    onChange={(e) => setAssistantWorker(e.target.value)}
                     placeholder="Opcional"
                   />
+                </div>
+                <div className="col-12">
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      className="form-check-input"
+                      checked={isActive}
+                      onChange={(e) => setIsActive(e.target.checked)}
+                    />
+                    <label htmlFor="isActive" className="form-check-label">Instalación activa</label>
+                  </div>
+                </div>
+                <div className="col-12">
+                  <label className="form-label">Tipos de membresía *</label>
+                  <div className="border rounded p-2" style={{ maxHeight: 160, overflowY: 'auto' }}>
+                    {membershipTypes.length === 0 ? (
+                      <small className="text-muted">No hay tipos de membresía cargados. Sincronizá desde Inicio.</small>
+                    ) : (
+                      membershipTypes.map((mt) => (
+                        <div key={mt.id} className="form-check">
+                          <input
+                            type="checkbox"
+                            id={`mt-${mt.id}`}
+                            className="form-check-input"
+                            checked={membershipTypeIds.includes(mt.id)}
+                            onChange={() => toggleMembershipType(mt.id)}
+                          />
+                          <label htmlFor={`mt-${mt.id}`} className="form-check-label">{mt.name}</label>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {membershipTypeIds.length === 0 && (
+                    <small className="text-danger">Seleccioná al menos un tipo de membresía</small>
+                  )}
                 </div>
               </div>
             </div>
@@ -156,7 +190,11 @@ export default function FacilityFormModal({ facility, onClose, onSuccess }: Faci
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancelar
               </button>
-              <button type="submit" className="btn btn-club-primary" disabled={loading}>
+              <button
+                type="submit"
+                className="btn btn-club-primary"
+                disabled={loading || membershipTypeIds.length === 0}
+              >
                 {loading ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>
@@ -173,4 +211,3 @@ export default function FacilityFormModal({ facility, onClose, onSuccess }: Faci
     </div>
   );
 }
-

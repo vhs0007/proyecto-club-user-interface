@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import type { Membership } from "../../entities/Entities";
+import type { MembershipResponse } from "../../entities/Entities";
 import { useEffect } from "react";
 
-export default function MembershipList({ membershipsList }: { membershipsList: Membership[] }) {
+export default function MembershipList({ membershipsList }: { membershipsList: MembershipResponse[] }) {
   const navigate = useNavigate();
   useEffect(() => {
     console.log(membershipsList);
@@ -24,8 +24,8 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
             {membershipsList.map((membership) => (
                 <tr key={membership.id}>
                     <td>{membership.id}</td>
-                    <td>{membership.type}</td>
-                    <td>{membership.userId}</td>
+                    <td>{membership.membershipType?.name ?? '-'}</td>
+                    <td>{membership.user?.name ?? membership.user?.id ?? '-'}</td>
                     <td><button className="btn btn-primary" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>
                     <button className="btn btn-danger" onClick={() => navigate(`/membresias/eliminar/${membership.id}`)}>Eliminar</button></td>
                 </tr>

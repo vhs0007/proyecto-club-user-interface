@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, Membership, MembershipType, UserType } from '../entities/Entities';
+import type { Activity, MembershipResponse, MembershipType, UserType } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -27,12 +27,12 @@ interface UserTypeState {
 }
 
 interface MembershipState {
-  memberships: Membership[];
-  setMemberships: (memberships: Membership[]) => void;
-  setMembership: (membership: Membership) => void;
-  getMembership: (id: number) => Membership | null;
+  memberships: MembershipResponse[];
+  setMemberships: (memberships: MembershipResponse[]) => void;
+  setMembership: (membership: MembershipResponse) => void;
+  getMembership: (id: number) => MembershipResponse | null;
   deleteMembership: (id: number) => void;
-  updateMembership: (membership: Membership) => void;
+  updateMembership: (membership: MembershipResponse) => void;
 }
 
 interface ActivityState {
@@ -109,12 +109,12 @@ export const useMembershipStore = create<MembershipState>()(
   persist(
     (set, get) => ({
       memberships: [],
-      setMemberships: (memberships: Membership[]) => set({ memberships }),
-      setMembership: (membership: Membership) =>
+      setMemberships: (memberships: MembershipResponse[]) => set({ memberships }),
+      setMembership: (membership: MembershipResponse) =>
         set((state) => ({ memberships: [...state.memberships, membership] })),
       getMembership: (id: number) => get().memberships.find((m) => m.id === id) ?? null,
       deleteMembership: (id: number) => set((state) => ({ memberships: state.memberships.filter((m) => m.id !== id) })),
-      updateMembership: (membership: Membership) => set((state) => ({ memberships: state.memberships.map((m) => m.id === membership.id ? membership : m) })),
+      updateMembership: (membership: MembershipResponse) => set((state) => ({ memberships: state.memberships.map((m) => m.id === membership.id ? membership : m) })),
     }),
     {
       name: 'memberships-storage',

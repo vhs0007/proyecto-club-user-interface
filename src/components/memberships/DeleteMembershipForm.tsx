@@ -1,22 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import type { Membership } from "../../entities/Entities";
-import { useMembershipStore, useMembershipTypeStore } from "../../store/store";
+import type { MembershipResponse } from "../../entities/Entities";
+import { useMembershipStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import React, { useState } from "react";
 
 export interface DeleteMembershipFormProps {
-  membership: Membership | null;
+  membership: MembershipResponse | null;
 }
 
 const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership }) => {
   const navigate = useNavigate();
   const deleteMembership = useMembershipStore((state) => state.deleteMembership);
-  const getMembershipType = useMembershipTypeStore((state) => state.getMembershipType);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const typeName = membership ? getMembershipType(membership.type)?.name ?? `Tipo #${membership.type}` : "";
-  const userName = membership ? membership.userId : "";
+  const typeName = membership?.membershipType?.name ?? (membership?.membershipType ? `Tipo #${membership.membershipType.id}` : "");
+  const userName = membership?.user?.name ?? membership?.user?.id ?? "";
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!membership?.id) return;

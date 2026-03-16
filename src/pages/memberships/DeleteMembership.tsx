@@ -1,13 +1,13 @@
 import DeleteMembershipForm from "../../components/memberships/DeleteMembershipForm";
 import MembershipLayout from "../../components/memberships/MembershipLayout";
 import { useParams } from "react-router-dom";
-import type { Membership } from "../../entities/Entities";
+import type { MembershipResponse } from "../../entities/Entities";
 import { useState, useEffect } from "react";
 import { useMembershipStore } from "../../store/store";
 
 export default function DeleteMembership() {
   const { id } = useParams<{ id: string }>();
-  const [membership, setMembership] = useState<Membership | null>(null);
+  const [membership, setMembership] = useState<MembershipResponse | null>(null);
 
   useEffect(() => {
     if (!id) return;

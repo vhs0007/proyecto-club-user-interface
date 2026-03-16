@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import type { Membership } from "../../entities/Entities";
+import type { MembershipResponse } from "../../entities/Entities";
 import { useMembershipTypeStore, useMembershipStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,7 @@ const schema = z.object({
 export type EditMembershipFormData = z.infer<typeof schema>;
 
 export interface EditMembershipFormProps {
-  membership: Membership | null;
+  membership: MembershipResponse | null;
 }
 
 export default function EditMembershipForm({ membership }: EditMembershipFormProps) {
@@ -36,8 +36,8 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
     if (membership) {
       reset({
         id: membership?.id ?? 0,
-        type: membership.type,
-        userId: membership.userId,
+        type: membership.membershipType?.id ?? 0,
+        userId: membership.user?.id ?? 0,
       });
     }
   }, [membership, reset]);
@@ -47,8 +47,8 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
     console.log(data);
     const response = await AxiosInstance.patch(`/membership/${membership.id}`, data);
     console.log(response);
-    if (response.status === 200) {
-      updateMembership({ ...membership, ...data });
+    if (response.status === 200 && response.data) {
+      updateMembership(response.data as MembershipResponse);
       navigate('/membresias');
     }
   };

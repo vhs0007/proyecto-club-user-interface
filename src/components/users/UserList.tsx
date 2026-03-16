@@ -1,46 +1,15 @@
 import { useUserTypeStore } from '../../store/store';
-
-interface User {
-  id: number;
-  name: string;
-  type: 'worker' | 'athlete' | 'member';
-  typeId?: number;
-  email: string | null;
-  createdAt: string;
-  updatedAt: string | null;
-  isActive: boolean;
-  role?: string;
-  roleId?: number;
-  gender?: 'male' | 'female';
-}
+import type { UserResponse, UserType, User } from '../../entities/Entities';
 
 interface UserListProps {
-  users: User[];
-  onViewDetails?: (user: User) => void;
-  onEdit: (user: User) => void;
+  users: UserResponse[];
+  onViewDetails?: (user: UserResponse) => void;
+  onEdit: (user: User | null) => void;
   onDelete: (id: number) => void;
 }
 
-const roleIdToLabel: Record<number, string> = {
-  1: 'Estándar',
-  2: 'VIP',
-  3: 'Atleta',
-  4: 'Administrador',
-  5: 'Entrenador',
-  6: 'Nutricionista',
-  7: 'Psicólogo',
-  8: 'Fisioterapeuta',
-  9: 'Administrativo',
-  10: 'Limpieza',
-};
 
-function getRoleDisplay(user: User): string {
-  if (user.role) return roleLabels[user.role] || user.role;
-  if (user.roleId != null) return roleIdToLabel[user.roleId] ?? `Rol ${user.roleId}`;
-  return '-';
-}
-
-function formatDate(date: string | null | undefined): string {
+function formatDate(date: Date | null | undefined): string {
   if (!date) return '-';
   try {
     return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -49,31 +18,12 @@ function formatDate(date: string | null | undefined): string {
   }
 }
 
-const typeLabels: Record<string, string> = {
-  worker: 'Trabajador',
-  athlete: 'Atleta',
-  member: 'Miembro',
-};
 
-const roleLabels: Record<string, string> = {
-  standard: 'Estándar',
-  vip: 'VIP',
-  athlete: 'Atleta',
-  admin: 'Administrador',
-  coach: 'Entrenador',
-  nutritionist: 'Nutricionista',
-  psychologist: 'Psicólogo',
-  physical_therapist: 'Fisioterapeuta',
-  administrative: 'Administrativo',
-  cleaner: 'Limpieza',
-};
-
-function getTypeDisplay(user: User, getUserType: (id: number) => { name: string } | null): string {
-  if (user.typeId != null) {
-    const ut = getUserType(user.typeId);
-    if (ut) return ut.name;
-  }
-  return typeLabels[user.type] ?? '-';
+function getTypeDisplay(user: UserResponse, getUserType: (id: number) => UserType | null): string {
+  const typeId = user.type?.id ?? user.typeId;
+  const ut = getUserType(typeId);
+  if (ut) return ut.name;
+  return '';
 }
 
 export default function UserList({
@@ -90,7 +40,6 @@ export default function UserList({
           <tr>
             <th>Nombre</th>
             <th>Tipo</th>
-            <th>Rol</th>
             <th>Fecha registro</th>
             <th>Estado</th>
             <th className="text-center">Acciones</th>
@@ -104,11 +53,10 @@ export default function UserList({
                 <small className="text-muted">{user.email || 'Sin email'}</small>
               </td>
               <td>
-                <span className={`badge bg-${user.type === 'worker' ? 'primary' : user.type === 'athlete' ? 'success' : 'secondary'}`}>
+                <span className={`badge bg-${user.type?.name === 'worker' ? 'primary' : user.type?.name === 'athlete' ? 'success' : 'secondary'}`}>
                   {getTypeDisplay(user, getUserType)}
                 </span>
               </td>
-              <td>{getRoleDisplay(user)}</td>
               <td>{formatDate(user.createdAt)}</td>
               <td>
                 <span className={`badge ${user.isActive ? 'bg-success' : 'bg-danger'}`}>

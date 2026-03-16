@@ -4,82 +4,20 @@ import { useAuthStore } from '../../store/store';
 import UserList from '../../components/users/UserList';
 import UserFormModal from '../../components/users/UserFormModal';
 import UserDetailModal from '../../components/users/UserDetailModal';
+import type { User } from '../../entities/Entities';
+import type { UserResponse } from '../../entities/Entities';
 
-interface User {
-  id: number;
-  name: string;
-  type: 'worker' | 'athlete' | 'member';
-  typeId?: number;
-  email: string | null;
-  createdAt: string;
-  updatedAt: string | null;
-  isActive: boolean;
-  role?: string;
-  roleId?: number;
-  salary?: number;
-  hoursToWorkPerDay?: number;
-  startWorkAt?: string;
-  endWorkAt?: string;
-  weight?: number;
-  height?: number;
-  gender?: 'male' | 'female';
-  birthDate?: string;
-  diet?: string;
-  trainingPlan?: string;
-  medicalHistory?: string;
-  allergies?: string;
-  medications?: string;
-  medicalConditions?: string;
-}
-
-const TYPE_ID_TO_TYPE: Record<number, 'worker' | 'athlete' | 'member'> = {
-  1: 'worker',
-  2: 'athlete',
-  3: 'member',
-};
-
-function normalizeUserFromApi(item: any): User {
-  const id = item?.id ?? item?._id;
-  const typeId = item?.type ?? item?._type;
-  const roleId = item?.role ?? item?._role ?? item?.roleId;
-  return {
-    id,
-    name: item?.name ?? item?._name ?? '',
-    type: TYPE_ID_TO_TYPE[typeId] ?? 'member',
-    typeId: typeId != null ? typeId : undefined,
-    email: item?.email ?? item?._email ?? null,
-    createdAt: item?.createdAt ?? item?._createdAt ?? '',
-    updatedAt: item?.updatedAt ?? item?._updatedAt ?? null,
-    isActive: item?.isActive ?? item?._isActive ?? true,
-    role: item?.role && typeof item.role === 'string' ? item.role : undefined,
-    roleId: typeof roleId === 'number' ? roleId : undefined,
-    salary: item?.salary ?? item?._salary,
-    hoursToWorkPerDay: item?.hoursToWorkPerDay ?? item?._hoursToWorkPerDay,
-    startWorkAt: item?.startWorkAt ?? item?._startWorkAt,
-    endWorkAt: item?.endWorkAt ?? item?._endWorkAt,
-    weight: item?.weight ?? item?._weight,
-    height: item?.height ?? item?._height,
-    gender: item?.gender ?? item?._gender,
-    birthDate: item?.birthDate ?? item?._birthDate,
-    diet: item?.diet ?? item?._diet,
-    trainingPlan: item?.trainingPlan ?? item?._trainingPlan,
-    medicalHistory: item?.medicalHistory ?? item?._medicalHistory,
-    allergies: item?.allergies ?? item?._allergies,
-    medications: item?.medications ?? item?._medications,
-    medicalConditions: item?.medicalConditions ?? item?._medicalConditions,
-  };
-}
 
 export default function Users() {
   const token = useAuthStore((state) => state.token);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -88,8 +26,7 @@ export default function Users() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const raw = response.data;
-      const normalized = Array.isArray(raw) ? raw.map(normalizeUserFromApi) : [];
-      setUsers(normalized);
+      setUsers(raw);
     } catch (err) {
       setError('Error al cargar usuarios');
     } finally {
@@ -106,12 +43,12 @@ export default function Users() {
     setShowFormModal(true);
   };
 
-  const handleViewDetails = (user: User) => {
+  const handleViewDetails = (user: UserResponse) => {
     setSelectedUser(user);
     setShowDetailModal(true);
   };
 
-  const handleEdit = (user: User) => {
+  const handleEdit = (user: User | null) => {
     setEditingUser(user);
     setShowFormModal(true);
   };
@@ -186,7 +123,17 @@ export default function Users() {
         <UserFormModal
           user={editingUser}
           onClose={closeModal}
-          onSuccess={fetchUsers}
+          onSuccess={(userFromServer) => {
+            if (userFromServer.id != null) {
+              setUsers((prev) => {
+                const idx = prev.findIndex((u) => u.id === userFromServer.id);
+                if (idx >= 0) return prev.map((u) => (u.id === userFromServer.id ? userFromServer : u));
+                return [...prev, userFromServer];
+              });
+            } else {
+              fetchUsers();
+            }
+          }}
         />
       )}
     </div>

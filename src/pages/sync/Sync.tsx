@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
 import { useActivityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore } from "../../store/store";
-import type { Activity, Membership, MembershipType, UserType } from "../../entities/Entities";
+import type { Activity, MembershipResponse, MembershipType, UserType } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ export default function Sync() {
   const [membershipsProgress, setMembershipsProgress] = useState<number>(0);
   const [activitiesProgress, setActivitiesProgress] = useState<number>(0);
   const [membershipTypes, setMembershipTypesState] = useState<MembershipType[]>([]);
-  const [memberships, setMembershipsState] = useState<Membership[]>([]);
+  const [memberships, setMembershipsState] = useState<MembershipResponse[]>([]);
   const [activities, setActivitiesState] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function Sync() {
         setError(null);
         const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes] = await Promise.all([
           AxiosInstance.get<MembershipType[]>("/membership-type"),
-          AxiosInstance.get<Membership[]>("/membership"),
+          AxiosInstance.get<MembershipResponse[]>("/membership"),
           AxiosInstance.get<Activity[]>("/activities"),
           AxiosInstance.get<UserType[]>("/user-type"),
         ]);
@@ -73,7 +73,7 @@ export default function Sync() {
     setMembershipTypesProgress(100);
   };
 
-  const runSyncMemberships = async (totalMemberships: number, memberships: Membership[]) => {
+  const runSyncMemberships = async (totalMemberships: number, memberships: MembershipResponse[]) => {
     if (totalMemberships === 0) {
       setMemberships([]);
       setMembershipsProgress(100);

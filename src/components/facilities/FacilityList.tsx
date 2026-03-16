@@ -1,16 +1,8 @@
-interface Facility {
-  id: number;
-  tipo: string;
-  horarioDisponible: string;
-  aforo: number;
-  trabajadorEncargado: number;
-  trabajadorAyudante: number | null;
-  isActive: boolean;
-}
+import type { FacilityResponse } from '../../entities/Entities';
 
 interface FacilityListProps {
-  facilities: Facility[];
-  onEdit: (facility: Facility) => void;
+  facilities: FacilityResponse[];
+  onEdit: (facility: FacilityResponse) => void;
   onDelete: (id: number) => void;
 }
 
@@ -22,10 +14,10 @@ export default function FacilityList({ facilities, onEdit, onDelete }: FacilityL
           <tr>
             <th>ID</th>
             <th>Tipo</th>
-            <th>Horario</th>
-            <th>Aforo</th>
-            <th>Encargado</th>
-            <th>Ayudante</th>
+            <th>Capacidad</th>
+            <th>Responsable</th>
+            <th>Asistente</th>
+            <th>Estado</th>
             <th className="text-center">Acciones</th>
           </tr>
         </thead>
@@ -34,12 +26,16 @@ export default function FacilityList({ facilities, onEdit, onDelete }: FacilityL
             <tr key={facility.id}>
               <td>{facility.id}</td>
               <td>
-                <span className="fw-semibold">{facility.tipo}</span>
+                <span className="fw-semibold">{facility.type}</span>
               </td>
-              <td>{facility.horarioDisponible}</td>
-              <td>{facility.aforo}</td>
-              <td>{facility.trabajadorEncargado}</td>
-              <td>{facility.trabajadorAyudante || '-'}</td>
+              <td>{facility.capacity}</td>
+              <td>{facility.responsibleWorker?.name ?? facility.responsibleWorker?.id ?? '-'}</td>
+              <td>{facility.assistantWorker?.name ?? facility.assistantWorker?.id ?? '-'}</td>
+              <td>
+                <span className={`badge ${facility.isActive ? 'bg-success' : 'bg-secondary'}`}>
+                  {facility.isActive ? 'Activa' : 'Inactiva'}
+                </span>
+              </td>
               <td>
                 <div className="d-flex gap-1 justify-content-center">
                   <button
@@ -68,4 +64,3 @@ export default function FacilityList({ facilities, onEdit, onDelete }: FacilityL
     </div>
   );
 }
-

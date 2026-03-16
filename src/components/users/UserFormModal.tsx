@@ -1,48 +1,15 @@
 import { useState, useEffect } from 'react';
 import api from '../../config/axios';
 import { useAuthStore, useUserTypeStore } from '../../store/store';
-
-interface User {
-  id: number;
-  name: string;
-  type: 'worker' | 'athlete' | 'member';
-  typeId?: number;
-  email: string | null;
-  role?: string;
-  salary?: number;
-  hoursToWorkPerDay?: number;
-  startWorkAt?: string;
-  endWorkAt?: string;
-  weight?: number;
-  height?: number;
-  gender?: 'male' | 'female';
-  birthDate?: string;
-  diet?: string;
-  trainingPlan?: string;
-  medicalHistory?: string;
-  allergies?: string;
-  medications?: string;
-  medicalConditions?: string;
-}
+import type { User, UserResponse } from '../../entities/Entities';
 
 interface UserFormModalProps {
   user: User | null;
   onClose: () => void;
-  onSuccess: () => void;
+  /** Recibe el usuario tal como lo devuelve el servidor (UserResponse) después de crear o actualizar */
+  onSuccess: (user: UserResponse) => void;
 }
 
-const memberRoles = ['standard', 'vip', 'athlete'];
-const roleLabels: Record<string, string> = {
-  standard: 'Estándar',
-  vip: 'VIP',
-  athlete: 'Atleta',
-};
-
-const TYPE_TO_ID: Record<string, number> = {
-  worker: 1,
-  athlete: 2,
-  member: 3,
-};
 
 export default function UserFormModal({ user, onClose, onSuccess }: UserFormModalProps) {
   const token = useAuthStore((state) => state.token);
@@ -55,7 +22,6 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [typeId, setTypeId] = useState<number>(0);
-  const [role, setRole] = useState('');
   const [salary, setSalary] = useState('');
   const [hoursToWorkPerDay, setHoursToWorkPerDay] = useState('');
   const [startWorkAt, setStartWorkAt] = useState('');
@@ -77,29 +43,21 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     if (user) {
       setName(user.name);
       setEmail(user.email || '');
-      setTypeId(user.typeId ?? TYPE_TO_ID[user.type] ?? 0);
-      setRole(user.role || '');
+      setTypeId(user.typeId ?? 0);
       setSalary(user.salary?.toString() || '');
       setHoursToWorkPerDay(user.hoursToWorkPerDay?.toString() || '');
-      setStartWorkAt(user.startWorkAt?.split('T')[0] || '');
-      setEndWorkAt(user.endWorkAt?.split('T')[0] || '');
+      setStartWorkAt(user.startWorkAt?.toISOString() || '');
+      setEndWorkAt(user.endWorkAt?.toISOString() || '');
       setGender(user.gender || '');
-      setBirthDate(user.birthDate?.split('T')[0] || '');
+      setBirthDate(user.birthDate?.toISOString() || '');
       setWeight(user.weight?.toString() || '');
       setHeight(user.height?.toString() || '');
-      setDiet(user.diet || '');
-      setTrainingPlan(user.trainingPlan || '');
-      setMedicalHistory(user.medicalHistory || '');
-      setAllergies(user.allergies || '');
-      setMedications(user.medications || '');
-      setMedicalConditions(user.medicalConditions || '');
     }
   }, [user]);
 
   const selectedTypeName = getUserType(typeId)?.name?.toLowerCase() ?? '';
   const isWorker = selectedTypeName === 'worker';
-  const isAthlete = selectedTypeName === 'athlete' || role === 'athlete';
-  const isMemberRoleVisible = !isWorker;
+  const isAthlete = selectedTypeName === 'athlete';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,16 +94,17 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
     }
 
     try {
-      if (isEditing && user) {
-        await api.patch(`/users/${user.id}`, payload, {
+      if (isEditing && user?.id) {
+        const response = await api.patch<UserResponse>(`/users/${user.id}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        onSuccess(response.data);
       } else {
-        await api.post('/users', payload, {
+        const response = await api.post<UserResponse>('/users', payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        onSuccess(response.data);
       }
-      onSuccess();
       onClose();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al guardar usuario');
@@ -223,19 +182,6 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="role" className="form-label">Rol</label>
-                  <select
-                    id="role"
-                    className="form-select"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value="">Seleccionar rol</option>
-                    {isMemberRoleVisible && memberRoles.map((r) => (
-                      <option key={r} value={r}>{roleLabels[r]}</option>
-                    ))}
-                  </select>
-                </div>
 
                 {isWorker && (
                   <>

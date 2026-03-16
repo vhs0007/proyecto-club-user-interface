@@ -1,88 +1,23 @@
-import { useUserTypeStore } from '../../store/store';
+import type { UserResponse } from '../../entities/Entities';
 
-interface User {
-  id: number;
-  name: string;
-  type: 'worker' | 'athlete' | 'member';
-  typeId?: number;
-  email: string | null;
-  createdAt: string;
-  updatedAt: string | null;
-  isActive: boolean;
-  role?: string;
-  roleId?: number;
-  salary?: number;
-  hoursToWorkPerDay?: number;
-  startWorkAt?: string;
-  endWorkAt?: string;
-  weight?: number;
-  height?: number;
-  gender?: 'male' | 'female';
-  birthDate?: string;
-  diet?: string;
-  trainingPlan?: string;
-  medicalHistory?: string;
-  allergies?: string;
-  medications?: string;
-  medicalConditions?: string;
-}
 
 interface UserDetailModalProps {
-  user: User;
+  user: UserResponse;
   onClose: () => void;
 }
 
-const typeLabels: Record<string, string> = {
-  worker: 'Trabajador',
-  athlete: 'Atleta',
-  member: 'Miembro',
-};
-
-const roleLabels: Record<string, string> = {
-  standard: 'Estándar',
-  vip: 'VIP',
-  athlete: 'Atleta',
-  admin: 'Administrador',
-  coach: 'Entrenador',
-  nutritionist: 'Nutricionista',
-  psychologist: 'Psicólogo',
-  physical_therapist: 'Fisioterapeuta',
-  administrative: 'Administrativo',
-  cleaner: 'Limpieza',
-};
-
-const roleIdToLabel: Record<number, string> = {
-  1: 'Estándar',
-  2: 'VIP',
-  3: 'Atleta',
-  4: 'Administrador',
-  5: 'Entrenador',
-  6: 'Nutricionista',
-  7: 'Psicólogo',
-  8: 'Fisioterapeuta',
-  9: 'Administrativo',
-  10: 'Limpieza',
-};
-
-function getRoleDisplay(user: User): string {
-  if (user.role) return roleLabels[user.role] || user.role;
-  if (user.roleId != null) return roleIdToLabel[user.roleId] ?? `Rol ${user.roleId}`;
-  return '-';
-}
 
 const genderLabels: Record<string, string> = {
   male: 'Masculino',
   female: 'Femenino',
 };
 
-const formatDate = (date: string | null | undefined): string => {
+const formatDate = (date: Date | null | undefined): string => {
   if (!date) return '-';
   return new Date(date).toLocaleDateString('es-ES');
 };
 
 export default function UserDetailModal({ user, onClose }: UserDetailModalProps) {
-  const getUserType = useUserTypeStore((state) => state.getUserType);
-  const typeDisplay = user.typeId != null ? (getUserType(user.typeId)?.name ?? typeLabels[user.type]) : typeLabels[user.type];
   return (
     <div className="modal fade show d-block modal-backdrop-custom">
       <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -105,8 +40,7 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                     <p><strong>ID:</strong> {user.id}</p>
                     <p><strong>Nombre:</strong> {user.name}</p>
                     <p><strong>Email:</strong> {user.email || '-'}</p>
-                    <p><strong>Tipo:</strong> {typeDisplay}</p>
-                    <p><strong>Rol:</strong> {getRoleDisplay(user)}</p>
+                    <p><strong>Tipo:</strong> {user.type?.name ?? '-'}</p>
                     <p>
                       <strong>Estado:</strong>{' '}
                       <span className={`badge ${user.isActive ? 'bg-success' : 'bg-danger'}`}>
@@ -120,7 +54,7 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                 </div>
               </div>
 
-              {user.type === 'worker' && (
+              {user.type?.name === 'worker' && (
                 <div className="col-md-6">
                   <div className="card h-100">
                     <div className="card-header bg-warning bg-opacity-10">
@@ -136,7 +70,7 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                 </div>
               )}
 
-              {(user.type === 'athlete' || user.role === 'athlete') && (
+              {user.type?.name === 'athlete' && (
                 <>
                   <div className="col-md-6">
                     <div className="card h-100">
@@ -180,7 +114,6 @@ export default function UserDetailModal({ user, onClose }: UserDetailModalProps)
                         <p className="mb-0"><strong>Creado:</strong> {formatDate(user.createdAt)}</p>
                       </div>
                       <div className="col-md-6">
-                        <p className="mb-0"><strong>Actualizado:</strong> {formatDate(user.updatedAt)}</p>
                       </div>
                     </div>
                   </div>
