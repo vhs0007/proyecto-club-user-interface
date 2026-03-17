@@ -14,6 +14,9 @@ import DeleteMembership from '../pages/memberships/DeleteMembership';
 import Sync from '../pages/sync/Sync';
 import CreateFacilityFirstStep from '../pages/facilities/CreateFacilityFirstStep';
 import CreateFacilitySecondStep from '../pages/facilities/CreateFacilitySecondStep';
+import EditFacilityFirstStep from '../pages/facilities/EditFacilityFirstStep';
+import EditFacilitySecondStep from '../pages/facilities/EditFacilitySecondStep';
+import DeleteFacility from '../pages/facilities/DeleteFacility';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -60,6 +63,30 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <CreateFacilitySecondStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instalaciones/editar/:id/paso-1"
+          element={
+            <ProtectedRoute>
+              <EditFacilityFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instalaciones/editar/:id/paso-2"
+          element={
+            <ProtectedRoute>
+              <EditFacilitySecondStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instalaciones/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteFacility />
             </ProtectedRoute>
           }
         />

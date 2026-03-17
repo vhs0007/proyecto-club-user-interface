@@ -12,7 +12,7 @@ export default function FacilitiesList() {
         try {
             setFacilitiesList(useFacilityStore.getState().facilities);
         }
-        catch (error) {
+        catch {
             setError('Error al obtener las instalaciones');
         } finally {
             setLoading(false);
@@ -65,10 +65,13 @@ export default function FacilitiesList() {
                             {facility.capacity ? <td>si</td> : <td>no</td>}
                             <td>{facility.membershipTypes.map((membershipType) => membershipType.name).join(', ')}</td>
                             <td>
-                                <button className="btn btn-primary">
+                                <button className="btn btn-primary" onClick={() => navigate(`/instalaciones/editar/${facility.id}/paso-1`)}>
                                     <i className="bi bi-pencil"></i>
                                 </button>
-                                <button className="btn btn-danger">
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => navigate(`/instalaciones/eliminar/${facility.id}`)}
+                                >
                                     <i className="bi bi-trash"></i>
                                 </button>
                             </td>
