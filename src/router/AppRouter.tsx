@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../store/store';
 import Login from '../pages/login/Login';
 import Home from '../pages/home/Home';
-import Facilities from '../pages/facilities/Facilities';
+import FacilitiesList from '../pages/facilities/FacilitiesList';
 import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
 import CreateActivity from '../pages/activities/CreateActivity';
@@ -12,6 +12,8 @@ import CreateMembership from '../pages/memberships/CreateMembership';
 import EditMembership from '../pages/memberships/EditMembership';
 import DeleteMembership from '../pages/memberships/DeleteMembership';
 import Sync from '../pages/sync/Sync';
+import CreateFacilityFirstStep from '../pages/facilities/CreateFacilityFirstStep';
+import CreateFacilitySecondStep from '../pages/facilities/CreateFacilitySecondStep';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -41,7 +43,23 @@ export default function AppRouter() {
           path="/instalaciones"
           element={
             <ProtectedRoute>
-              <Facilities />
+              <FacilitiesList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instalaciones/crear/paso-1"
+          element={
+            <ProtectedRoute>
+              <CreateFacilityFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/instalaciones/crear/paso-2"
+          element={
+            <ProtectedRoute>
+              <CreateFacilitySecondStep />
             </ProtectedRoute>
           }
         />

@@ -162,7 +162,7 @@ export interface Activity {
     isActive?: boolean;
 }
 
-interface ActivityResponse {
+export interface ActivityResponse {
     id: number;
     name: string;
     type: string;

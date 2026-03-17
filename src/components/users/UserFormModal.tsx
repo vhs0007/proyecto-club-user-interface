@@ -345,6 +345,7 @@ export default function UserFormModal({ user, onClose, onSuccess }: UserFormModa
                 )}
               </div>
             </div>
+          </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancelar

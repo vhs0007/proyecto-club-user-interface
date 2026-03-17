@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Activity, MembershipResponse, MembershipType, UserType } from '../entities/Entities';
+import type { FacilityResponse } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -44,6 +45,33 @@ interface ActivityState {
   updateActivity: (activity: Activity) => void;
 }
 
+interface FacilityState {
+  facilities: FacilityResponse[];
+  setFacilities: (facilities: FacilityResponse[]) => void;
+  setFacility: (facility: FacilityResponse) => void;
+  getFacility: (id: number) => FacilityResponse | null;
+  deleteFacility: (id: number) => void;
+  updateFacility: (facility: FacilityResponse) => void;
+}
+
+interface CreateFacilityState {
+  firstStep: CreateFacilityFirstStep;
+  setFirstStep: (firstStep: CreateFacilityFirstStep) => void;
+  secondStep: CreateFacilitySecondStep;
+  setSecondStep: (secondStep: CreateFacilitySecondStep) => void;
+}
+
+interface CreateFacilityFirstStep{
+  type: string;
+  capacity: number;
+  isActive: boolean;
+}
+
+interface CreateFacilitySecondStep{
+  responsibleWorker: number;
+  assistantWorker: number;
+  membershipTypeIds: number[];
+}
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -143,6 +171,40 @@ export const useActivityStore = create<ActivityState>()(
       name: 'activities-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ activities: state.activities }),
+    }
+  )
+);
+
+export const useFacilityStore = create<FacilityState>()(
+  persist(
+    (set, get) => ({
+      facilities: [],
+      setFacilities: (facilities: FacilityResponse[]) => set({ facilities }),
+      setFacility: (facility: FacilityResponse) =>
+        set((state) => ({ facilities: [...state.facilities, facility] })),
+      getFacility: (id: number) => get().facilities.find((f) => f.id === id) ?? null,
+      deleteFacility: (id: number) => set((state) => ({ facilities: state.facilities.filter((f) => f.id !== id) })),
+      updateFacility: (facility: FacilityResponse) => set((state) => ({ facilities: state.facilities.map((f) => f.id === facility.id ? facility : f) })),
+    }),
+    {
+      name: 'facilities-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ facilities: state.facilities }),
+    }
+  )
+);
+
+export const useCreateFacilityStore = create<CreateFacilityState>()(
+  persist(
+    (set) => ({
+      firstStep: { type: '', capacity: 0, isActive: true },
+      secondStep: { responsibleWorker: 0, assistantWorker: 0, membershipTypeIds: [] },
+      setFirstStep: (firstStep: CreateFacilityFirstStep) => set({ firstStep }),
+      setSecondStep: (secondStep: CreateFacilitySecondStep) => set({ secondStep }),
+    }),
+    {
+      name: 'create-facility-storage',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
