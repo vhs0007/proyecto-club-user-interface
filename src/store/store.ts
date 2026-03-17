@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, MembershipResponse, MembershipType, UserType } from '../entities/Entities';
+import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
 
 interface AuthState {
@@ -72,6 +72,16 @@ interface CreateFacilitySecondStep{
   assistantWorker: number;
   membershipTypeIds: number[];
 }
+
+interface UserState {
+  users: UserResponse[];
+  setUsers: (users: UserResponse[]) => void;
+  setUser: (user: UserResponse) => void;
+  getUser: (id: number) => UserResponse | null;
+  deleteUser: (id: number) => void;
+  updateUser: (user: UserResponse) => void;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
@@ -205,6 +215,24 @@ export const useCreateFacilityStore = create<CreateFacilityState>()(
     {
       name: 'create-facility-storage',
       storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export const useUserStore = create<UserState>()(
+  persist(
+    (set, get) => ({
+      users: [],
+      setUsers: (users: UserResponse[]) => set({ users }),
+      setUser: (user: UserResponse) => set((state) => ({ users: [...state.users, user] })),
+      getUser: (id: number) => get().users.find((u) => u.id === id) ?? null,
+      deleteUser: (id: number) => set((state) => ({ users: state.users.filter((u) => u.id !== id) })),
+      updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id ? user : u) })),
+    }),
+    {
+      name: 'users-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ users: state.users }),
     }
   )
 );

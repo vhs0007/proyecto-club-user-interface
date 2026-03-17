@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore } from "../../store/store";
-import type { Activity, FacilityResponse, MembershipResponse, MembershipType, UserType } from "../../entities/Entities";
+import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore } from "../../store/store";
+import type { Activity, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -15,6 +15,8 @@ export default function Sync() {
   const [memberships, setMembershipsState] = useState<MembershipResponse[]>([]);
   const [activities, setActivitiesState] = useState<Activity[]>([]);
   const [facilities, setFacilitiesState] = useState<FacilityResponse[]>([]);
+  const [users, setUsersState] = useState<UserResponse[]>([]);
+  const [usersProgress, setUsersProgress] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,18 +25,19 @@ export default function Sync() {
   const setActivities = useActivityStore((state) => state.setActivities);
   const setUserTypes = useUserTypeStore((state) => state.setUserTypes);
   const setFacilities = useFacilityStore((state) => state.setFacilities);
-
+  const setUsers = useUserStore((state) => state.setUsers);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities] = await Promise.all([
+        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers] = await Promise.all([
           AxiosInstance.get<MembershipType[]>("/membership-type"),
           AxiosInstance.get<MembershipResponse[]>("/membership"),
           AxiosInstance.get<Activity[]>("/activities"),
           AxiosInstance.get<UserType[]>("/user-type"),
           AxiosInstance.get<FacilityResponse[]>("/facilities"),
+          AxiosInstance.get<UserResponse[]>("/users"),
         ]);
 
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
@@ -42,12 +45,13 @@ export default function Sync() {
         const dataActivities = responseActivities.data ?? [];
         const dataUserTypes = responseUserTypes?.data ?? [];
         const dataFacilities = responseFacilities.data ?? [];
-
+        const dataUsers = responseUsers.data ?? [];
         console.log("data de membership types", dataMembershipTypes);
         console.log("data de memberships", dataMemberships);
         console.log("data de activities", dataActivities);
         console.log("data de facilities", dataFacilities);
         console.log("data de Activities", dataActivities);
+        console.log("data de users", dataUsers);
 
         setMembershipTypesState(dataMembershipTypes);
         setMembershipsState(dataMemberships);
@@ -57,6 +61,7 @@ export default function Sync() {
         setActivities(dataActivities);
         setUserTypes(dataUserTypes);
         setFacilitiesState(dataFacilities);
+        setUsersState(dataUsers);
       } catch (err) {
         setError("Error al cargar los datos");
       } finally {
@@ -65,7 +70,7 @@ export default function Sync() {
     };
 
     fetchData();
-  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities]);
+  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities, setUsers]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
     console.log(totalMembershipTypes);
@@ -126,17 +131,33 @@ export default function Sync() {
     setFacilitiesProgress(100);
   };
 
+  const runSyncUsers = async (totalUsers: number, usersData: UserResponse[]) => {
+    if (totalUsers === 0) {
+      setUsers([]);
+      setUsersProgress(100);
+      return;
+    }
+    for (let i = 0; i < totalUsers; i++) {
+      await new Promise((r) => setTimeout(r, 1));
+      setUsersProgress(((i + 1) / totalUsers) * 100);
+    }
+    setUsers(usersData);
+    setUsersProgress(100);
+  }
+
   useEffect(() => {
     if (loading) return;
     const totalMembershipTypes = membershipTypes.length;
     const totalMemberships = memberships.length;
     const totalActivities = activities.length;
     const totalFacilities = facilities.length;
+    const totalUsers = users.length;
     const runSync = async () => {
       await runSyncMembershipTypes(totalMembershipTypes, membershipTypes);
       await runSyncMemberships(totalMemberships, memberships);
       await runSyncActivities(totalActivities, activities);
       await runSyncFacilities(totalFacilities, facilities);
+      await runSyncUsers(totalUsers, users);
       navigate('/home');
     }
     console.log("membership types", membershipTypes);
@@ -150,7 +171,7 @@ export default function Sync() {
     console.log("activities", activities);
     console.log("activities progress", activitiesProgress);
     runSync();
-  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate]);
+  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate, users, setUsers]);
 
   return (
     <div className="container">
@@ -161,6 +182,7 @@ export default function Sync() {
       <SyncBar progress={membershipsProgress} dataName="Membresías" />
       <SyncBar progress={activitiesProgress} dataName="Actividades" />
       <SyncBar progress={facilitiesProgress} dataName="Instalaciones" />
+      <SyncBar progress={usersProgress} dataName="Usuarios" />
     </div>
   );
 }

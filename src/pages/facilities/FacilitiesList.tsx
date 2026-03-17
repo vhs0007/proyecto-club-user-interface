@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import type{FacilityResponse} from '../../entities/Entities';
 import { useFacilityStore } from '../../store/store';
-
+import { useNavigate } from 'react-router-dom';
 export default function FacilitiesList() {
     const [facilitiesList, setFacilitiesList] = useState<FacilityResponse[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
+    const navigate = useNavigate()
     useEffect(() => {
         setLoading(true);
         try {
@@ -36,7 +36,7 @@ export default function FacilitiesList() {
             <h1>Instalaciones</h1>
             <div className="row">
                 <div className="col-12">
-                    <button className="btn btn-primary">
+                    <button className="btn btn-primary" onClick={() => navigate('/instalaciones/crear/paso-1')}>
                         <i className="bi bi-plus"></i>
                     </button>
                 </div>
