@@ -17,6 +17,7 @@ import CreateFacilitySecondStep from '../pages/facilities/CreateFacilitySecondSt
 import EditFacilityFirstStep from '../pages/facilities/EditFacilityFirstStep';
 import EditFacilitySecondStep from '../pages/facilities/EditFacilitySecondStep';
 import DeleteFacility from '../pages/facilities/DeleteFacility';
+import CreateUserFirstStepForm from '../components/users/CreateUserFirstStepForm';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -95,6 +96,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/crear/paso-general"
+          element={
+            <ProtectedRoute>
+              <CreateUserFirstStepForm />
             </ProtectedRoute>
           }
         />

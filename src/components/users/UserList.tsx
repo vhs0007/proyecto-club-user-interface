@@ -1,12 +1,6 @@
-import { useUserTypeStore } from '../../store/store';
-import type { UserResponse, UserType, User } from '../../entities/Entities';
-
-interface UserListProps {
-  users: UserResponse[];
-  onViewDetails?: (user: UserResponse) => void;
-  onEdit: (user: User | null) => void;
-  onDelete: (id: number) => void;
-}
+import { useUserStore, useUserTypeStore } from '../../store/store';
+import type { UserResponse, UserType } from '../../entities/Entities';
+import { useNavigate } from 'react-router-dom';
 
 
 function formatDate(date: Date | null | undefined): string {
@@ -26,13 +20,12 @@ function getTypeDisplay(user: UserResponse, getUserType: (id: number) => UserTyp
   return '';
 }
 
-export default function UserList({
-  users,
-  onViewDetails = () => {},
-  onEdit,
-  onDelete,
-}: UserListProps) {
+export default function UserList() {
+  
   const getUserType = useUserTypeStore((state) => state.getUserType);
+  const navigate = useNavigate();
+  const users: UserResponse[] = useUserStore((state) => state.users);
+
   return (
     <div className="table-responsive">
       <table className="table table-hover align-middle">
@@ -66,15 +59,8 @@ export default function UserList({
               <td>
                 <div className="d-flex gap-1 justify-content-center">
                   <button
-                    className="btn btn-sm btn-outline-info"
-                    onClick={() => onViewDetails(user)}
-                    title="Ver detalles"
-                  >
-                    <i className="bi bi-eye"></i>
-                  </button>
-                  <button
                     className="btn btn-sm btn-outline-warning"
-                    onClick={() => onEdit(user)}
+                    onClick={() => navigate(`/usuarios/editar/${user.id}`)}
                     title="Editar"
                   >
                     <i className="bi bi-pencil"></i>
@@ -82,7 +68,7 @@ export default function UserList({
                   {user.isActive && (
                     <button
                       className="btn btn-sm btn-outline-danger"
-                      onClick={() => onDelete(user.id)}
+                      onClick={() => navigate(`/usuarios/eliminar/${user.id}`)}
                       title="Dar de baja"
                     >
                       <i className="bi bi-person-x"></i>
