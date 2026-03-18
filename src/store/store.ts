@@ -96,7 +96,7 @@ interface CreateUserFirstStep{
   typeId: number;
   email: string;
   isActive: boolean;
-  membership: Membership;
+  membership: number;
 }
 
 interface CreateUserWorkerSpecificStep{
@@ -276,7 +276,7 @@ export const useUserStore = create<UserState>()(
 export const useCreateUserStore = create<CreateUserState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: { type: 0, userId: 0 } },
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0 },
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
       workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),

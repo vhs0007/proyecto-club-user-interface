@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserStore } from "../../store/store";
+import { useCreateUserStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { MembershipType, UserResponse } from "../../entities/Entities";
 import { useUserTypeStore } from "../../store/store";
@@ -30,7 +30,7 @@ export default function CreateUserFirstStepForm() {
             typeId: data.typeId,
             email: data.email,
             isActive: true,
-            membership: { type: data.membershipType, userId: 0 },
+            membership: data.membershipType,
         }
         try{
             if(user.typeId === 0){
@@ -50,22 +50,25 @@ export default function CreateUserFirstStepForm() {
                     ...user,
                 });
                 if(data.membershipType === 1 || data.membershipType === 2){
+                    try{
+                        const response = await AxiosInstance.post<UserResponse>("/users", user);
+                        if(response){
+                            const userRes : UserResponse = response.data;
+                            useUserStore.getState().setUser(userRes);
+                        }else{
+                            throw new Error("Error al crear el usuario");
+                        }
+                    }catch(error){
+                        alert(error);
+                        console.error(error);
+                    }
+                }else if(data.membershipType === 3){
                     useCreateUserStore.getState().setFirstStep({
                         ...user,
-                        membership: { type: data.membershipType, userId: 0 },
+                        membership: data.membershipType,
                     });
-                    
-                }else{
-                    useCreateUserStore.getState().setFirstStep({
-                        ...user,
-                        membership: { type: data.membershipType, userId: 0 },
-                navigate('/usuarios/crear/paso-especifico-atleta')
-            }
-            const response = await AxiosInstance.post<UserResponse>("/users", user);
-            if(response){
-                const userRes : UserResponse = response.data;
-            }else{
-                throw new Error("Error al crear el usuario");
+                    navigate('/usuarios/crear/paso-especifico-atleta')
+                }
             }
         }catch(error){
             alert(error);

@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import api from '../../config/axios';
 import { useAuthStore } from '../../store/store';
 import UserList from '../../components/users/UserList';
-import UserFormModal from '../../components/users/UserFormModal';
-import UserDetailModal from '../../components/users/UserDetailModal';
 import type { User } from '../../entities/Entities';
 import type { UserResponse } from '../../entities/Entities';
 
@@ -19,52 +17,6 @@ export default function Users() {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await api.get('/users', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const raw = response.data;
-      setUsers(raw);
-    } catch (err) {
-      setError('Error al cargar usuarios');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const handleCreate = () => {
-    setEditingUser(null);
-    setShowFormModal(true);
-  };
-
-  const handleViewDetails = (user: UserResponse) => {
-    setSelectedUser(user);
-    setShowDetailModal(true);
-  };
-
-  const handleEdit = (user: User | null) => {
-    setEditingUser(user);
-    setShowFormModal(true);
-  };
-
-  const handleDeactivate = async (id: number) => {
-    if (!confirm('¿Estás seguro de dar de baja a este usuario? Se marcará como inactivo.')) return;
-
-    try {
-      await api.patch(`/users/${id}`, { isActive: false }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchUsers();
-    } catch (err) {
-      setError('Error al dar de baja al usuario');
-    }
-  };
 
   const closeModal = () => {
     setShowFormModal(false);
