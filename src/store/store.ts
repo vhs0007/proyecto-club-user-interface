@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
+import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse, Membership } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
 
 interface AuthState {
@@ -80,6 +80,42 @@ interface UserState {
   getUser: (id: number) => UserResponse | null;
   deleteUser: (id: number) => void;
   updateUser: (user: UserResponse) => void;
+}
+
+interface CreateUserState {
+  firstStep: CreateUserFirstStep;
+  workerSpecificStep: CreateUserWorkerSpecificStep;
+  athleteSpecificStep: CreateUserAthleteSpecificStep;
+  setFirstStep: (firstStep: CreateUserFirstStep) => void;
+  setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => void;
+  setAthleteSpecificStep: (athleteSpecificStep: CreateUserAthleteSpecificStep) => void;
+}
+
+interface CreateUserFirstStep{
+  name: string;
+  typeId: number;
+  email: string;
+  isActive: boolean;
+  membership: Membership;
+}
+
+interface CreateUserWorkerSpecificStep{
+  salary: number;
+  hoursToWorkPerDay: number;
+  startWorkAt: Date;
+  endWorkAt: Date;
+}
+
+interface CreateUserAthleteSpecificStep{
+  weight: number;
+  height: number;
+  gender: string;
+  birthDate: Date;
+  diet: string;
+  trainingPlan: string;
+  allergies: string;
+  medications: string;
+  medicalConditions: string;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -233,6 +269,23 @@ export const useUserStore = create<UserState>()(
       name: 'users-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ users: state.users }),
+    }
+  )
+);
+
+export const useCreateUserStore = create<CreateUserState>()(
+  persist(
+    (set) => ({
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: { type: 0, userId: 0 } },
+      setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
+      workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
+      setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),
+      athleteSpecificStep: { weight: 0, height: 0, gender: '', birthDate: new Date(), diet: '', trainingPlan: '', allergies: '', medications: '', medicalConditions: '' },
+      setAthleteSpecificStep: (athleteSpecificStep: CreateUserAthleteSpecificStep) => set({ athleteSpecificStep }),
+    }),
+    {
+      name: 'create-user-storage',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

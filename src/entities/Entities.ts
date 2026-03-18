@@ -34,7 +34,6 @@ export interface User {
     birthDate?: Date | null;
     diet?: string | null;
     trainingPlan?: string | null;
-    medicalHistory?: string | null;
     allergies?: string | null;
     medications?: string | null;
     medicalConditions?: string | null;
@@ -60,7 +59,6 @@ export interface UserResponse {
     birthDate?: Date | null;
     diet?: string | null;
     trainingPlan?: string | null;
-    medicalHistory?: string | null;
     allergies?: string | null;
     medications?: string | null;
     medicalConditions?: string | null;

@@ -1,0 +1,111 @@
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreateUserStore } from "../../store/store";
+import AxiosInstance from "../../config/axios";
+import type { MembershipType, UserResponse } from "../../entities/Entities";
+import { useUserTypeStore } from "../../store/store";
+import type { UserType } from "../../entities/Entities";
+import { useNavigate } from "react-router-dom";
+import { useMembershipTypeStore } from "../../store/store";
+
+const formSchema = z.object({
+  name: z.string().min(1),
+  typeId: z.number().min(1, 'Seleccioná un tipo de usuario'),
+  email: z.string().email(),
+  membershipType: z.number().min(1, 'Seleccioná un tipo de membresía'),
+});
+
+export default function CreateUserFirstStepForm() {
+    const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+    });
+    const navigate = useNavigate();
+    const userTypes: UserType[] = useUserTypeStore((state) => state.userTypes);
+    const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes);
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        console.log(data);
+        const user = {
+            name: data.name,
+            typeId: data.typeId,
+            email: data.email,
+            isActive: true,
+            membership: { type: data.membershipType, userId: 0 },
+        }
+        try{
+            if(user.typeId === 0){
+                throw new Error("Seleccioná un tipo de usuario");
+            }
+            if(data.membershipType === 0){
+                throw new Error("Seleccioná un tipo de membresía");
+            }
+            if(user.typeId === 1){ //suponemos es worker el primer tipo
+                useCreateUserStore.getState().setFirstStep({
+                    ...user,
+                });
+                navigate('/usuarios/crear/paso-especifico-trabajador')
+            }
+            if(user.typeId === 2){ //suponemos es member el segundo tipo
+                useCreateUserStore.getState().setFirstStep({
+                    ...user,
+                });
+                if(data.membershipType === 1 || data.membershipType === 2){
+                    useCreateUserStore.getState().setFirstStep({
+                        ...user,
+                        membership: { type: data.membershipType, userId: 0 },
+                    });
+                    
+                }else{
+                    useCreateUserStore.getState().setFirstStep({
+                        ...user,
+                        membership: { type: data.membershipType, userId: 0 },
+                navigate('/usuarios/crear/paso-especifico-atleta')
+            }
+            const response = await AxiosInstance.post<UserResponse>("/users", user);
+            if(response){
+                const userRes : UserResponse = response.data;
+            }else{
+                throw new Error("Error al crear el usuario");
+            }
+        }catch(error){
+            alert(error);
+            console.error(error);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-3">
+                <label htmlFor="name" className="form-label">Nombre</label>
+                <input type="text" className="form-control" {...register("name")} />
+                {errors.name && <span className="text-danger">{errors.name.message}</span>}
+            </div>
+            <div className="mb-3">
+                <label htmlFor="typeId" className="form-label">Tipo de usuario</label>
+                <select className="form-select" {...register("typeId", { valueAsNumber: true })}>
+                    <option value={0}>Seleccione un tipo de usuario</option>
+                    {userTypes.map((userType) => (
+                        <option key={userType.id} value={userType.id}>{userType.name}</option>
+                    ))}
+                </select>
+                {errors.typeId && <span className="text-danger">{errors.typeId.message}</span>}
+            </div>
+            <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email</label>
+                <input type="email" className="form-control" {...register("email")} />
+                {errors.email && <span className="text-danger">{errors.email.message}</span>}
+            </div>
+            <div className="mb-3">
+                <label htmlFor="membershipType" className="form-label">Tipo de membresía</label>
+                <select className="form-select" {...register("membershipType", { valueAsNumber: true })}>
+                    <option value={0}>Seleccione un tipo de membresía</option>
+                    {membershipTypes.map((membershipType) => (
+                        <option key={membershipType.id} value={membershipType.id}>{membershipType.name}</option>
+                    ))}
+                </select>
+                {errors.membershipType && <span className="text-danger">{errors.membershipType.message}</span>}
+            </div>
+            <button type="submit" className="btn btn-primary">Crear usuario</button>
+        </form>
+    );
+}
