@@ -60,7 +60,7 @@ export default function UserList() {
                 <div className="d-flex gap-1 justify-content-center">
                   <button
                     className="btn btn-sm btn-outline-warning"
-                    onClick={() => navigate(`/usuarios/editar/${user.id}`)}
+                    onClick={() => navigate(`/usuarios/editar/${user.id}/paso-1`)}
                     title="Editar"
                   >
                     <i className="bi bi-pencil"></i>

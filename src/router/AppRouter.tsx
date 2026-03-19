@@ -18,6 +18,11 @@ import EditFacilityFirstStep from '../pages/facilities/EditFacilityFirstStep';
 import EditFacilitySecondStep from '../pages/facilities/EditFacilitySecondStep';
 import DeleteFacility from '../pages/facilities/DeleteFacility';
 import CreateUserFirstStepForm from '../components/users/CreateUserFirstStepForm';
+import CreateUserWorkerSpecific from '../pages/users/CreateUserWorkerSpecific';
+import CreateUserAthleteSpecific from '../pages/users/CreateUserAthleteSpecific';
+import EditUserFirstStep from '../pages/users/EditUserFirstStep';
+import EditUserSecondStep from '../pages/users/EditUserSecondStep';
+import DeleteUser from '../pages/users/DeleteUser';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -104,6 +109,46 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <CreateUserFirstStepForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/crear/paso-especifico-trabajador"
+          element={
+            <ProtectedRoute>
+              <CreateUserWorkerSpecific />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/crear/paso-especifico-atleta"
+          element={
+            <ProtectedRoute>
+              <CreateUserAthleteSpecific />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/editar/:id/paso-1"
+          element={
+            <ProtectedRoute>
+              <EditUserFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/editar/:id/paso-2"
+          element={
+            <ProtectedRoute>
+              <EditUserSecondStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/usuarios/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteUser />
             </ProtectedRoute>
           }
         />

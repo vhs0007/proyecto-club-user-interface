@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserStore, useUserStore } from "../../store/store";
+import { useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
-import type { MembershipType, UserResponse } from "../../entities/Entities";
+import type { MembershipResponse, MembershipType, UserResponse } from "../../entities/Entities";
 import { useUserTypeStore } from "../../store/store";
 import type { UserType } from "../../entities/Entities";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,7 @@ export default function CreateUserFirstStepForm() {
     const userTypes: UserType[] = useUserTypeStore((state) => state.userTypes);
     const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes);
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        debugger;
         console.log(data);
         const user = {
             name: data.name,
@@ -51,15 +52,40 @@ export default function CreateUserFirstStepForm() {
                 });
                 if(data.membershipType === 1 || data.membershipType === 2){
                     try{
-                        const response = await AxiosInstance.post<UserResponse>("/users", user);
+                        const userToSend = {
+                            name: data.name,
+                            typeId: data.typeId,
+                            email: data.email,
+                            isActive: true,
+                        }
+                        const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
                         if(response){
                             const userRes : UserResponse = response.data;
                             useUserStore.getState().setUser(userRes);
+                            try{
+                                const response = await AxiosInstance.post("/memberships", {
+                                    userId: userRes.id,
+                                    membershipTypeId: data.membershipType,
+                                });
+                                if(response){
+                                    const membershipRes : MembershipResponse = response.data;
+                                    useMembershipStore.getState().setMembership(membershipRes);
+                                    if(membershipRes.id){
+                                        navigate('/usuarios')
+                                    }else{
+                                        AxiosInstance.delete(`/users/${userRes.id}`);
+                                        throw new Error("Error al crear la membresía");
+                                    }
+                                }
+                            }catch(error){
+                                alert("Error al crear la membresía");
+                                console.error(error);
+                            }
                         }else{
                             throw new Error("Error al crear el usuario");
                         }
                     }catch(error){
-                        alert(error);
+                        alert("Error al crear la membresía");
                         console.error(error);
                     }
                 }else if(data.membershipType === 3){

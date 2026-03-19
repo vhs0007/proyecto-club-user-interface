@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse, Membership } from '../entities/Entities';
+import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
 
 interface AuthState {
@@ -117,6 +117,31 @@ interface CreateUserAthleteSpecificStep{
   medications: string;
   medicalConditions: string;
 }
+
+interface EditUserFirstStep {
+  name: string;
+  typeId: number;
+  email: string;
+  isActive: boolean;
+}
+
+interface EditUserState {
+  firstStep: EditUserFirstStep;
+  setFirstStep: (firstStep: EditUserFirstStep) => void;
+}
+
+export const useEditUserStore = create<EditUserState>()(
+  persist(
+    (set) => ({
+      firstStep: { name: '', typeId: 0, email: '', isActive: true },
+      setFirstStep: (firstStep: EditUserFirstStep) => set({ firstStep }),
+    }),
+    {
+      name: 'edit-user-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
 
 export const useAuthStore = create<AuthState>()(
   persist(
