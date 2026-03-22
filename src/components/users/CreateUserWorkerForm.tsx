@@ -49,9 +49,9 @@ export default function CreateUserWorkerForm() {
                 try{
                     const membership = {
                         userId: response.data.id,
-                        membershipTypeId: useCreateUserStore.getState().firstStep.membership,
+                        type: useCreateUserStore.getState().firstStep.membership,
                     }
-                    const membershipResponse = await AxiosInstance.post("/memberships", membership);
+                    const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if(membershipResponse.data){
                         useMembershipStore.getState().setMembership(membershipResponse.data);
                         navigate("/usuarios");

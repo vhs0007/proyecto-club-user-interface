@@ -34,11 +34,12 @@ export default function CreateUserAthleteForm() {
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
+            const birthDateIso = new Date(`${data.birthDate}T00:00:00.000Z`).toISOString();
             const athleteSpecificStep = {
                 weight: data.weight,
                 height: data.height,
                 gender: data.gender,
-                birthDate: new Date(data.birthDate),
+                birthDate: birthDateIso,
                 diet: data.diet,
                 trainingPlan: data.trainingPlan,
                 allergies: data.allergies,
@@ -57,7 +58,7 @@ export default function CreateUserAthleteForm() {
                 weight: athleteSpecificStep.weight,
                 height: athleteSpecificStep.height,
                 gender: athleteSpecificStep.gender,
-                birthDate: athleteSpecificStep.birthDate,
+                birthDate: birthDateIso,
                 diet: athleteSpecificStep.diet || null,
                 trainingPlan: athleteSpecificStep.trainingPlan || null,
                 allergies: athleteSpecificStep.allergies || null,
@@ -71,9 +72,9 @@ export default function CreateUserAthleteForm() {
                 try {
                     const membership = {
                         userId: response.data.id,
-                        membershipTypeId: firstStep.membership,
+                        type: firstStep.membership,
                     };
-                    const membershipResponse = await AxiosInstance.post("/memberships", membership);
+                    const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if (membershipResponse.data) {
                         useMembershipStore.getState().setMembership(membershipResponse.data);
                         navigate("/usuarios");

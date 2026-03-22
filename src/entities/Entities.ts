@@ -148,6 +148,15 @@ export interface FacilityResponse {
     membershipTypes: MembershipTypeNavigation[];
 }
 
+export interface FacilityNavigation {
+    id: number;
+    type: string;
+    capacity: number;
+    responsibleWorker: WorkerNavigation;
+    assistantWorker: WorkerNavigation | null;
+    isActive: boolean;
+}
+
 export interface Activity {
     id?: number;
     name: string;
@@ -166,7 +175,7 @@ export interface ActivityResponse {
     type: string;
     startAt: string;
     endAt: string;
-    user: UserResponse;
+    user: UserNavigation;
     cost: number;
-    facility: FacilityResponse;
+    facility: FacilityNavigation;
 }

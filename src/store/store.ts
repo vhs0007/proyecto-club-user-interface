@@ -110,7 +110,7 @@ interface CreateUserAthleteSpecificStep{
   weight: number;
   height: number;
   gender: string;
-  birthDate: Date;
+  birthDate: string;
   diet: string;
   trainingPlan: string;
   allergies: string;
@@ -305,7 +305,7 @@ export const useCreateUserStore = create<CreateUserState>()(
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
       workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),
-      athleteSpecificStep: { weight: 0, height: 0, gender: '', birthDate: new Date(), diet: '', trainingPlan: '', allergies: '', medications: '', medicalConditions: '' },
+      athleteSpecificStep: { weight: 0, height: 0, gender: '', birthDate: '', diet: '', trainingPlan: '', allergies: '', medications: '', medicalConditions: '' },
       setAthleteSpecificStep: (athleteSpecificStep: CreateUserAthleteSpecificStep) => set({ athleteSpecificStep }),
     }),
     {

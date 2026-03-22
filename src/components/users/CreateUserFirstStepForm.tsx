@@ -63,9 +63,9 @@ export default function CreateUserFirstStepForm() {
                             const userRes : UserResponse = response.data;
                             useUserStore.getState().setUser(userRes);
                             try{
-                                const response = await AxiosInstance.post("/memberships", {
+                                const response = await AxiosInstance.post("/membership", {
                                     userId: userRes.id,
-                                    membershipTypeId: data.membershipType,
+                                    type: data.membershipType,
                                 });
                                 if(response){
                                     const membershipRes : MembershipResponse = response.data;
@@ -73,6 +73,7 @@ export default function CreateUserFirstStepForm() {
                                     if(membershipRes.id){
                                         navigate('/usuarios')
                                     }else{
+                                        useUserStore.getState().deleteUser(userRes.id);
                                         AxiosInstance.delete(`/users/${userRes.id}`);
                                         throw new Error("Error al crear la membresía");
                                     }
