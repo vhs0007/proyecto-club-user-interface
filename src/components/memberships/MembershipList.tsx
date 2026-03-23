@@ -17,6 +17,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
                 <th>ID</th>
                 <th>Tipo</th>
                 <th>Usuario</th>
+                <th>Expiración</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -26,6 +27,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
                     <td>{membership.id}</td>
                     <td>{membership.membershipType?.name ?? '-'}</td>
                     <td>{membership.user?.name ?? membership.user?.id ?? '-'}</td>
+                    <td>{membership.expiration ? new Date(membership.expiration).toLocaleDateString() : '-'}</td>
                     <td><button className="btn btn-primary" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>
                     <button className="btn btn-danger" onClick={() => navigate(`/membresias/eliminar/${membership.id}`)}>Eliminar</button></td>
                 </tr>

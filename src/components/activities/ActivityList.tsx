@@ -1,10 +1,5 @@
-import type { Activity } from '../../entities/Entities';
-
-interface ActivityListProps {
-  activities: Activity[];
-  onEdit: (activity: Activity) => void;
-  onDelete: (id: number | undefined) => void;
-}
+import { useNavigate } from 'react-router-dom';
+import type { ActivityResponse } from '../../entities/Entities';
 
 const formatDate = (date: string): string => {
   return new Date(date).toLocaleDateString('es-ES');
@@ -15,6 +10,9 @@ const formatTime = (date: string): string => {
 };
 
 export default function ActivityList({ activities, onEdit, onDelete }: ActivityListProps) {
+  const navigate = useNavigate();
+
+  console.log(activities);
   return (
     <div className="table-responsive">
       <table className="table table-hover align-middle">
@@ -47,7 +45,7 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
                 <div>{formatDate(activity.endAt)}</div>
                 <small className="text-muted">{formatTime(activity.endAt)}</small>
               </td>
-              <td>{activity.userId}</td>
+              <td>{activity.user.name}</td>
               <td>
                 {typeof activity.cost === 'number'
                   ? `$${activity.cost.toLocaleString()}`
@@ -62,16 +60,17 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
                 <div className="d-flex gap-1 justify-content-center">
                   <button
                     className="btn btn-sm btn-outline-warning"
-                    onClick={() => onEdit(activity)}
+                    onClick={() => navigate(`/actividades/editar/${activity.id}`)}
                     title="Editar"
                   >
                     <i className="bi bi-pencil"></i>
                   </button>
+                  
                   <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => onDelete(activity.id)}
-                    title="Eliminar"
-                  >
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => navigate(`/actividades/eliminar/${activity.id}`)}
+                      title="Eliminar"
+                    >
                     <i className="bi bi-trash"></i>
                   </button>
                 </div>
