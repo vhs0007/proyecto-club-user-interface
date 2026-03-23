@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
 import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore } from "../../store/store";
-import type { Activity, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse } from "../../entities/Entities";
+import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function Sync() {
   const [facilitiesProgress, setFacilitiesProgress] = useState<number>(0);
   const [membershipTypes, setMembershipTypesState] = useState<MembershipType[]>([]);
   const [memberships, setMembershipsState] = useState<MembershipResponse[]>([]);
-  const [activities, setActivitiesState] = useState<Activity[]>([]);
+  const [activities, setActivitiesState] = useState<ActivityResponse[]>([]);
   const [facilities, setFacilitiesState] = useState<FacilityResponse[]>([]);
   const [users, setUsersState] = useState<UserResponse[]>([]);
   const [usersProgress, setUsersProgress] = useState<number>(0);
@@ -34,7 +34,7 @@ export default function Sync() {
         const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers] = await Promise.all([
           AxiosInstance.get<MembershipType[]>("/membership-type"),
           AxiosInstance.get<MembershipResponse[]>("/membership"),
-          AxiosInstance.get<Activity[]>("/activities"),
+          AxiosInstance.get<ActivityResponse[]>("/activities"),
           AxiosInstance.get<UserType[]>("/user-type"),
           AxiosInstance.get<FacilityResponse[]>("/facilities"),
           AxiosInstance.get<UserResponse[]>("/users"),
@@ -102,7 +102,7 @@ export default function Sync() {
     setMembershipsProgress(100);
   };
 
-  const runSyncActivities = async (totalActivities: number, activitiesData: Activity[]) => {
+  const runSyncActivities = async (totalActivities: number, activitiesData: ActivityResponse[]) => {
     const total = totalActivities || 1;
     if (totalActivities === 0) {
       setActivities([]);

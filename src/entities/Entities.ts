@@ -75,6 +75,7 @@ export interface MembershipResponse {
     id: number;
     user: UserResponse;
     membershipType: MembershipType;
+    expiration: Date;
 }
 
 /** Request: CreateFacilityDto / Update */

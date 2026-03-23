@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
+import type { ActivityResponse } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -37,12 +38,33 @@ interface MembershipState {
 }
 
 interface ActivityState {
-  activities: Activity[];
-  setActivities: (activities: Activity[]) => void;
-  setActivity: (activity: Activity) => void;
-  getActivity: (id: number) => Activity | null;
+  activities: ActivityResponse[];
+  setActivities: (activities: ActivityResponse[]) => void;
+  setActivity: (activity: ActivityResponse) => void;
+  getActivity: (id: number) => ActivityResponse | null;
   deleteActivity: (id: number) => void;
-  updateActivity: (activity: Activity) => void;
+  updateActivity: (activity: ActivityResponse) => void;
+}
+
+interface CreateActivityFirstStep {
+  name: string;
+  type: string;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+}
+
+interface CreateActivitySecondStep {
+  facilityId: number;
+  userId: number;
+  cost: number;
+}
+
+interface CreateActivityState {
+  firstStep: CreateActivityFirstStep;
+  secondStep: CreateActivitySecondStep;
+  setFirstStep: (firstStep: CreateActivityFirstStep) => void;
+  setSecondStep: (secondStep: CreateActivitySecondStep) => void;
 }
 
 interface FacilityState {
@@ -125,6 +147,14 @@ interface EditUserFirstStep {
   isActive: boolean;
 }
 
+interface EditActivity {
+  name: string;
+  type: string;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+}
+
 interface EditUserState {
   firstStep: EditUserFirstStep;
   setFirstStep: (firstStep: EditUserFirstStep) => void;
@@ -138,6 +168,19 @@ export const useEditUserStore = create<EditUserState>()(
     }),
     {
       name: 'edit-user-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export const useEditActivityStore = create<EditActivity>()(
+  persist(
+    (set) => ({
+      activity: { name: '', type: '', startAt: '', endAt: '', isActive: true },
+      setActivity: (activity: EditActivity) => set({ activity }),
+    }),
+    {
+      name: 'edit-activity-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )
@@ -310,6 +353,21 @@ export const useCreateUserStore = create<CreateUserState>()(
     }),
     {
       name: 'create-user-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+export const useCreateActivityStore = create<CreateActivityState>()(
+  persist(
+    (set) => ({
+      firstStep: { name: '', type: '', startAt: '', endAt: '', isActive: true },
+      secondStep: { facilityId: 0, userId: 0, cost: 0 },
+      setFirstStep: (firstStep: CreateActivityFirstStep) => set({ firstStep }),
+      setSecondStep: (secondStep: CreateActivitySecondStep) => set({ secondStep }),
+    }),
+    {
+      name: 'create-activity-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )

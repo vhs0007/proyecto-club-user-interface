@@ -6,6 +6,8 @@ import FacilitiesList from '../pages/facilities/FacilitiesList';
 import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
 import CreateActivity from '../pages/activities/CreateActivity';
+import CreateActivitySecondStep from '../pages/activities/CreateActivitySecondStep';
+import DeleteActivityForm from '../components/activities/DeleteActivityForm';
 import Navbar from '../components/shared/Navbar';
 import Membership from '../pages/memberships/MembershipList';
 import CreateMembership from '../pages/memberships/CreateMembership';
@@ -23,6 +25,9 @@ import CreateUserAthleteSpecific from '../pages/users/CreateUserAthleteSpecific'
 import EditUserFirstStep from '../pages/users/EditUserFirstStep';
 import EditUserSecondStep from '../pages/users/EditUserSecondStep';
 import DeleteUser from '../pages/users/DeleteUser';
+import DeleteActivity from '../pages/activities/DeleteActivity';
+import EditActivity from '../pages/activities/EditActivity';
+import EditActivityForm from '../components/activities/EditActivityForm';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -161,10 +166,42 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/crear"
+          path="/actividades/crear/paso-1"
           element={
             <ProtectedRoute>
               <CreateActivity />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades/crear/paso-2"
+          element={
+            <ProtectedRoute>
+              <CreateActivitySecondStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteActivity />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades/editar/:id"
+          element={
+            <ProtectedRoute>
+              <EditActivity />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades/editar/:id/paso-2"
+          element={
+            <ProtectedRoute>
+              <EditActivityForm />
             </ProtectedRoute>
           }
         />
