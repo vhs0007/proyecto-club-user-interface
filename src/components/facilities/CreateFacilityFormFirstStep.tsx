@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateFacilityStore } from '../../store/store'
+import { useClubIdStore, useCreateFacilityStore } from '../../store/store'
 import { useNavigate } from 'react-router-dom'
 const formSchema = z.object({
     type: z.string().min(1),
@@ -20,7 +20,8 @@ export default function CreateFacilityFormFirstStep() {
         const firstStep = {
             type: data.type,
             capacity: data.capacity,
-            isActive: true
+            isActive: true,
+            clubId: useClubIdStore.getState().clubId,
         }
         useCreateFacilityStore.getState().setFirstStep(firstStep)
         navigate('/instalaciones/crear/paso-2')

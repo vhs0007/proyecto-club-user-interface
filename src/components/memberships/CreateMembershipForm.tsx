@@ -1,20 +1,25 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMembershipTypeStore } from "../../store/store";
+import { useClubIdStore, useMembershipTypeStore } from "../../store/store";
+import { useMembershipStore } from "../../store/store";
 import Axios from '../../config/axios';
+import type { MembershipResponse } from "../../entities/Entities";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   type: z.number().min(1, "Seleccioná un tipo de membresía"),
   userId: z.number().min(1, "El usuario es requerido"),
+  clubId: z.number().min(1, "El club es requerido"),
 });
 
 export type CreateMembershipFormData = z.infer<typeof schema>;
 
 export default function CreateMembershipForm() {
   const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
+  const setMembership = useMembershipStore((state) => state.setMembership);
   console.log("membership types en el form", membershipTypes);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -24,16 +29,30 @@ export default function CreateMembershipForm() {
     defaultValues: {
       type: 0,
       userId: 0,
+      clubId: 0,
     },
   });
 
   const onSubmit = async (data: CreateMembershipFormData) => {
     console.log(data);
+    data.clubId = useClubIdStore.getState().clubId;
     try {
       const response = await Axios.post('/membership', data);
       console.log(response);
+      if (response.status === 200 && response.data) {
+        const membershipres = {
+          id: response.data.id,
+          clubId: response.data.clubId,
+          user: response.data.user,
+          membershipType: response.data.membershipType,
+          expiration: response.data.expiration,
+        } as MembershipResponse;
+        setMembership(membershipres);
+        navigate('/membresias');
+      }
     } catch (error) {
       console.log(error);
+      alert('Error al crear la membresía');
     }
   };
 

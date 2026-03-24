@@ -56,8 +56,7 @@ export default function EditActivityForm({ activity }: { activity: Activity }) {
             type: data.type,
             startAt: data.startAt,
             endAt: data.endAt,
-            isActive: true,
-            cost: Number(data.cost),
+            isActive: data.isActive,
           });
           try {
             const response = await AxiosInstance.patch<Activity>(`/activities/${id}`, {

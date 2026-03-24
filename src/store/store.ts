@@ -3,12 +3,19 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
 import type { ActivityResponse } from '../entities/Entities';
+import type { Club } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
   setToken: (token: string) => void;
   logout: () => void;
 }
+
+interface ClubIdState{
+  clubId: number;
+  setClubId: (clubId: number) => void;
+}
+
 
 interface MembershipTypeState {
   membershipTypes: MembershipType[];
@@ -48,6 +55,7 @@ interface ActivityState {
 
 interface CreateActivityFirstStep {
   name: string;
+  clubId: number;
   type: string;
   startAt: string;
   endAt: string;
@@ -85,6 +93,7 @@ interface CreateFacilityState {
 
 interface CreateFacilityFirstStep{
   type: string;
+  clubId: number;
   capacity: number;
   isActive: boolean;
 }
@@ -115,6 +124,7 @@ interface CreateUserState {
 
 interface CreateUserFirstStep{
   name: string;
+  clubId: number;
   typeId: number;
   email: string;
   isActive: boolean;
@@ -155,6 +165,11 @@ interface EditActivity {
   isActive: boolean;
 }
 
+interface EditActivityState {
+  activity: EditActivity;
+  setActivity: (activity: EditActivity) => void;
+}
+
 interface EditUserState {
   firstStep: EditUserFirstStep;
   setFirstStep: (firstStep: EditUserFirstStep) => void;
@@ -173,7 +188,7 @@ export const useEditUserStore = create<EditUserState>()(
   )
 );
 
-export const useEditActivityStore = create<EditActivity>()(
+export const useEditActivityStore = create<EditActivityState>()(
   persist(
     (set) => ({
       activity: { name: '', type: '', startAt: '', endAt: '', isActive: true },
@@ -270,13 +285,13 @@ export const useActivityStore = create<ActivityState>()(
   persist(
     (set, get) => ({
       activities: [],
-      setActivities: (activities: Activity[]) => set({ activities }),
-      setActivity: (activity: Activity) =>
+      setActivities: (activities: ActivityResponse[]) => set({ activities }),
+      setActivity: (activity: ActivityResponse) =>
         set((state) => ({ activities: [...state.activities, activity] })),
       getActivity: (id: number) => get().activities.find((a) => a.id === id) ?? null,
       deleteActivity: (id: number) =>
         set((state) => ({ activities: state.activities.filter((a) => a.id !== id) })),
-      updateActivity: (activity: Activity) =>
+      updateActivity: (activity: ActivityResponse) =>
         set((state) => ({
           activities: state.activities.map((a) => (a.id === activity.id ? activity : a)),
         })),
@@ -311,7 +326,7 @@ export const useFacilityStore = create<FacilityState>()(
 export const useCreateFacilityStore = create<CreateFacilityState>()(
   persist(
     (set) => ({
-      firstStep: { type: '', capacity: 0, isActive: true },
+      firstStep: { type: '', capacity: 0, isActive: true, clubId: 0 },
       secondStep: { responsibleWorker: 0, assistantWorker: 0, membershipTypeIds: [] },
       setFirstStep: (firstStep: CreateFacilityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateFacilitySecondStep) => set({ secondStep }),
@@ -344,7 +359,7 @@ export const useUserStore = create<UserState>()(
 export const useCreateUserStore = create<CreateUserState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0 },
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0 },
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
       workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),
@@ -361,7 +376,7 @@ export const useCreateUserStore = create<CreateUserState>()(
 export const useCreateActivityStore = create<CreateActivityState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', type: '', startAt: '', endAt: '', isActive: true },
+      firstStep: { name: '', type: '', startAt: '', endAt: '', isActive: true, clubId: 0 },
       secondStep: { facilityId: 0, userId: 0, cost: 0 },
       setFirstStep: (firstStep: CreateActivityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateActivitySecondStep) => set({ secondStep }),
@@ -372,3 +387,17 @@ export const useCreateActivityStore = create<CreateActivityState>()(
     }
   )
 );
+
+export const useClubIdStore = create<ClubIdState>()(
+  persist(
+    (set) => ({
+      clubId: 0,
+      setClubId: (clubId: number) => set({ clubId }),
+    }),
+    {
+      name: 'club-id-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ clubId: state.clubId }),
+    }
+  )
+)

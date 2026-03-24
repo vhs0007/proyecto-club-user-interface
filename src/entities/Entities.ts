@@ -1,5 +1,6 @@
 export interface MembershipType {
     id: number;
+    clubId: number;
     name: string;
     price: number;
     facilitiesIncluded?: string;
@@ -7,16 +8,13 @@ export interface MembershipType {
 
 export interface UserType {
     id: number;
+    clubId: number;
     name: string;
 }
 
-/*export interface UserRole {
-    id: number;
-    name: string;
-}*/
-
 export interface User {
     id?: number;
+    clubId: number;
     name: string;
     typeId: number;
     email?: string | null;
@@ -41,6 +39,7 @@ export interface User {
 
 export interface UserResponse {
     id: number;
+    clubId: number;
     name: string;
     typeId: number;
     type?: UserType;
@@ -67,12 +66,14 @@ export interface UserResponse {
 
 export interface Membership {
     id?: number;
+    clubId: number;
     type: number;
     userId: number;
 }
 
 export interface MembershipResponse {
     id: number;
+    clubId: number;
     user: UserResponse;
     membershipType: MembershipType;
     expiration: Date;
@@ -81,6 +82,7 @@ export interface MembershipResponse {
 /** Request: CreateFacilityDto / Update */
 export interface Facility {
     id?: number;
+    clubId: number;
     type: string;
     capacity: number;
     responsibleWorker: number;
@@ -98,6 +100,7 @@ export interface UserTypeNavigation {
 /** Navegación: trabajador en respuesta de instalación */
 export interface WorkerNavigation {
     id: number;
+    clubId: number;
     name: string;
     type: UserTypeNavigation;
     email: string | null;
@@ -110,6 +113,7 @@ export interface WorkerNavigation {
 /** Navegación: usuario en actividades */
 export interface UserNavigation {
     id: number;
+    clubId: number;
     name: string;
     type: UserTypeNavigation;
     email: string | null;
@@ -121,6 +125,7 @@ export interface UserNavigation {
 /** Navegación: actividad en respuesta de instalación */
 export interface ActivitiesNavigation {
     id: number;
+    clubId: number;
     name: string;
     type: string;
     startAt: Date;
@@ -133,6 +138,7 @@ export interface ActivitiesNavigation {
 /** Navegación: tipo de membresía en respuesta de instalación */
 export interface MembershipTypeNavigation {
     id: number;
+    clubId: number;
     name: string;
     price: number;
 }
@@ -140,6 +146,7 @@ export interface MembershipTypeNavigation {
 /** Response: FacilityResponseDto */
 export interface FacilityResponse {
     id: number;
+    clubId: number;
     type: string;
     capacity: number;
     responsibleWorker: WorkerNavigation;
@@ -151,6 +158,7 @@ export interface FacilityResponse {
 
 export interface FacilityNavigation {
     id: number;
+    clubId: number;
     type: string;
     capacity: number;
     responsibleWorker: WorkerNavigation;
@@ -160,6 +168,7 @@ export interface FacilityNavigation {
 
 export interface Activity {
     id?: number;
+    clubId: number;
     name: string;
     type: string;
     startAt: string;
@@ -172,6 +181,7 @@ export interface Activity {
 
 export interface ActivityResponse {
     id: number;
+    clubId: number;
     name: string;
     type: string;
     startAt: string;
@@ -179,4 +189,15 @@ export interface ActivityResponse {
     user: UserNavigation;
     cost: number;
     facility: FacilityNavigation;
+}
+
+export interface Club{
+    id: number;
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    website: string;
+    logo: string | null;
+    isActive: boolean;
 }

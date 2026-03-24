@@ -1,5 +1,5 @@
 import axios, { AxiosHeaders } from 'axios';
-import { useAuthStore } from '../store/store';
+import { useAuthStore, useClubIdStore } from '../store/store';
 
 const AxiosInstance = axios.create({
   baseURL: 'http://localhost:3000',
@@ -35,43 +35,13 @@ AxiosInstance.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  const clubId = useClubIdStore.getState().clubId;
+  if (clubId > 0) {
+    config.headers.set('X-Club-Id', String(clubId));
+  }
+
   return config;
 });
-
-AxiosInstance.interceptors.response.use(
-  (response) => {
-    const { config, status } = response;
-    const isActivitiesRequest = config.url?.startsWith('/activities');
-
-    // Para ACTIVITIES solo dejamos logs importantes (errores en el interceptor de error).
-    if (!isActivitiesRequest) {
-      console.log(
-        '[Axios][Response]',
-        config.method?.toUpperCase(),
-        config.url,
-        '→',
-        status
-      );
-    }
-    return response;
-  },
-  (error) => {
-    if (error.config) {
-      console.log(
-        '[Axios][Response][Error]',
-        error.config.method?.toUpperCase(),
-        error.config.url,
-        '→',
-        error.response?.status
-      );
-    } else {
-      console.log('[Axios][Response][Error]', error);
-    }
-    return Promise.reject(error);
-  }
-);
-
-
-
 
 export default AxiosInstance;

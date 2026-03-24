@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { useCreateActivityStore } from "../../store/store";
+import { useClubIdStore, useCreateActivityStore } from "../../store/store";
 
 const formSchema = z
   .object({
@@ -41,6 +41,7 @@ export default function CreateActivityFirstStepForm() {
       startAt: data.startAt,
       endAt: data.endAt,
       isActive: data.isActive,
+      clubId: useClubIdStore.getState().clubId,
     });
     navigate("/actividades/crear/paso-2");
   };

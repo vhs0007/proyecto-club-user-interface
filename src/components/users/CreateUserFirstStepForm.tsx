@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { MembershipResponse, MembershipType, UserResponse } from "../../entities/Entities";
 import { useUserTypeStore } from "../../store/store";
@@ -43,12 +43,14 @@ export default function CreateUserFirstStepForm() {
             if(user.typeId === 1){ //suponemos es worker el primer tipo
                 useCreateUserStore.getState().setFirstStep({
                     ...user,
+                    clubId: useClubIdStore.getState().clubId,
                 });
                 navigate('/usuarios/crear/paso-especifico-trabajador')
             }
             if(user.typeId === 2){ //suponemos es member el segundo tipo
                 useCreateUserStore.getState().setFirstStep({
                     ...user,
+                    clubId: useClubIdStore.getState().clubId,
                 });
                 if(data.membershipType === 1 || data.membershipType === 2){
                     try{
@@ -93,6 +95,7 @@ export default function CreateUserFirstStepForm() {
                     useCreateUserStore.getState().setFirstStep({
                         ...user,
                         membership: data.membershipType,
+                        clubId: useClubIdStore.getState().clubId,
                     });
                     navigate('/usuarios/crear/paso-especifico-atleta')
                 }

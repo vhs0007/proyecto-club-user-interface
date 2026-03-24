@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import api from '../../config/axios'
-import { useAuthStore } from '../../store/store'
+import { useAuthStore, useClubIdStore } from '../../store/store'
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -15,6 +15,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginForm() {
   const navigate = useNavigate()
   const setToken = useAuthStore((state) => state.setToken)
+  const setClubId = useClubIdStore((state) => state.setClubId)
 
   const {
     register,
@@ -33,6 +34,9 @@ export default function LoginForm() {
 
       if (response.status === 201) {
         setToken(response.data.accessToken)
+        if (typeof response.data.clubId === 'number' && response.data.clubId > 0) {
+          setClubId(response.data.clubId)
+        }
         navigate('/sincronizar')
       }
     } catch (error: any) {
