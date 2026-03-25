@@ -10,12 +10,12 @@ import { useNavigate } from "react-router-dom";
 const schema = z.object({
   type: z.number().min(1, "Seleccioná un tipo de membresía"),
   userId: z.number().min(1, "El usuario es requerido"),
-  clubId: z.number().min(1, "El club es requerido"),
 });
 
 export type CreateMembershipFormData = z.infer<typeof schema>;
 
 export default function CreateMembershipForm() {
+  debugger;
   const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
   const setMembership = useMembershipStore((state) => state.setMembership);
   console.log("membership types en el form", membershipTypes);
@@ -29,17 +29,21 @@ export default function CreateMembershipForm() {
     defaultValues: {
       type: 0,
       userId: 0,
-      clubId: 0,
     },
   });
 
   const onSubmit = async (data: CreateMembershipFormData) => {
+    debugger;
     console.log(data);
-    data.clubId = useClubIdStore.getState().clubId;
+    
     try {
-      const response = await Axios.post('/membership', data);
+      const membership = {
+        ...data,
+        clubId: useClubIdStore.getState().clubId,
+      }
+      const response = await Axios.post('/membership', membership);
       console.log(response);
-      if (response.status === 200 && response.data) {
+      if (response.status === 201 && response.data) {
         const membershipres = {
           id: response.data.id,
           clubId: response.data.clubId,

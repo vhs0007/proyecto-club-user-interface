@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateFacilityStore } from '../../store/store'
+import { useClubIdStore, useCreateFacilityStore } from '../../store/store'
 import { useUserStore } from '../../store/store'
 import {useMembershipTypeStore} from '../../store/store'
 import {useFacilityStore} from '../../store/store'
@@ -46,13 +46,14 @@ export default function CreateFacilityFormSecondStep() {
                 assistantWorker: data.assistantWorker,
                 membershipTypeIds,
                 isActive: true,
+                clubId: useClubIdStore.getState().clubId,
             }
             const response : FacilityResponse | null = await createFacility(request)
             console.log(response)
             if(response){
                 useFacilityStore.getState().setFacility(response)
                 alert('Instalación creada correctamente')
-                navigate('/facilities')
+                navigate('/instalaciones')
             }
         }catch(error){
             alert('Error al crear la instalación')

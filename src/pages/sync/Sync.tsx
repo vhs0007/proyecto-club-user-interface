@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore } from "../../store/store";
+import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore, useClubIdStore } from "../../store/store";
 import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse } from "../../entities/Entities";
 
 export default function Sync() {
@@ -29,15 +29,17 @@ export default function Sync() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+
         setLoading(true);
         setError(null);
+        const clubId = useClubIdStore.getState().clubId;
         const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers] = await Promise.all([
-          AxiosInstance.get<MembershipType[]>("/membership-type"),
-          AxiosInstance.get<MembershipResponse[]>("/membership"),
-          AxiosInstance.get<ActivityResponse[]>("/activities"),
-          AxiosInstance.get<UserType[]>("/user-type"),
-          AxiosInstance.get<FacilityResponse[]>("/facilities"),
-          AxiosInstance.get<UserResponse[]>("/users"),
+          AxiosInstance.get<MembershipType[]>(`/membership-type?clubId=${clubId}`),
+          AxiosInstance.get<MembershipResponse[]>(`/membership?clubId=${clubId}`),
+          AxiosInstance.get<ActivityResponse[]>(`/activities?clubId=${clubId}`),
+          AxiosInstance.get<UserType[]>(`/user-type?clubId=${clubId}`),
+          AxiosInstance.get<FacilityResponse[]>(`/facilities?clubId=${clubId}`),
+          AxiosInstance.get<UserResponse[]>(`/users?clubId=${clubId}`),
         ]);
 
         const dataMembershipTypes = responseMembershipTypes.data ?? [];

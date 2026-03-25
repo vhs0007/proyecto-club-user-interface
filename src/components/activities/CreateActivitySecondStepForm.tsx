@@ -4,8 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useCreateActivityStore } from "../../store/store";
-import type { Activity } from "../../entities/Entities";
+import { useActivityStore, useClubIdStore, useCreateActivityStore } from "../../store/store";
+import type { ActivityResponse } from "../../entities/Entities";
 
 const formSchema = z.object({
   userId: z.number().min(1, "Usuario requerido"),
@@ -21,6 +21,7 @@ const emptyFirstStep = {
   startAt: "",
   endAt: "",
   isActive: true,
+  clubId: 0,
 };
 
 const emptySecondStep = { facilityId: 0, userId: 0, cost: 0 };
@@ -61,13 +62,14 @@ export default function CreateActivitySecondStepForm() {
         type: fs.type,
         startAt: new Date(fs.startAt).toISOString(),
         endAt: new Date(fs.endAt).toISOString(),
+        clubId: useClubIdStore.getState().clubId,
         userId: data.userId,
         cost: data.cost,
         facilityId: data.facilityId,
         isActive: fs.isActive,
       };
 
-      const response = await AxiosInstance.post<Activity>("/activities", payload);
+      const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
       if (created) {
         setActivity(created);

@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { Activity, MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
+import type { MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
 import type { FacilityResponse } from '../entities/Entities';
 import type { ActivityResponse } from '../entities/Entities';
-import type { Club } from '../entities/Entities';
 
 interface AuthState {
   token: string | null;
@@ -127,6 +126,7 @@ interface CreateUserFirstStep{
   clubId: number;
   typeId: number;
   email: string;
+  document: string;
   isActive: boolean;
   membership: number;
 }
@@ -359,7 +359,7 @@ export const useUserStore = create<UserState>()(
 export const useCreateUserStore = create<CreateUserState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0 },
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0, document: '' },
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
       workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),

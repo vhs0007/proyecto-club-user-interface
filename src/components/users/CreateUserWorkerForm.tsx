@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { UserResponse } from "../../entities/Entities";
 import { useNavigate } from "react-router-dom";
@@ -36,11 +36,13 @@ export default function CreateUserWorkerForm() {
                 name: firstStep.name,
                 typeId: firstStep.typeId,
                 email: firstStep.email,
+                document: firstStep.document,
                 isActive: true,
                 salary: workerSpecificStep.salary,
                 hoursToWorkPerDay: workerSpecificStep.hoursToWorkPerDay,
                 startWorkAt: workerSpecificStep.startWorkAt,
                 endWorkAt: workerSpecificStep.endWorkAt,
+                clubId: useClubIdStore.getState().clubId,
             };
 
             const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
@@ -50,6 +52,7 @@ export default function CreateUserWorkerForm() {
                     const membership = {
                         userId: response.data.id,
                         type: useCreateUserStore.getState().firstStep.membership,
+                        clubId: useClubIdStore.getState().clubId,
                     }
                     const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if(membershipResponse.data){

@@ -8,9 +8,7 @@ import AxiosInstance from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
-  id: z.number().min(1, "El ID es requerido"),
   type: z.number().min(1, "Seleccioná un tipo de membresía"),
-  userId: z.number().min(1, "El usuario es requerido"),
 });
 
 export type EditMembershipFormData = z.infer<typeof schema>;
@@ -26,18 +24,14 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
   const { register, handleSubmit, formState: { errors }, reset } = useForm<EditMembershipFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      id: membership?.id,
       type: 0,
-      userId: 0,
     },
   });
 
   useEffect(() => {
     if (membership) {
       reset({
-        id: membership?.id ?? 0,
         type: membership.membershipType?.id ?? 0,
-        userId: membership.user?.id ?? 0,
       });
     }
   }, [membership, reset]);
@@ -45,11 +39,16 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
   const onSubmit = async (data: EditMembershipFormData) => {
     if (!membership?.id) return;
     console.log(data);
-    const response = await AxiosInstance.patch(`/membership/${membership.id}`, data);
+    const membershipToSend = {
+      ...data,
+    }
+    const response = await AxiosInstance.patch(`/membership/${membership.id}`, membershipToSend);
     console.log(response);
     if (response.status === 200 && response.data) {
       updateMembership(response.data as MembershipResponse);
       navigate('/membresias');
+    }else{
+      alert('Error al actualizar la membresía');
     }
   };
 
@@ -58,7 +57,6 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-3">
-        <input type="hidden" {...register("id")} value={membership.id} />
         <label className="form-label">Tipo de membresía</label>
         <select
           className={`form-select ${errors.type ? "is-invalid" : ""}`}
@@ -72,16 +70,6 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
           ))}
         </select>
         {errors.type && <div className="invalid-feedback">{errors.type.message}</div>}
-      </div>
-      <div className="mb-3">
-        <label className="form-label">Usuario</label>
-        <input
-          type="number"
-          placeholder="ID del usuario"
-          className={`form-control ${errors.userId ? "is-invalid" : ""}`}
-          {...register("userId", { valueAsNumber: true })}
-        />
-        {errors.userId && <div className="invalid-feedback">{errors.userId.message}</div>}
       </div>
       <button type="submit" className="btn btn-primary">Guardar</button>
     </form>

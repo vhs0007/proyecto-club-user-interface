@@ -14,6 +14,7 @@ const formSchema = z.object({
   typeId: z.number().min(1, 'Seleccioná un tipo de usuario'),
   email: z.string().email(),
   membershipType: z.number().min(1, 'Seleccioná un tipo de membresía'),
+  document: z.string().min(1, 'El documento es requerido'),
 });
 
 export default function CreateUserFirstStepForm() {
@@ -32,6 +33,7 @@ export default function CreateUserFirstStepForm() {
             email: data.email,
             isActive: true,
             membership: data.membershipType,
+            document: data.document,
         }
         try{
             if(user.typeId === 0){
@@ -45,6 +47,7 @@ export default function CreateUserFirstStepForm() {
                     ...user,
                     clubId: useClubIdStore.getState().clubId,
                 });
+                console.log('primer paso seteado ', useCreateUserStore.getState().firstStep);
                 navigate('/usuarios/crear/paso-especifico-trabajador')
             }
             if(user.typeId === 2){ //suponemos es member el segundo tipo
@@ -59,6 +62,8 @@ export default function CreateUserFirstStepForm() {
                             typeId: data.typeId,
                             email: data.email,
                             isActive: true,
+                            document: data.document,
+                            clubId: useClubIdStore.getState().clubId,
                         }
                         const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
                         if(response){
@@ -68,6 +73,7 @@ export default function CreateUserFirstStepForm() {
                                 const response = await AxiosInstance.post("/membership", {
                                     userId: userRes.id,
                                     type: data.membershipType,
+                                    clubId: useClubIdStore.getState().clubId,
                                 });
                                 if(response){
                                     const membershipRes : MembershipResponse = response.data;
@@ -79,6 +85,10 @@ export default function CreateUserFirstStepForm() {
                                         AxiosInstance.delete(`/users/${userRes.id}`);
                                         throw new Error("Error al crear la membresía");
                                     }
+                                }else{
+                                    useUserStore.getState().deleteUser(userRes.id);
+                                    AxiosInstance.delete(`/users/${userRes.id}`);
+                                    throw new Error("Error al crear la membresía");
                                 }
                             }catch(error){
                                 alert("Error al crear la membresía");
@@ -112,6 +122,11 @@ export default function CreateUserFirstStepForm() {
                 <label htmlFor="name" className="form-label">Nombre</label>
                 <input type="text" className="form-control" {...register("name")} />
                 {errors.name && <span className="text-danger">{errors.name.message}</span>}
+            </div>
+            <div className="mb-3">
+                <label htmlFor="document" className="form-label">Documento</label>
+                <input type="text" className="form-control" {...register("document")} />
+                {errors.document && <span className="text-danger">{errors.document.message}</span>}
             </div>
             <div className="mb-3">
                 <label htmlFor="typeId" className="form-label">Tipo de usuario</label>

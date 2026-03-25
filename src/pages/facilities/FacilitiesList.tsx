@@ -28,7 +28,9 @@ export default function FacilitiesList() {
     }
 
     if (facilitiesList.length === 0) {
-        return <div>No hay instalaciones</div>;
+        return <div>
+            <button className="btn btn-primary" onClick={() => navigate('/instalaciones/crear/paso-1')}></button>
+            No hay instalaciones</div>;
     }
 
     return (
