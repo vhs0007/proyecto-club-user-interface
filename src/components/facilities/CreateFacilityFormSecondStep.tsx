@@ -71,44 +71,59 @@ export default function CreateFacilityFormSecondStep() {
         }
     }
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-            <label htmlFor="responsibleWorker">Trabajador Encargado</label>
-            <select {...register('responsibleWorker', { valueAsNumber: true })}>
-                {users.map((user) => (
-                    <option key={user.id} value={user.id}>{user.name}</option>
-                ))}
-            </select>
-            {errors.responsibleWorker && <span className="text-danger">{errors.responsibleWorker.message}</span>}
-        </div>
-        <div className="form-group">
-            <label htmlFor="assistantWorker">Trabajador Asistente</label>
-            <select {...register('assistantWorker', { valueAsNumber: true })}>
-                {users.map((user) => (
-                    <option key={user.id} value={user.id}>{user.name}</option>
-                ))}
-            </select>
-            {errors.assistantWorker && <span className="text-danger">{errors.assistantWorker.message}</span>}
-        </div>
-        <div className="form-group">
-            <label htmlFor="membershipTypeIds">Tipos de membresía</label>
-            <div className="d-flex flex-wrap gap-2">
-                {membershipTypes.map((membershipType) => {
-                    const selected = membershipTypeIds.includes(membershipType.id);
-                    return (
-                        <button
-                            key={membershipType.id}
-                            type="button"
-                            className={`btn btn-sm ${selected ? 'btn-danger' : 'btn-primary'}`}
-                            onClick={() => toggleMembershipType(membershipType.id)}
-                        >
-                            {membershipType.name}
-                        </button>
-                    );
-                })}
-            </div>
-        </div>
-        <button type="submit" className="btn btn-primary">Crear</button>
-    </form>
+    <div className="mx-auto w-full max-w-2xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="space-y-1.5">
+              <label htmlFor="responsibleWorker" className="block text-sm font-medium text-slate-700">Trabajador Encargado</label>
+              <select
+                  id="responsibleWorker"
+                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                  {...register('responsibleWorker', { valueAsNumber: true })}
+              >
+                  {users.map((user) => (
+                      <option key={user.id} value={user.id}>{user.name}</option>
+                  ))}
+              </select>
+              {errors.responsibleWorker && <span className="text-sm text-red-600">{errors.responsibleWorker.message}</span>}
+          </div>
+          <div className="space-y-1.5">
+              <label htmlFor="assistantWorker" className="block text-sm font-medium text-slate-700">Trabajador Asistente</label>
+              <select
+                  id="assistantWorker"
+                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                  {...register('assistantWorker', { valueAsNumber: true })}
+              >
+                  {users.map((user) => (
+                      <option key={user.id} value={user.id}>{user.name}</option>
+                  ))}
+              </select>
+              {errors.assistantWorker && <span className="text-sm text-red-600">{errors.assistantWorker.message}</span>}
+          </div>
+          <div className="space-y-1.5">
+              <label htmlFor="membershipTypeIds" className="block text-sm font-medium text-slate-700">Seleccione Tipos de membresía</label>
+              <div className="flex flex-wrap gap-2">
+                  {membershipTypes.map((membershipType) => {
+                      const selected = membershipTypeIds.includes(membershipType.id);
+                      return (
+                          <button
+                              key={membershipType.id}
+                              type="button"
+                              className={`facilitySelectButton ${selected ? 'facilitySelectButton--selected' : 'facilitySelectButton--unselected'}`}
+                              onClick={() => toggleMembershipType(membershipType.id)}
+                          >
+                              {membershipType.name}
+                          </button>
+                      );
+                  })}
+              </div>
+          </div>
+          <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+          >
+              Crear
+          </button>
+      </form>
+    </div>
   )
 }

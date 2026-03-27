@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
 import { useUserStore } from "../../store/store";
 import EditUserFormFirstStep from "../../components/users/EditUserFormFirstStep";
+import { Link } from "react-router-dom";
 
 export default function EditUserFirstStep() {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,9 @@ export default function EditUserFirstStep() {
 
   return (
     <div className="container py-4">
+      <Link to="/usuarios" className="pageBackButton mb-3">
+        ← Atrás
+      </Link>
       <h1 className="mb-4">Editar usuario</h1>
       <EditUserFormFirstStep user={user} />
     </div>

@@ -102,13 +102,18 @@ function EditUserMemberSecond({
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input type="hidden" value={user.id} readOnly disabled />
-      <p className="mb-3">Confirmá los datos generales del usuario.</p>
-      <button type="submit" className="btn btn-primary">
-        Guardar
-      </button>
-    </form>
+    <div className="mx-auto w-full max-w-2xl">
+      <form onSubmit={onSubmit} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <input type="hidden" value={user.id} readOnly disabled />
+        <p className="text-sm text-slate-700">Confirmá los datos generales del usuario.</p>
+        <button
+          type="submit"
+          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        >
+          Guardar
+        </button>
+      </form>
+    </div>
   );
 }
 
@@ -165,38 +170,55 @@ function EditUserWorkerSecond({
   } = form;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="hidden" value={user.id} readOnly disabled />
-      <div className="form-group mb-3">
-        <label className="form-label">Salario</label>
-        <input type="number" className="form-control" {...register("salary", { valueAsNumber: true })} />
-        {errors.salary && <span className="text-danger">{errors.salary.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Horas de trabajo por día</label>
-        <input
-          type="number"
-          className="form-control"
-          {...register("hoursToWorkPerDay", { valueAsNumber: true })}
-        />
-        {errors.hoursToWorkPerDay && (
-          <span className="text-danger">{errors.hoursToWorkPerDay.message}</span>
-        )}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Inicio de trabajo</label>
-        <input type="datetime-local" className="form-control" {...register("startWorkAt")} />
-        {errors.startWorkAt && <span className="text-danger">{errors.startWorkAt.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Fin de trabajo</label>
-        <input type="datetime-local" className="form-control" {...register("endWorkAt")} />
-        {errors.endWorkAt && <span className="text-danger">{errors.endWorkAt.message}</span>}
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Guardar
-      </button>
-    </form>
+    <div className="mx-auto w-full max-w-2xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <input type="hidden" value={user.id} readOnly disabled />
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Salario</label>
+          <input
+            type="number"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("salary", { valueAsNumber: true })}
+          />
+          {errors.salary && <span className="text-sm text-red-600">{errors.salary.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Horas de trabajo por día</label>
+          <input
+            type="number"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("hoursToWorkPerDay", { valueAsNumber: true })}
+          />
+          {errors.hoursToWorkPerDay && (
+            <span className="text-sm text-red-600">{errors.hoursToWorkPerDay.message}</span>
+          )}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Inicio de trabajo</label>
+          <input
+            type="datetime-local"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("startWorkAt")}
+          />
+          {errors.startWorkAt && <span className="text-sm text-red-600">{errors.startWorkAt.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Fin de trabajo</label>
+          <input
+            type="datetime-local"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("endWorkAt")}
+          />
+          {errors.endWorkAt && <span className="text-sm text-red-600">{errors.endWorkAt.message}</span>}
+        </div>
+        <button
+          type="submit"
+          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        >
+          Guardar
+        </button>
+      </form>
+    </div>
   );
 }
 
@@ -263,51 +285,93 @@ function EditUserAthleteSecond({
   } = form;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="hidden" value={user.id} readOnly disabled />
-      <div className="form-group mb-3">
-        <label className="form-label">Peso (kg)</label>
-        <input type="number" step="0.1" className="form-control" {...register("weight", { valueAsNumber: true })} />
-        {errors.weight && <span className="text-danger">{errors.weight.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Altura (cm)</label>
-        <input type="number" className="form-control" {...register("height", { valueAsNumber: true })} />
-        {errors.height && <span className="text-danger">{errors.height.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Género</label>
-        <input type="text" className="form-control" {...register("gender")} />
-        {errors.gender && <span className="text-danger">{errors.gender.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Fecha de nacimiento</label>
-        <input type="date" className="form-control" {...register("birthDate")} />
-        {errors.birthDate && <span className="text-danger">{errors.birthDate.message}</span>}
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Dieta</label>
-        <input type="text" className="form-control" {...register("diet")} />
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Plan de entrenamiento</label>
-        <input type="text" className="form-control" {...register("trainingPlan")} />
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Alergias</label>
-        <input type="text" className="form-control" {...register("allergies")} />
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Medicación</label>
-        <input type="text" className="form-control" {...register("medications")} />
-      </div>
-      <div className="form-group mb-3">
-        <label className="form-label">Condiciones médicas</label>
-        <input type="text" className="form-control" {...register("medicalConditions")} />
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Guardar
-      </button>
-    </form>
+    <div className="mx-auto w-full max-w-2xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <input type="hidden" value={user.id} readOnly disabled />
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Peso (kg)</label>
+          <input
+            type="number"
+            step="0.1"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("weight", { valueAsNumber: true })}
+          />
+          {errors.weight && <span className="text-sm text-red-600">{errors.weight.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Altura (cm)</label>
+          <input
+            type="number"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("height", { valueAsNumber: true })}
+          />
+          {errors.height && <span className="text-sm text-red-600">{errors.height.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Género</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("gender")}
+          />
+          {errors.gender && <span className="text-sm text-red-600">{errors.gender.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Fecha de nacimiento</label>
+          <input
+            type="date"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("birthDate")}
+          />
+          {errors.birthDate && <span className="text-sm text-red-600">{errors.birthDate.message}</span>}
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Dieta</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("diet")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Plan de entrenamiento</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("trainingPlan")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Alergias</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("allergies")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Medicación</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("medications")}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Condiciones médicas</label>
+          <input
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("medicalConditions")}
+          />
+        </div>
+        <button
+          type="submit"
+          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        >
+          Guardar
+        </button>
+      </form>
+    </div>
   );
 }

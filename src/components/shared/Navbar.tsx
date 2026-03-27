@@ -1,5 +1,6 @@
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/store'
+//import { configuration} from 
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -7,20 +8,24 @@ export default function Navbar() {
   const logout = useAuthStore((state) => state.logout)
 
   const getLinkClass = (path: string) => {
-    return `nav-link nav-link-club ${location.pathname === path ? 'active' : ''}`
+    const isActive = location.pathname === path
+    return `nav-link nav-link-club ${
+      isActive ? 'active nav-link-item nav-link-item-active' : 'nav-link-item nav-link-item-inactive'
+    }`
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-club py-3">
-      <div className="container">
+    <nav className="nav-club navbar navbar-expand-lg">
+      <div className="container max-w-7xl mx-auto">
         <span
           onClick={() => navigate('/home')}
-          className="navbar-brand navbar-brand-club fs-4"
+          className="nav-brand"
         >
           Peñarol
         </span>
 
         <button
+          title="Toggle navigation"
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -30,7 +35,7 @@ export default function Navbar() {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto gap-3">
+          <ul className="navbar-nav ms-auto nav-links">
             <li className="nav-item">
               <Link to="/usuarios" className={getLinkClass('/usuarios')}>
                 Usuarios
@@ -54,7 +59,7 @@ export default function Navbar() {
             <li className="nav-item">
               <button
                 type="button"
-                className="nav-link nav-link-club border-0 bg-transparent p-0"
+                className="btn-danger"
                 aria-label="Cerrar sesión"
                 onClick={() => {
                   logout()

@@ -117,43 +117,73 @@ export default function CreateUserFirstStepForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-                <label htmlFor="name" className="form-label">Nombre</label>
-                <input type="text" className="form-control" {...register("name")} />
-                {errors.name && <span className="text-danger">{errors.name.message}</span>}
+        <div className="mx-auto w-full max-w-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-1.5">
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700">Nombre</label>
+                <input
+                    id="name"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("name")}
+                />
+                {errors.name && <span className="text-sm text-red-600">{errors.name.message}</span>}
             </div>
-            <div className="mb-3">
-                <label htmlFor="document" className="form-label">Documento</label>
-                <input type="text" className="form-control" {...register("document")} />
-                {errors.document && <span className="text-danger">{errors.document.message}</span>}
+            <div className="space-y-1.5">
+                <label htmlFor="document" className="block text-sm font-medium text-slate-700">Documento</label>
+                <input
+                    id="document"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("document")}
+                />
+                {errors.document && <span className="text-sm text-red-600">{errors.document.message}</span>}
             </div>
-            <div className="mb-3">
-                <label htmlFor="typeId" className="form-label">Tipo de usuario</label>
-                <select className="form-select" {...register("typeId", { valueAsNumber: true })}>
+            <div className="space-y-1.5">
+                <label htmlFor="typeId" className="block text-sm font-medium text-slate-700">Tipo de usuario</label>
+                <select
+                    id="typeId"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("typeId", { valueAsNumber: true })}
+                >
                     <option value={0}>Seleccione un tipo de usuario</option>
                     {userTypes.map((userType) => (
                         <option key={userType.id} value={userType.id}>{userType.name}</option>
                     ))}
                 </select>
-                {errors.typeId && <span className="text-danger">{errors.typeId.message}</span>}
+                {errors.typeId && <span className="text-sm text-red-600">{errors.typeId.message}</span>}
             </div>
-            <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email</label>
-                <input type="email" className="form-control" {...register("email")} />
-                {errors.email && <span className="text-danger">{errors.email.message}</span>}
+            <div className="space-y-1.5">
+                <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("email")}
+                />
+                {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
             </div>
-            <div className="mb-3">
-                <label htmlFor="membershipType" className="form-label">Tipo de membresía</label>
-                <select className="form-select" {...register("membershipType", { valueAsNumber: true })}>
+            <div className="space-y-1.5">
+                <label htmlFor="membershipType" className="block text-sm font-medium text-slate-700">Tipo de membresía</label>
+                <select
+                    id="membershipType"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("membershipType", { valueAsNumber: true })}
+                >
                     <option value={0}>Seleccione un tipo de membresía</option>
                     {membershipTypes.map((membershipType) => (
                         <option key={membershipType.id} value={membershipType.id}>{membershipType.name}</option>
                     ))}
                 </select>
-                {errors.membershipType && <span className="text-danger">{errors.membershipType.message}</span>}
+                {errors.membershipType && <span className="text-sm text-red-600">{errors.membershipType.message}</span>}
             </div>
-            <button type="submit" className="btn btn-primary">Crear usuario</button>
+            <button
+                type="submit"
+                className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+            >
+                Crear usuario
+            </button>
         </form>
+        </div>
     );
 }

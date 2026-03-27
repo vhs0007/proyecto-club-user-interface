@@ -61,11 +61,12 @@ export default function CreateMembershipForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-3">
-        <label className="form-label">Tipo de membresía</label>
+    <div className="mx-auto w-full max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <label className="activityFormLabel">Tipo de membresía</label>
         <select
-          className={`form-select ${errors.type ? "is-invalid" : ""}`}
+          className={`activityFormControl ${errors.type ? "border-red-300 focus:border-red-500 focus:ring-red-200" : ""}`}
           {...register("type", { valueAsNumber: true })}
         >
           <option value={0}>Seleccionar...</option>
@@ -76,26 +77,32 @@ export default function CreateMembershipForm() {
           ))}
         </select>
         {errors.type && (
-          <div className="invalid-feedback">{errors.type.message}</div>
+          <div className="activityFormError">{errors.type.message}</div>
         )}
       </div>
 
-      <div className="mb-3">
-        <label className="form-label">Usuario</label>
+      <div>
+        <label className="activityFormLabel">Usuario</label>
         <input
           type="number"
           placeholder="ID del usuario"
-          className={`form-control ${errors.userId ? "is-invalid" : ""}`}
+          className={`activityFormControl ${errors.userId ? "border-red-300 focus:border-red-500 focus:ring-red-200" : ""}`}
           {...register("userId", { valueAsNumber: true })}
         />
         {errors.userId && (
-          <div className="invalid-feedback">{errors.userId.message}</div>
+          <div className="activityFormError">{errors.userId.message}</div>
         )}
       </div>
 
-      <button type="submit" className="btn btn-primary">
-        Guardar
-      </button>
+      <div className="flex items-center gap-2 pt-2">
+        <button type="submit" className="activityPrimaryButton">
+          Guardar
+        </button>
+        <button type="button" className="activitySecondaryButton" onClick={() => navigate('/membresias')}>
+          Cancelar
+        </button>
+      </div>
     </form>
+    </div>
   );
 }

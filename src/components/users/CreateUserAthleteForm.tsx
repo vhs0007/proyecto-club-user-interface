@@ -100,86 +100,128 @@ export default function CreateUserAthleteForm() {
     } = form;
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-                <label htmlFor="weight" className="form-label">
+        <div className="mx-auto w-full max-w-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-1.5">
+                <label htmlFor="weight" className="block text-sm font-medium text-slate-700">
                     Peso (kg)
                 </label>
                 <input
+                    id="weight"
                     type="number"
                     step="0.1"
-                    className="form-control"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("weight", { valueAsNumber: true })}
                 />
-                {errors.weight && <span className="text-danger">{errors.weight.message}</span>}
+                {errors.weight && <span className="text-sm text-red-600">{errors.weight.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="height" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="height" className="block text-sm font-medium text-slate-700">
                     Altura (cm)
                 </label>
                 <input
+                    id="height"
                     type="number"
-                    className="form-control"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("height", { valueAsNumber: true })}
                 />
-                {errors.height && <span className="text-danger">{errors.height.message}</span>}
+                {errors.height && <span className="text-sm text-red-600">{errors.height.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="gender" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="gender" className="block text-sm font-medium text-slate-700">
                     Género
                 </label>
-                <input type="text" className="form-control" {...register("gender")} />
-                {errors.gender && <span className="text-danger">{errors.gender.message}</span>}
+                <input
+                    id="gender"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("gender")}
+                />
+                {errors.gender && <span className="text-sm text-red-600">{errors.gender.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="birthDate" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="birthDate" className="block text-sm font-medium text-slate-700">
                     Fecha de nacimiento
                 </label>
-                <input type="date" className="form-control" {...register("birthDate")} />
-                {errors.birthDate && <span className="text-danger">{errors.birthDate.message}</span>}
+                <input
+                    id="birthDate"
+                    type="date"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("birthDate")}
+                />
+                {errors.birthDate && <span className="text-sm text-red-600">{errors.birthDate.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="diet" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="diet" className="block text-sm font-medium text-slate-700">
                     Dieta
                 </label>
-                <input type="text" className="form-control" {...register("diet")} />
+                <input
+                    id="diet"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("diet")}
+                />
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="trainingPlan" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="trainingPlan" className="block text-sm font-medium text-slate-700">
                     Plan de entrenamiento
                 </label>
-                <input type="text" className="form-control" {...register("trainingPlan")} />
+                <input
+                    id="trainingPlan"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("trainingPlan")}
+                />
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="allergies" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="allergies" className="block text-sm font-medium text-slate-700">
                     Alergias
                 </label>
-                <input type="text" className="form-control" {...register("allergies")} />
+                <input
+                    id="allergies"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("allergies")}
+                />
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="medications" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="medications" className="block text-sm font-medium text-slate-700">
                     Medicación
                 </label>
-                <input type="text" className="form-control" {...register("medications")} />
+                <input
+                    id="medications"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("medications")}
+                />
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="medicalConditions" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="medicalConditions" className="block text-sm font-medium text-slate-700">
                     Condiciones médicas
                 </label>
-                <input type="text" className="form-control" {...register("medicalConditions")} />
+                <input
+                    id="medicalConditions"
+                    type="text"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("medicalConditions")}
+                />
             </div>
 
-            <button type="submit" className="btn btn-primary">
+            <button
+                type="submit"
+                className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+            >
                 Crear usuario
             </button>
         </form>
+        </div>
     );
 }

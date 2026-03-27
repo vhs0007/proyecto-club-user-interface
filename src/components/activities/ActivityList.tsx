@@ -9,7 +9,7 @@ const formatTime = (date: string): string => {
   return new Date(date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 };
 
-export default function ActivityList({ activities, onEdit, onDelete }: ActivityListProps) {
+export default function ActivityList({ activities }: { activities: ActivityResponse[] }) {
   const navigate = useNavigate();
 
   console.log(activities);
@@ -20,8 +20,9 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
           <tr>
             <th>Nombre</th>
             <th>Tipo</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
+            <th>Fecha</th>
+            <th>Hora Inicio</th>
+            <th>Hora Fin</th>
             <th>Usuario</th>
             <th>Costo</th>
             <th>Estado</th>
@@ -29,7 +30,7 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
           </tr>
         </thead>
         <tbody>
-          {activities.map((activity) => (
+          {activities.map((activity : ActivityResponse) => (
             <tr key={activity.id}>
               <td>
                 <span className="fw-semibold">{activity.name}</span>
@@ -38,12 +39,16 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
                 <span className="badge bg-info">{activity.type}</span>
               </td>
               <td>
-                <div>{formatDate(activity.startAt)}</div>
-                <small className="text-muted">{formatTime(activity.startAt)}</small>
+                <div>{activity.date.toString()}</div>
+                <small className="text-muted">{activity.hourStart}</small>
               </td>
               <td>
-                <div>{formatDate(activity.endAt)}</div>
-                <small className="text-muted">{formatTime(activity.endAt)}</small>
+                <div>{formatDate(activity.hourStart)}</div>
+                <small className="text-muted">{formatTime(activity.hourStart)}</small>
+              </td>
+              <td>
+                <div>{formatDate(activity.hourEnd)}</div>
+                <small className="text-muted">{formatTime(activity.hourEnd)}</small>
               </td>
               <td>{activity.user.name}</td>
               <td>
@@ -52,8 +57,8 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
                   : '-'}
               </td>
               <td>
-                <span className={`badge ${activity.isActive ? 'bg-success' : 'bg-danger'}`}>
-                  {activity.isActive ? 'Activa' : 'Inactiva'}
+                <span className={`badge ${activity.facility.isActive ? 'bg-success' : 'bg-danger'}`}>
+                  {activity.facility.isActive ? 'Activa' : 'Inactiva'}
                 </span>
               </td>
               <td>
@@ -85,4 +90,3 @@ export default function ActivityList({ activities, onEdit, onDelete }: ActivityL
     </div>
   );
 }
-

@@ -55,11 +55,12 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
   if (!membership) return null;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-3">
-        <label className="form-label">Tipo de membresía</label>
+    <div className="mx-auto w-full max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <label className="activityFormLabel">Tipo de membresía</label>
         <select
-          className={`form-select ${errors.type ? "is-invalid" : ""}`}
+          className={`activityFormControl ${errors.type ? "border-red-300 focus:border-red-500 focus:ring-red-200" : ""}`}
           {...register("type", { valueAsNumber: true })}
         >
           <option value={0}>Seleccionar...</option>
@@ -69,9 +70,16 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
             </option>
           ))}
         </select>
-        {errors.type && <div className="invalid-feedback">{errors.type.message}</div>}
+        {errors.type && <div className="activityFormError">{errors.type.message}</div>}
       </div>
-      <button type="submit" className="btn btn-primary">Guardar</button>
+
+      <div className="flex items-center gap-2 pt-2">
+        <button type="submit" className="activityPrimaryButton">Guardar</button>
+        <button type="button" className="activitySecondaryButton" onClick={() => navigate('/membresias')}>
+          Cancelar
+        </button>
+      </div>
     </form>
+    </div>
   );
 }

@@ -28,6 +28,7 @@ import DeleteUser from '../pages/users/DeleteUser';
 import DeleteActivity from '../pages/activities/DeleteActivity';
 import EditActivity from '../pages/activities/EditActivity';
 import EditActivityForm from '../components/activities/EditActivityForm';
+import CreateUserFirstStep from '../pages/users/CreateUserFirstStep';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -113,7 +114,7 @@ export default function AppRouter() {
           path="/usuarios/crear/paso-general"
           element={
             <ProtectedRoute>
-              <CreateUserFirstStepForm />
+              <CreateUserFirstStep />
             </ProtectedRoute>
           }
         />
@@ -201,7 +202,7 @@ export default function AppRouter() {
           path="/actividades/editar/:id/paso-2"
           element={
             <ProtectedRoute>
-              <EditActivityForm />
+              <EditActivity/>
             </ProtectedRoute>
           }
         />

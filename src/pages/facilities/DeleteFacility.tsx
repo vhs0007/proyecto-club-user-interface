@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import type { FacilityResponse } from '../../entities/Entities'
 import { useFacilityStore } from '../../store/store'
 import DeleteFacilityForm from '../../components/facilities/DeleteFacilityForm'
@@ -17,6 +17,9 @@ export default function DeleteFacility() {
 
   return (
     <div className="container">
+      <Link to="/instalaciones" className="pageBackButton mb-3">
+        ← Atrás
+      </Link>
       <h1>Eliminar Instalación</h1>
       <DeleteFacilityForm facility={facility} />
     </div>

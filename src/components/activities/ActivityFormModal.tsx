@@ -14,8 +14,9 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
-  const [startAt, setStartAt] = useState('');
-  const [endAt, setEndAt] = useState('');
+  const [date, setDate] = useState('');
+  const [hourStart, setHourStart] = useState('');
+  const [hourEnd, setHourEnd] = useState('');
   const [userId, setUserId] = useState('');
   const [cost, setCost] = useState('');
 
@@ -25,8 +26,9 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     if (activity) {
       setName(activity.name);
       setType(activity.type);
-      setStartAt(activity.startAt.slice(0, 16));
-      setEndAt(activity.endAt.slice(0, 16));
+      setDate(activity.date.toString());
+      setHourStart(activity.hourStart);
+      setHourEnd(activity.hourEnd);
       setUserId(activity.userId.toString());
       setCost(activity.cost.toString());
     }
@@ -37,10 +39,11 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     setLoading(true);
     setError('');
 
-    const startDate = new Date(startAt);
-    const endDate = new Date(endAt);
+    const dateDate = new Date(date);
+    const hourStartDate = new Date(hourStart);
+    const hourEndDate = new Date(hourEnd);
 
-    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+    if (Number.isNaN(dateDate.getTime()) || Number.isNaN(hourStartDate.getTime()) || Number.isNaN(hourEndDate.getTime())) {
       setError('Las fechas no son válidas. Revisá inicio y fin.');
       setLoading(false);
       return;
@@ -49,8 +52,9 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     const payload = {
       name,
       type,
-      startAt: startDate.toISOString(),
-      endAt: endDate.toISOString(),
+      date: dateDate.toISOString(),
+      hourStart: hourStartDate.toISOString(),
+      hourEnd: hourEndDate.toISOString(),
       userId: Number(userId),
       cost: Number(cost),
     };
@@ -120,24 +124,35 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="startAt" className="form-label">Fecha/Hora Inicio *</label>
+                  <label htmlFor="date" className="form-label">Fecha *</label>
                   <input
-                    type="datetime-local"
-                    id="startAt"
+                    type="date"
+                    id="date"
                     className="form-control"
-                    value={startAt}
-                    onChange={(e) => setStartAt(e.target.value)}
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="endAt" className="form-label">Fecha/Hora Fin *</label>
+                  <label htmlFor="hourStart" className="form-label">Hora Inicio *</label>
                   <input
-                    type="datetime-local"
-                    id="endAt"
+                    type="time"
+                    id="hourStart"
                     className="form-control"
-                    value={endAt}
-                    onChange={(e) => setEndAt(e.target.value)}
+                    value={hourStart}
+                    onChange={(e) => setHourStart(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="hourEnd" className="form-label">Hora Fin *</label>
+                  <input
+                    type="time"
+                    id="hourEnd"
+                    className="form-control"
+                    value={hourEnd}
+                    onChange={(e) => setHourEnd(e.target.value)}
                     required
                   />
                 </div>
@@ -188,4 +203,3 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     </div>
   );
 }
-

@@ -56,8 +56,9 @@ interface CreateActivityFirstStep {
   name: string;
   clubId: number;
   type: string;
-  startAt: string;
-  endAt: string;
+  hourStart: string;
+  hourEnd: string;
+  date: Date;
   isActive: boolean;
 }
 
@@ -126,7 +127,6 @@ interface CreateUserFirstStep{
   clubId: number;
   typeId: number;
   email: string;
-  document: string;
   isActive: boolean;
   membership: number;
 }
@@ -160,8 +160,9 @@ interface EditUserFirstStep {
 interface EditActivity {
   name: string;
   type: string;
-  startAt: string;
-  endAt: string;
+  hourStart: string;
+  hourEnd: string;
+  date: Date;
   isActive: boolean;
 }
 
@@ -191,7 +192,7 @@ export const useEditUserStore = create<EditUserState>()(
 export const useEditActivityStore = create<EditActivityState>()(
   persist(
     (set) => ({
-      activity: { name: '', type: '', startAt: '', endAt: '', isActive: true },
+      activity: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), isActive: true },
       setActivity: (activity: EditActivity) => set({ activity }),
     }),
     {
@@ -359,7 +360,7 @@ export const useUserStore = create<UserState>()(
 export const useCreateUserStore = create<CreateUserState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0, document: '' },
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0 },
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
       workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),
@@ -376,7 +377,7 @@ export const useCreateUserStore = create<CreateUserState>()(
 export const useCreateActivityStore = create<CreateActivityState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', type: '', startAt: '', endAt: '', isActive: true, clubId: 0 },
+      firstStep: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), isActive: true, clubId: 0 },
       secondStep: { facilityId: 0, userId: 0, cost: 0 },
       setFirstStep: (firstStep: CreateActivityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateActivitySecondStep) => set({ secondStep }),

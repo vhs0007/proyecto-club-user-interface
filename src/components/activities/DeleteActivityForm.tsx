@@ -1,71 +1,141 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useActivityStore } from '../../store/store';
-import type { Activity } from '../../entities/Entities';
-import AxiosInstance from '../../config/axios';
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate } from "react-router-dom";
+import AxiosInstance from "../../config/axios";
+import { useActivityStore, useCreateActivityStore } from "../../store/store";
+import type { ActivityResponse } from "../../entities/Entities";
 
-export default function DeleteActivityForm({ activity }: { activity: Activity }) {
+const formSchema = z.object({
+  userId: z.number().min(1, "Usuario requerido"),
+  cost: z.number().min(0, "El costo debe ser mayor o igual a 0"),
+  facilityId: z.number().min(1, "Seleccioná una instalación"),
+});
+
+export type CreateActivitySecondStepFormData = z.infer<typeof formSchema>;
+
+const emptyFirstStep = {
+  name: "",
+  type: "",
+  date: new Date(),
+  hourStart: "",
+  hourEnd: "",
+  isActive: true,
+  clubId: 0,
+};
+
+const emptySecondStep = { facilityId: 0, userId: 0, cost: 0 };
+
+export default function CreateActivitySecondStepForm() {
   const navigate = useNavigate();
-  const deleteActivity = useActivityStore((state) => state.deleteActivity);
-  console.log(activity);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const firstStep = useCreateActivityStore((s) => s.firstStep);
+  const secondStep = useCreateActivityStore((s) => s.secondStep);
+  const setActivity = useActivityStore((s) => s.setActivity);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (activity?.id == null) return;
+  useEffect(() => {
+    if (!firstStep.name.trim()) {
+      navigate("/actividades/crear/paso-1", { replace: true });
+    }
+  }, [firstStep.name, navigate]);
 
-    setLoading(true);
-    setError(null);
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateActivitySecondStepFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      userId: secondStep.userId,
+      cost: secondStep.cost,
+      facilityId: secondStep.facilityId,
+    },
+  });
 
+  const onSubmit = async (data: CreateActivitySecondStepFormData) => {
     try {
-      await AxiosInstance.delete(`/activities/${activity.id}`);
-      deleteActivity(activity.id);
-      navigate('/actividades');
-    } catch {
-      setError('No se pudo eliminar la actividad. Intentá de nuevo.');
-    } finally {
-      setLoading(false);
+      useCreateActivityStore.getState().setSecondStep({
+        facilityId: data.facilityId,
+        userId: data.userId,
+        cost: data.cost,
+      });
+
+      const fs = useCreateActivityStore.getState().firstStep;
+
+      const payload = {
+        name: fs.name,
+        type: fs.type,
+        date: new Date(fs.date).toISOString(),
+        hourStart: new Date(fs.hourStart).toISOString(),
+        hourEnd: new Date(fs.hourEnd).toISOString(),
+        userId: data.userId,
+        cost: data.cost,
+        facilityId: data.facilityId,
+        isActive: fs.isActive,
+      };
+
+      const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
+      const created = response.data;
+      if (created) {
+        setActivity(created);
+        navigate("/actividades");
+        useCreateActivityStore.getState().setFirstStep(emptyFirstStep);
+        useCreateActivityStore.getState().setSecondStep(emptySecondStep);
+      }
+    } catch (error: unknown) {
+      console.error("[CreateActivitySecondStep] error", error);
     }
   };
 
-  if (!activity) return null;
-
   return (
-    <form onSubmit={handleSubmit}>
-      <p className="mb-3">¿Estás seguro de que querés eliminar esta actividad?</p>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="mb-3">
+        <Link to="/actividades/crear/paso-1" className="btn btn-link p-0">
+          Volver al paso 1
+        </Link>
+      </div>
 
       <div className="mb-3">
-        <label className="form-label">ID</label>
+        <label htmlFor="facilityId" className="form-label">ID de instalación</label>
         <input
           type="number"
-          value={activity.id ?? ''}
-          disabled
-          readOnly
-          className="form-control"
+          id="facilityId"
+          min={1}
+          placeholder="ID de la instalación"
+          className={`form-control ${errors.facilityId ? "is-invalid" : ""}`}
+          {...register("facilityId", { valueAsNumber: true })}
         />
+        {errors.facilityId && (
+          <div className="invalid-feedback d-block">{errors.facilityId.message}</div>
+        )}
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Nombre</label>
-        <input type="text" value={activity.name} disabled readOnly className="form-control" />
+        <label htmlFor="userId" className="form-label">ID de usuario</label>
+        <input
+          type="number"
+          id="userId"
+          min={1}
+          placeholder="ID del usuario"
+          className={`form-control ${errors.userId ? "is-invalid" : ""}`}
+          {...register("userId", { valueAsNumber: true })}
+        />
+        {errors.userId && <div className="invalid-feedback d-block">{errors.userId.message}</div>}
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Tipo</label>
-        <input type="text" value={activity.type} disabled readOnly className="form-control" />
+        <label htmlFor="cost" className="form-label">Costo</label>
+        <input
+          type="number"
+          id="cost"
+          step="0.01"
+          min={0}
+          placeholder="0"
+          className={`form-control ${errors.cost ? "is-invalid" : ""}`}
+          {...register("cost", { valueAsNumber: true })}
+        />
+        {errors.cost && <div className="invalid-feedback d-block">{errors.cost.message}</div>}
       </div>
 
-      {error && <p className="text-danger mb-2">{error}</p>}
-
-      <div className="d-flex gap-2">
-        <button type="submit" className="btn btn-danger" disabled={loading || activity.id == null}>
-          {loading ? 'Eliminando...' : 'Eliminar'}
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={() => navigate('/actividades')}>
-          Cancelar
-        </button>
-      </div>
+      <button type="submit" className="btn btn-primary">
+        Crear actividad
+      </button>
     </form>
   );
 }

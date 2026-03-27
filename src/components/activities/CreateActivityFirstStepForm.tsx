@@ -4,17 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useClubIdStore, useCreateActivityStore } from "../../store/store";
 
+const toMinutes = (value: string) => {
+  const [hours, minutes] = value.split(":").map(Number);
+  return (hours * 60) + minutes;
+};
+
 const formSchema = z
   .object({
     name: z.string().min(1, "El nombre es requerido"),
     type: z.string().min(1, "El tipo es requerido"),
-    startAt: z.string().min(1, "Fecha y hora de inicio requerida"),
-    endAt: z.string().min(1, "Fecha y hora de fin requerida"),
+    date: z.string().min(1, "Fecha requerida"),
+    hourStart: z.string().min(1, "Hora de inicio requerida"),
+    hourEnd: z.string().min(1, "Hora de fin requerida"),
     isActive: z.boolean(),
   })
-  .refine((data) => new Date(data.endAt).getTime() > new Date(data.startAt).getTime(), {
+  .refine((data) => toMinutes(data.hourEnd) > toMinutes(data.hourStart), {
     message: "La fecha de fin debe ser posterior al inicio",
-    path: ["endAt"],
+    path: ["hourEnd"],
   });
 
 export type CreateActivityFirstStepFormData = z.infer<typeof formSchema>;
@@ -28,8 +34,9 @@ export default function CreateActivityFirstStepForm() {
     defaultValues: {
       name: firstStep.name,
       type: firstStep.type,
-      startAt: firstStep.startAt,
-      endAt: firstStep.endAt,
+      date: '',
+      hourStart: firstStep.hourStart,
+      hourEnd: firstStep.hourEnd,
       isActive: firstStep.isActive,
     },
   });
@@ -38,8 +45,9 @@ export default function CreateActivityFirstStepForm() {
     useCreateActivityStore.getState().setFirstStep({
       name: data.name,
       type: data.type,
-      startAt: data.startAt,
-      endAt: data.endAt,
+      date: new Date(data.date),
+      hourStart: data.hourStart,
+      hourEnd: data.hourEnd,
       isActive: data.isActive,
       clubId: useClubIdStore.getState().clubId,
     });
@@ -71,24 +79,34 @@ export default function CreateActivityFirstStepForm() {
         {errors.type && <div className="invalid-feedback d-block">{errors.type.message}</div>}
       </div>
       <div className="mb-3">
-        <label htmlFor="startAt" className="form-label">Fecha y hora de inicio</label>
+        <label htmlFor="date" className="form-label">Fecha</label>
         <input
-          type="datetime-local"
-          id="startAt"
-          className={`form-control ${errors.startAt ? "is-invalid" : ""}`}
-          {...register("startAt")}
+          type="date"
+          id="date"
+          className={`form-control ${errors.date ? "is-invalid" : ""}`}
+          {...register("date")}
         />
-        {errors.startAt && <div className="invalid-feedback d-block">{errors.startAt.message}</div>}
+        {errors.date && <div className="invalid-feedback d-block">{errors.date.message}</div>}
       </div>
       <div className="mb-3">
-        <label htmlFor="endAt" className="form-label">Fecha y hora de fin</label>
+        <label htmlFor="hourStart" className="form-label">Hora de inicio</label>
         <input
-          type="datetime-local"
-          id="endAt"
-          className={`form-control ${errors.endAt ? "is-invalid" : ""}`}
-          {...register("endAt")}
+          type="time"
+          id="hourStart"
+          className={`form-control ${errors.hourStart ? "is-invalid" : ""}`}
+          {...register("hourStart")}
         />
-        {errors.endAt && <div className="invalid-feedback d-block">{errors.endAt.message}</div>}
+        {errors.hourStart && <div className="invalid-feedback d-block">{errors.hourStart.message}</div>}
+      </div>
+      <div className="mb-3">
+        <label htmlFor="hourEnd" className="form-label">Hora de fin</label>
+        <input
+          type="time"
+          id="hourEnd"
+          className={`form-control ${errors.hourEnd ? "is-invalid" : ""}`}
+          {...register("hourEnd")}
+        />
+        {errors.hourEnd && <div className="invalid-feedback d-block">{errors.hourEnd.message}</div>}
       </div>
       <div className="mb-3 form-check">
         <input type="checkbox" className="form-check-input" id="isActive" {...register("isActive")} />

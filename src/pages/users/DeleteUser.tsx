@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import type { UserResponse } from '../../entities/Entities'
 import { useUserStore } from '../../store/store'
 import DeleteUserForm from '../../components/users/DeleteUserForm'
@@ -18,6 +18,9 @@ export default function DeleteUser() {
 
   return (
     <div className="container py-4">
+      <Link to="/usuarios" className="pageBackButton mb-3">
+        ← Atrás
+      </Link>
       <h1 className="mb-4">Eliminar usuario</h1>
       <DeleteUserForm user={user} />
     </div>

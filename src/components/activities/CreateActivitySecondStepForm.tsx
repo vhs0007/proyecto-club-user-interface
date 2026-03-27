@@ -1,139 +1,131 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useClubIdStore, useCreateActivityStore } from "../../store/store";
+import { useActivityStore } from "../../store/store";
 import type { ActivityResponse } from "../../entities/Entities";
 
-const formSchema = z.object({
+const schema = z.object({
+  name: z.string().min(1, "El nombre es requerido"),
+  type: z.string().min(1, "El tipo es requerido"),
+  date: z.string().min(1, "Fecha requerida"),
+  hourStart: z.string().min(1, "Hora de inicio requerida"),
+  hourEnd: z.string().min(1, "Hora de fin requerida"),
   userId: z.number().min(1, "Usuario requerido"),
   cost: z.number().min(0, "El costo debe ser mayor o igual a 0"),
   facilityId: z.number().min(1, "Seleccioná una instalación"),
+  isActive: z.boolean().optional(),
 });
 
-export type CreateActivitySecondStepFormData = z.infer<typeof formSchema>;
+export type CreateActivityFormData = z.infer<typeof schema>;
 
-const emptyFirstStep = {
-  name: "",
-  type: "",
-  startAt: "",
-  endAt: "",
-  isActive: true,
-  clubId: 0,
-};
-
-const emptySecondStep = { facilityId: 0, userId: 0, cost: 0 };
-
-export default function CreateActivitySecondStepForm() {
+export default function CreateActivityForm() {
   const navigate = useNavigate();
-  const firstStep = useCreateActivityStore((s) => s.firstStep);
-  const secondStep = useCreateActivityStore((s) => s.secondStep);
-  const setActivity = useActivityStore((s) => s.setActivity);
+  const setActivity = useActivityStore((state) => state.setActivity);
 
-  useEffect(() => {
-    if (!firstStep.name.trim()) {
-      navigate("/actividades/crear/paso-1", { replace: true });
-    }
-  }, [firstStep.name, navigate]);
-
-  const { register, handleSubmit, formState: { errors } } = useForm<CreateActivitySecondStepFormData>({
-    resolver: zodResolver(formSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CreateActivityFormData>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      userId: secondStep.userId,
-      cost: secondStep.cost,
-      facilityId: secondStep.facilityId,
+      name: "",
+      type: "",
+      date: "",
+      hourStart: "",
+      hourEnd: "",
+      userId: 0,
+      cost: 0,
+      facilityId: 0,
+      isActive: true,
     },
   });
 
-  const onSubmit = async (data: CreateActivitySecondStepFormData) => {
+  const onSubmit = async (data: CreateActivityFormData) => {
     try {
-      useCreateActivityStore.getState().setSecondStep({
-        facilityId: data.facilityId,
-        userId: data.userId,
-        cost: data.cost,
-      });
-
-      const fs = useCreateActivityStore.getState().firstStep;
-
       const payload = {
-        name: fs.name,
-        type: fs.type,
-        startAt: new Date(fs.startAt).toISOString(),
-        endAt: new Date(fs.endAt).toISOString(),
-        clubId: useClubIdStore.getState().clubId,
+        name: data.name,
+        type: data.type,
+        date: new Date(data.date).toISOString(),
+        hourStart: data.hourStart,
+        hourEnd: data.hourEnd,
         userId: data.userId,
         cost: data.cost,
         facilityId: data.facilityId,
-        isActive: fs.isActive,
+        ...(data.isActive !== undefined && { isActive: data.isActive }),
       };
-
       const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
-      if (created) {
-        setActivity(created);
-        navigate("/actividades");
-        useCreateActivityStore.getState().setFirstStep(emptyFirstStep);
-        useCreateActivityStore.getState().setSecondStep(emptySecondStep);
-      }
-    } catch (error: unknown) {
-      console.error("[CreateActivitySecondStep] error", error);
+      if (created) setActivity(created);
+      navigate("/actividades");
+    } catch (error: any) {
+      console.error("[CreateActivity] error", error);
+      console.error("[CreateActivity] response data", error?.response?.data);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-3">
-        <Link to="/actividades/crear/paso-1" className="btn btn-link p-0">
-          Volver al paso 1
-        </Link>
-      </div>
 
       <div className="mb-3">
-        <label htmlFor="facilityId" className="form-label">ID de instalación</label>
+        <label className="form-label">ID de usuario</label>
         <input
           type="number"
-          id="facilityId"
-          min={1}
-          placeholder="ID de la instalación"
-          className={`form-control ${errors.facilityId ? "is-invalid" : ""}`}
-          {...register("facilityId", { valueAsNumber: true })}
-        />
-        {errors.facilityId && (
-          <div className="invalid-feedback d-block">{errors.facilityId.message}</div>
-        )}
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="userId" className="form-label">ID de usuario</label>
-        <input
-          type="number"
-          id="userId"
           min={1}
           placeholder="ID del usuario"
           className={`form-control ${errors.userId ? "is-invalid" : ""}`}
           {...register("userId", { valueAsNumber: true })}
         />
-        {errors.userId && <div className="invalid-feedback d-block">{errors.userId.message}</div>}
+        {errors.userId && (
+          <div className="invalid-feedback">{errors.userId.message}</div>
+        )}
       </div>
 
       <div className="mb-3">
-        <label htmlFor="cost" className="form-label">Costo</label>
+        <label className="form-label">Costo</label>
         <input
           type="number"
-          id="cost"
           step="0.01"
           min={0}
           placeholder="0"
           className={`form-control ${errors.cost ? "is-invalid" : ""}`}
           {...register("cost", { valueAsNumber: true })}
         />
-        {errors.cost && <div className="invalid-feedback d-block">{errors.cost.message}</div>}
+        {errors.cost && (
+          <div className="invalid-feedback">{errors.cost.message}</div>
+        )}
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label">ID de instalación</label>
+        <input
+          type="number"
+          min={1}
+          placeholder="ID de la instalación"
+          className={`form-control ${errors.facilityId ? "is-invalid" : ""}`}
+          {...register("facilityId", { valueAsNumber: true })}
+        />
+        {errors.facilityId && (
+          <div className="invalid-feedback">{errors.facilityId.message}</div>
+        )}
+      </div>
+
+      <div className="mb-3 form-check">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          id="isActive"
+          {...register("isActive")}
+        />
+        <label className="form-check-label" htmlFor="isActive">
+          Activa
+        </label>
       </div>
 
       <button type="submit" className="btn btn-primary">
-        Crear actividad
+        Guardar
       </button>
     </form>
   );

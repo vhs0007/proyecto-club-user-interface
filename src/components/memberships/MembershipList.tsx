@@ -8,28 +8,32 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
     console.log(membershipsList);
   }, [membershipsList]);
   return (
-    <div className="container">
-        <h1>Membresías</h1>
-        <button className="btn btn-primary" onClick={() => navigate(`/membresias/crear`)}>Crear Membresía</button>
-    <table className="table table-striped table-hover table-responsive">
-        <thead>
+    <div className="overflow-x-auto rounded-md border border-slate-200 bg-white shadow-sm">
+    <table className="min-w-full align-middle">
+        <thead className="bg-slate-50">
             <tr>
-                <th>ID</th>
-                <th>Tipo</th>
-                <th>Usuario</th>
-                <th>Expiración</th>
-                <th>Acciones</th>
+                <th className="listTableTh">ID</th>
+                <th className="listTableTh">Tipo</th>
+                <th className="listTableTh">Usuario</th>
+                <th className="listTableTh">Expiración</th>
+                <th className="listTableThCenter">Acciones</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-slate-100">
             {membershipsList.map((membership) => (
-                <tr key={membership.id}>
-                    <td>{membership.id}</td>
-                    <td>{membership.membershipType?.name ?? '-'}</td>
-                    <td>{membership.user?.name ?? membership.user?.id ?? '-'}</td>
-                    <td>{membership.expiration ? new Date(membership.expiration).toLocaleDateString() : '-'}</td>
-                    <td><button className="btn btn-primary" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>
-                    <button className="btn btn-danger" onClick={() => navigate(`/membresias/eliminar/${membership.id}`)}>Eliminar</button></td>
+                <tr key={membership.id} className="hover:bg-slate-50/70">
+                    <td className="listTableTd">{membership.id}</td>
+                    <td className="listTableTd">
+                      <span className="listBadgeTypeInfo">{membership.membershipType?.name ?? '-'}</span>
+                    </td>
+                    <td className="listTableTd">{membership.user?.name ?? membership.user?.id ?? '-'}</td>
+                    <td className="listTableTd">{membership.expiration ? new Date(membership.expiration).toLocaleDateString() : '-'}</td>
+                    <td className="listTableTd text-center">
+                      <div className="flex justify-center gap-2">
+                        <button className="listActionBtnEdit" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>
+                        <button className="listActionBtnDelete" onClick={() => navigate(`/membresias/eliminar/${membership.id}`)}>Eliminar</button>
+                      </div>
+                    </td>
                 </tr>
             ))}
         </tbody>

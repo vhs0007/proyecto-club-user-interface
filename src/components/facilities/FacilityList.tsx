@@ -8,45 +8,47 @@ interface FacilityListProps {
 
 export default function FacilityList({ facilities, onEdit, onDelete }: FacilityListProps) {
   return (
-    <div className="table-responsive">
-      <table className="table table-hover align-middle">
-        <thead className="table-light">
+    <div className="overflow-x-auto rounded-md border border-slate-200 bg-white shadow-sm">
+      <table className="min-w-full align-middle">
+        <thead className="bg-slate-50">
           <tr>
-            <th>ID</th>
-            <th>Tipo</th>
-            <th>Capacidad</th>
-            <th>Responsable</th>
-            <th>Asistente</th>
-            <th>Estado</th>
-            <th className="text-center">Acciones</th>
+            <th className="listTableTh">ID</th>
+            <th className="listTableTh">Tipo</th>
+            <th className="listTableTh">Capacidad</th>
+            <th className="listTableTh">Responsable</th>
+            <th className="listTableTh">Asistente</th>
+            <th className="listTableTh">Membresías</th>
+            <th className="listTableTh">Estado</th>
+            <th className="listTableThCenter">Acciones</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-slate-100">
           {facilities.map((facility) => (
-            <tr key={facility.id}>
-              <td>{facility.id}</td>
-              <td>
-                <span className="fw-semibold">{facility.type}</span>
+            <tr key={facility.id} className="hover:bg-slate-50/70">
+              <td className="listTableTd">{facility.id}</td>
+              <td className="listTableTd">
+                <span className="listBadgeTypeInfo">{facility.type}</span>
               </td>
-              <td>{facility.capacity}</td>
-              <td>{facility.responsibleWorker?.name ?? facility.responsibleWorker?.id ?? '-'}</td>
-              <td>{facility.assistantWorker?.name ?? facility.assistantWorker?.id ?? '-'}</td>
-              <td>
-                <span className={`badge ${facility.isActive ? 'bg-success' : 'bg-secondary'}`}>
+              <td className="listTableTd">{facility.capacity}</td>
+              <td className="listTableTd">{facility.responsibleWorker?.name ?? facility.responsibleWorker?.id ?? '-'}</td>
+              <td className="listTableTd">{facility.assistantWorker?.name ?? facility.assistantWorker?.id ?? '-'}</td>
+              <td className="listTableTd">{facility.membershipTypes[0]?.name ?? '-'}</td>
+              <td className="listTableTd">
+                <span className={facility.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
                   {facility.isActive ? 'Activa' : 'Inactiva'}
                 </span>
               </td>
-              <td>
-                <div className="d-flex gap-1 justify-content-center">
+              <td className="listTableTd">
+                <div className="flex justify-center gap-2">
                   <button
-                    className="btn btn-sm btn-outline-warning"
+                    className="listActionBtnEdit"
                     onClick={() => onEdit(facility)}
                     title="Editar"
                   >
                     <i className="bi bi-pencil"></i>
                   </button>
                   <button
-                    className="btn btn-sm btn-outline-danger"
+                    className="listActionBtnDelete"
                     onClick={() => onDelete(facility.id)}
                     title="Eliminar"
                   >
@@ -59,7 +61,7 @@ export default function FacilityList({ facilities, onEdit, onDelete }: FacilityL
         </tbody>
       </table>
       {facilities.length === 0 && (
-        <p className="text-center text-muted py-4 mb-0">No hay instalaciones registradas</p>
+        <p className="py-8 text-center text-sm text-slate-500">No hay instalaciones registradas</p>
       )}
     </div>
   );

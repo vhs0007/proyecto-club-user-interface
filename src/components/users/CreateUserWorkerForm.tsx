@@ -80,52 +80,69 @@ export default function CreateUserWorkerForm() {
     } = form;
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-3">
-                <label htmlFor="salary" className="form-label">
+        <div className="mx-auto w-full max-w-2xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-1.5">
+                <label htmlFor="salary" className="block text-sm font-medium text-slate-700">
                     Salario
                 </label>
                 <input
+                    id="salary"
                     type="number"
-                    className="form-control"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("salary", { valueAsNumber: true })}
                 />
-                {errors.salary && <span className="text-danger">{errors.salary.message}</span>}
+                {errors.salary && <span className="text-sm text-red-600">{errors.salary.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="hoursToWorkPerDay" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="hoursToWorkPerDay" className="block text-sm font-medium text-slate-700">
                     Horas de trabajo por día
                 </label>
                 <input
+                    id="hoursToWorkPerDay"
                     type="number"
-                    className="form-control"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("hoursToWorkPerDay", { valueAsNumber: true })}
                 />
                 {errors.hoursToWorkPerDay && (
-                    <span className="text-danger">{errors.hoursToWorkPerDay.message}</span>
+                    <span className="text-sm text-red-600">{errors.hoursToWorkPerDay.message}</span>
                 )}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="startWorkAt" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="startWorkAt" className="block text-sm font-medium text-slate-700">
                     Inicio de trabajo
                 </label>
-                <input type="datetime-local" className="form-control" {...register("startWorkAt")} />
-                {errors.startWorkAt && <span className="text-danger">{errors.startWorkAt.message}</span>}
+                <input
+                    id="startWorkAt"
+                    type="datetime-local"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("startWorkAt")}
+                />
+                {errors.startWorkAt && <span className="text-sm text-red-600">{errors.startWorkAt.message}</span>}
             </div>
 
-            <div className="mb-3">
-                <label htmlFor="endWorkAt" className="form-label">
+            <div className="space-y-1.5">
+                <label htmlFor="endWorkAt" className="block text-sm font-medium text-slate-700">
                     Fin de trabajo
                 </label>
-                <input type="datetime-local" className="form-control" {...register("endWorkAt")} />
-                {errors.endWorkAt && <span className="text-danger">{errors.endWorkAt.message}</span>}
+                <input
+                    id="endWorkAt"
+                    type="datetime-local"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("endWorkAt")}
+                />
+                {errors.endWorkAt && <span className="text-sm text-red-600">{errors.endWorkAt.message}</span>}
             </div>
 
-            <button type="submit" className="btn btn-primary">
+            <button
+                type="submit"
+                className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+            >
                 Crear usuario
             </button>
         </form>
+        </div>
     );
 }

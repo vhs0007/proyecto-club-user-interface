@@ -10,10 +10,11 @@ import AxiosInstance from "../../config/axios";
 const formSchema = z.object({
   name: z.string().min(1),
   type: z.string().min(1),
-  startAt: z.string().min(1),
-  endAt: z.string().min(1),
+  date: z.date(),
+  hourStart: z.string().min(1),
+  hourEnd: z.string().min(1),
   isActive: z.boolean(),
-  cost: z.coerce.number().min(0),
+  cost: z.number().min(0),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -32,10 +33,12 @@ export default function EditActivityForm({ activity }: { activity: Activity }) {
     defaultValues: {
       name: activity.name ?? "",
       type: activity.type ?? "",
-      startAt: activity.startAt ?? "",
-      endAt: activity.endAt ?? "",
+      date: activity.date ?? new Date(),
+      hourStart: activity.hourStart ?? "",
+      hourEnd: activity.hourEnd ?? "",
       isActive: activity.isActive ?? true,
       cost: activity.cost ?? 0,
+
     },
   });
 
@@ -43,8 +46,9 @@ export default function EditActivityForm({ activity }: { activity: Activity }) {
     reset({
       name: activity.name ?? "",
       type: activity.type ?? "",
-      startAt: activity.startAt ?? "",
-      endAt: activity.endAt ?? "",
+      date: activity.date ?? new Date(),
+      hourStart: activity.hourStart ?? "",
+      hourEnd: activity.hourEnd ?? "",
       isActive: activity.isActive ?? true,
       cost: activity.cost ?? 0,
     });
@@ -54,16 +58,18 @@ export default function EditActivityForm({ activity }: { activity: Activity }) {
         useEditActivityStore.getState().setActivity({
             name: data.name,
             type: data.type,
-            startAt: data.startAt,
-            endAt: data.endAt,
+            date: data.date ?? new Date(),
+            hourStart: data.hourStart,
+            hourEnd: data.hourEnd,
             isActive: data.isActive,
           });
           try {
-            const response = await AxiosInstance.patch<Activity>(`/activities/${id}`, {
+            const response = await AxiosInstance.patch<ActivityResponse>(`/activities/${id}`, {
               name: data.name,
               type: data.type,
-            startAt: new Date(data.startAt).toISOString(),
-            endAt: new Date(data.endAt).toISOString(),
+            date: data.date,
+            hourStart: data.hourStart,
+            hourEnd: data.hourEnd,
             isActive: true,
             cost: Number(data.cost),
           });
@@ -118,25 +124,7 @@ export default function EditActivityForm({ activity }: { activity: Activity }) {
         </label>
         <input type="number" id="cost" className="form-control" {...register("cost")} />
         {errors.cost && <span className="text-danger">{errors.cost.message}</span>}
-      </div>
-
-      <div className="form-group mb-3">
-        <label htmlFor="startAt" className="form-label">
-          Fecha de inicio
-        </label>
-        <input type="datetime-local" id="startAt" className="form-control" {...register("startAt")} />
-        {errors.startAt && <span className="text-danger">{errors.startAt.message}</span>}
-      </div>
-
-     
-
-      <div className="form-group mb-3">
-        <label htmlFor="endAt" className="form-label">
-          Fecha de fin
-        </label>
-        <input type="datetime-local" id="endAt" className="form-control" {...register("endAt")} />
-        {errors.endAt && <span className="text-danger">{errors.endAt.message}</span>}
-      </div>
+      </div>   
 
       <div className="form-check mb-3">
         <input type="checkbox" id="isActive" className="form-check-input" {...register("isActive")} />

@@ -17,7 +17,6 @@ export interface User {
     clubId: number;
     name: string;
     typeId: number;
-    document: string;
     email?: string | null;
     password?: string | null;
     createdAt?: Date;
@@ -129,8 +128,9 @@ export interface ActivitiesNavigation {
     clubId: number;
     name: string;
     type: string;
-    startAt: Date;
-    endAt: Date;
+    date: Date;
+    hourStart: string;
+    hourEnd: string;
     user: UserNavigation;
     cost: number;
     isActive: boolean;
@@ -172,8 +172,9 @@ export interface Activity {
     clubId: number;
     name: string;
     type: string;
-    startAt: string;
-    endAt: string;
+    hourStart: string;
+    date: Date;
+    hourEnd: string;
     userId: number;
     cost: number;
     facilityId: number;
@@ -185,8 +186,9 @@ export interface ActivityResponse {
     clubId: number;
     name: string;
     type: string;
-    startAt: string;
-    endAt: string;
+    hourStart: string;
+    date: Date;
+    hourEnd: string;
     user: UserNavigation;
     cost: number;
     facility: FacilityNavigation;

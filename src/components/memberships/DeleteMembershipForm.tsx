@@ -35,26 +35,34 @@ const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership 
   if (!membership) return null;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <p className="mb-3">¿Estás seguro de que querés eliminar esta membresía?</p>
-      <div className="mb-3">
-        <label className="form-label">Tipo</label>
-        <input type="text" value={typeName} readOnly disabled className="form-control" />
+    <div className="mx-auto w-full max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        ¿Estás seguro de que querés eliminar esta membresía?
       </div>
-      <div className="mb-3">
-        <label className="form-label">Usuario</label>
-        <input type="text" value={userName} readOnly disabled className="form-control" />
+
+      <div>
+        <label className="activityFormLabel">Tipo</label>
+        <input type="text" value={typeName} readOnly disabled aria-label="Tipo" className="activityFormControl bg-slate-50" />
       </div>
-      {error && <p className="text-danger mb-2">{error}</p>}
-      <div className="d-flex gap-2">
-        <button type="submit" className="btn btn-danger" disabled={loading}>
+
+      <div>
+        <label className="activityFormLabel">Usuario</label>
+        <input type="text" value={userName} readOnly disabled aria-label="Usuario" className="activityFormControl bg-slate-50" />
+      </div>
+
+      {error && <p className="activityFormError">{error}</p>}
+
+      <div className="flex flex-wrap items-center gap-2 pt-2">
+        <button type="submit" className="activityDangerButton" disabled={loading}>
           {loading ? "Eliminando..." : "Eliminar"}
         </button>
-        <button type="button" className="btn btn-secondary" onClick={() => navigate("/membresias")}>
+        <button type="button" className="activitySecondaryButton" onClick={() => navigate("/membresias")}>
           Cancelar
         </button>
       </div>
     </form>
+    </div>
   );
 };
 
