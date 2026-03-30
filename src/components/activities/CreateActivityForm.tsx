@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
 import { useActivityStore } from "../../store/store";
-import type { Activity } from "../../entities/Entities";
+import type { ActivityResponse } from "../../entities/Entities";
 
 const schema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
@@ -53,7 +53,7 @@ export default function CreateActivityForm() {
         facilityId: data.facilityId,
         ...(data.isActive !== undefined && { isActive: data.isActive }),
       };
-      const response = await AxiosInstance.post<Activity>("/activities", payload);
+      const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
       if (created) setActivity(created);
       navigate("/actividades");

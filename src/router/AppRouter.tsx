@@ -7,7 +7,6 @@ import Users from '../pages/users/Users';
 import Activities from '../pages/activities/Activities';
 import CreateActivity from '../pages/activities/CreateActivity';
 import CreateActivitySecondStep from '../pages/activities/CreateActivitySecondStep';
-import DeleteActivityForm from '../components/activities/DeleteActivityForm';
 import Navbar from '../components/shared/Navbar';
 import Membership from '../pages/memberships/MembershipList';
 import CreateMembership from '../pages/memberships/CreateMembership';
@@ -19,7 +18,6 @@ import CreateFacilitySecondStep from '../pages/facilities/CreateFacilitySecondSt
 import EditFacilityFirstStep from '../pages/facilities/EditFacilityFirstStep';
 import EditFacilitySecondStep from '../pages/facilities/EditFacilitySecondStep';
 import DeleteFacility from '../pages/facilities/DeleteFacility';
-import CreateUserFirstStepForm from '../components/users/CreateUserFirstStepForm';
 import CreateUserWorkerSpecific from '../pages/users/CreateUserWorkerSpecific';
 import CreateUserAthleteSpecific from '../pages/users/CreateUserAthleteSpecific';
 import EditUserFirstStep from '../pages/users/EditUserFirstStep';
@@ -27,7 +25,6 @@ import EditUserSecondStep from '../pages/users/EditUserSecondStep';
 import DeleteUser from '../pages/users/DeleteUser';
 import DeleteActivity from '../pages/activities/DeleteActivity';
 import EditActivity from '../pages/activities/EditActivity';
-import EditActivityForm from '../components/activities/EditActivityForm';
 import CreateUserFirstStep from '../pages/users/CreateUserFirstStep';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {

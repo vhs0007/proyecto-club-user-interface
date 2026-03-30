@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import type { FacilityResponse } from '../../entities/Entities'
-import { useCreateFacilityStore } from '../../store/store'
+import { useClubIdStore, useCreateFacilityStore } from '../../store/store'
 
 const formSchema = z.object({
   type: z.string().min(1),
@@ -43,6 +43,7 @@ export default function EditFacilityFormFirstStep({ facility }: { facility: Faci
       type: data.type,
       capacity: data.capacity,
       isActive: facility?.isActive ?? true,
+      clubId: useClubIdStore.getState().clubId,
     }
 
     useCreateFacilityStore.getState().setFirstStep(firstStep)

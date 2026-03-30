@@ -17,6 +17,7 @@ export interface User {
     clubId: number;
     name: string;
     typeId: number;
+    document: string;
     email?: string | null;
     password?: string | null;
     createdAt?: Date;
@@ -43,6 +44,7 @@ export interface UserResponse {
     name: string;
     typeId: number;
     type?: UserType;
+    document: string;
     email?: string | null;
     password?: string | null;
     createdAt?: Date;
