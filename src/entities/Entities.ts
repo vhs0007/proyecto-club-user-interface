@@ -238,7 +238,23 @@ export interface MonthIncomeReportRequest {
 }
 
 export interface MonthIncomeReportResponse {
+    month: string;
     monthIncomeTotal: number;
     monthIncomeMemberships: number;
     monthIncomeActivities: number;
+}
+
+export interface MonthIncomeProgressionReportRequest {
+    clubId: number;
+    dateStart: string;
+    dateEnd: string;
+}
+
+export interface MonthIncomeProgressionReportResponse {
+    dateStart: string;
+    dateEnd: string;
+    totalIncome: number;
+    totalIncomeMemberships: number;
+    totalIncomeActivities: number;
+    monthlyIncomes: MonthIncomeReportResponse[];
 }

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import NewUsersReportCard from '../../components/reports/NewUsersReportCard';
 import MonthIncomeReportCard from '../../components/reports/MonthIncomeReportCard';
+import MonthIncomeProgressionCard from '../../components/reports/MonthIncomeProgressionCard';
 
-type ReportSection = 'salary' | 'newUsers' | 'monthIncome';
+type ReportSection = 'salary' | 'newUsers' | 'monthIncome' | 'monthlyIncomeProgression' ;
 
 export default function Reports() {
   const [section, setSection] = useState<ReportSection>('salary');
@@ -32,13 +33,19 @@ export default function Reports() {
                 className="btn btn-outline-primary"
                 onClick={() => setSection('newUsers')}
               >
-                Reporte de nuevos usuarios
+                Reporte de nuevos usuarios de un mes
               </button>
               <button
               type="button"
               className='btn btn-outline-primary'
               onClick={() => setSection('monthIncome')}>
-                Reporte de ingresos mensuales
+                Reporte de ingresos de un mes
+              </button>
+              <button
+              type="button"
+              className='btn btn-outline-primary'
+              onClick={() => setSection('monthlyIncomeProgression')}>
+                Reporte de ingresos entre 2 fechas
               </button>
             </div>
           </div>
@@ -55,6 +62,7 @@ export default function Reports() {
 
           {section === 'newUsers' ? <NewUsersReportCard /> : null}
           {section === 'monthIncome' ? <MonthIncomeReportCard /> : null}
+          {section === 'monthlyIncomeProgression' ? <MonthIncomeProgressionCard /> : null }
         </div>
       </div>
     </div>
