@@ -24,9 +24,9 @@ import EditUserFirstStep from '../pages/users/EditUserFirstStep';
 import EditUserSecondStep from '../pages/users/EditUserSecondStep';
 import DeleteUser from '../pages/users/DeleteUser';
 import DeleteActivity from '../pages/activities/DeleteActivity';
-import EditActivity from '../pages/activities/EditActivity';
 import CreateUserFirstStep from '../pages/users/CreateUserFirstStep';
-
+import EditActivityFirstStep from '../pages/activities/EditActivityFirstStep';
+import EditActivitySecondStep from '../pages/activities/EditActivitySecondStep';
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
   return token ? <>{children}</> : <Navigate to="/login" replace />;
@@ -191,7 +191,7 @@ export default function AppRouter() {
           path="/actividades/editar/:id"
           element={
             <ProtectedRoute>
-              <EditActivity />
+              <EditActivityFirstStep />
             </ProtectedRoute>
           }
         />
@@ -199,7 +199,7 @@ export default function AppRouter() {
           path="/actividades/editar/:id/paso-2"
           element={
             <ProtectedRoute>
-              <EditActivity/>
+              <EditActivitySecondStep />
             </ProtectedRoute>
           }
         />
