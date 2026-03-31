@@ -79,6 +79,7 @@ export interface MembershipResponse {
     user: UserResponse;
     membershipType: MembershipType;
     expiration: Date;
+    createdAt: Date;
 }
 
 /** Request: CreateFacilityDto / Update */
@@ -205,4 +206,39 @@ export interface Club{
     website: string;
     logo: string | null;
     isActive: boolean;
+}
+
+export interface SalaryReportRequest {
+    userId: number;
+}
+
+export interface SalaryReportResponse {
+    user: UserResponse;
+    salary: number;
+    hoursWorked: number;
+    hoursToWorkPerMonth: number;
+    extraHours: number;
+    totalSalary: number;
+}
+
+export interface NewUsersReportRequest {
+    clubId: number;
+    typeId: number;
+    date: string;
+}
+
+export interface NewUsersReportResponse {
+    users: UserResponse[];
+    totalUsers: number;
+}
+
+export interface MonthIncomeReportRequest {
+    clubId: number;
+    date: string;
+}
+
+export interface MonthIncomeReportResponse {
+    monthIncomeTotal: number;
+    monthIncomeMemberships: number;
+    monthIncomeActivities: number;
 }

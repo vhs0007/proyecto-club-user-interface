@@ -13,7 +13,6 @@ export default function Membership() {
     setMembershipsList(memberships);
     console.log(memberships);
 
-
   }, [memberships]);
   return (
     <MembershipLayout>

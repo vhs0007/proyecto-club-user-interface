@@ -26,6 +26,10 @@ import DeleteUser from '../pages/users/DeleteUser';
 import DeleteActivity from '../pages/activities/DeleteActivity';
 import EditActivity from '../pages/activities/EditActivity';
 import CreateUserFirstStep from '../pages/users/CreateUserFirstStep';
+import Reports from '../pages/reports/Reports';
+import ReportSalaryStep from '../pages/reports/ReportSalaryStep';
+import SalaryReportPage from '../pages/reports/SalaryReportPage';
+import NewUsersReportPage from '../pages/reports/NewUsersReportPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -232,6 +236,38 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <DeleteMembership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reportes"
+          element={
+            <ProtectedRoute>
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reportes/salario/paso-1"
+          element={
+            <ProtectedRoute>
+              <ReportSalaryStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reportes/salario/:id"
+          element={
+            <ProtectedRoute>
+              <SalaryReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reportes/nuevos-usuarios"
+          element={
+            <ProtectedRoute>
+              <NewUsersReportPage />
             </ProtectedRoute>
           }
         />
