@@ -1,25 +1,27 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ActivityList from '../../components/activities/ActivityList';
 import { useActivityStore } from '../../store/store';
 
 
 export default function Activities() {
   const [error, setError] = useState('');
-  
+  const navigate = useNavigate();
+
   const activities = useActivityStore.getState().activities;
-
-
-
 
   return (
     <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0">Gestión de Actividades</h2>
-        <Link to="/actividades/crear/paso-1" className="btn btn-club-primary">
-          <i className="bi bi-plus-lg me-2"></i>
+        <button
+          type="button"
+          className="pageHeaderPrimaryButton"
+          onClick={() => navigate('/actividades/crear/paso-1')}
+        >
+          <i className="bi bi-plus-lg mr-2"></i>
           Nueva Actividad
-        </Link>
+        </button>
       </div>
 
       {error && (
@@ -37,15 +39,6 @@ export default function Activities() {
         </div>
       </div>
 
-      
     </div>
   );
 }
-
-{/*{showFormModal && (
-  <ActivityFormModal
-    activity={editingActivity}
-    onClose={closeModal}
-    onSuccess={fetchActivities}
-  />
-)}*/}

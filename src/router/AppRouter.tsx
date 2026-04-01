@@ -32,6 +32,10 @@ import NewUsersReportPage from '../pages/reports/NewUsersReportPage';
 
 import EditActivityFirstStep from '../pages/activities/EditActivityFirstStep';
 import EditActivitySecondStep from '../pages/activities/EditActivitySecondStep';
+import MembershipTypes from '../pages/membershipType/MembershipTypes';
+import CreateMembershipType from '../pages/membershipType/CreateMembershipType';
+import EditMembershipType from '../pages/membershipType/EditMembershipType';
+import DeleteMembershipType from '../pages/membershipType/DeleteMembershipType';
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
   return token ? <>{children}</> : <Navigate to="/login" replace />;
@@ -237,6 +241,38 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <DeleteMembership />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tipos-membresia"
+          element={
+            <ProtectedRoute>
+              <MembershipTypes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tipos-membresia/crear"
+          element={
+            <ProtectedRoute>
+              <CreateMembershipType />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tipos-membresia/editar/:id"
+          element={
+            <ProtectedRoute>
+              <EditMembershipType />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tipos-membresia/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteMembershipType />
             </ProtectedRoute>
           }
         />

@@ -1,92 +1,90 @@
 import { useNavigate } from 'react-router-dom';
 import type { ActivityResponse } from '../../entities/Entities';
 
-const formatDate = (date: string): string => {
-  return new Date(date).toLocaleDateString('es-ES');
-};
-
-const formatTime = (date: string): string => {
-  return new Date(date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-};
-
 export default function ActivityList({ activities }: { activities: ActivityResponse[] }) {
   const navigate = useNavigate();
 
   console.log(activities);
   return (
-    <div className="table-responsive">
-      <table className="table table-hover align-middle">
-        <thead className="table-light">
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Fecha</th>
-            <th>Hora Inicio</th>
-            <th>Hora Fin</th>
-            <th>Usuario</th>
-            <th>Costo</th>
-            <th>Estado</th>
-            <th className="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {activities.map((activity : ActivityResponse) => (
-            <tr key={activity.id}>
-              <td>
-                <span className="fw-semibold">{activity.name}</span>
-              </td>
-              <td>
-                <span className="badge bg-info">{activity.type}</span>
-              </td>
-              <td>
-                <div>{activity.date.toString()}</div>
-                <small className="text-muted">{activity.hourStart}</small>
-              </td>
-              <td>
-                <div>{formatDate(activity.hourStart)}</div>
-                <small className="text-muted">{formatTime(activity.hourStart)}</small>
-              </td>
-              <td>
-                <div>{formatDate(activity.hourEnd)}</div>
-                <small className="text-muted">{formatTime(activity.hourEnd)}</small>
-              </td>
-              <td>{activity.user.name}</td>
-              <td>
-                {typeof activity.cost === 'number'
-                  ? `$${activity.cost.toLocaleString()}`
-                  : '-'}
-              </td>
-              <td>
-                <span className={`badge ${activity.facility.isActive ? 'bg-success' : 'bg-danger'}`}>
-                  {activity.facility.isActive ? 'Activa' : 'Inactiva'}
-                </span>
-              </td>
-              <td>
-                <div className="d-flex gap-1 justify-content-center">
-                  <button
-                    className="btn btn-sm btn-outline-warning"
-                    onClick={() => navigate(`/actividades/editar/${activity.id}`)}
-                    title="Editar"
-                  >
-                    <i className="bi bi-pencil"></i>
-                  </button>
-                  
-                  <button
-                      className="btn btn-sm btn-outline-danger"
+    <>
+      <div className="overflow-x-auto rounded-md border border-slate-200/80 bg-white -mx-0.5">
+        <table className="min-w-full align-middle">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="listTableTh">Nombre</th>
+              <th className="listTableTh">Tipo</th>
+              <th className="listTableTh">Fecha</th>
+              <th className="listTableTh">Hora Inicio</th>
+              <th className="listTableTh">Hora Fin</th>
+              <th className="listTableTh">Usuario</th>
+              <th className="listTableTh">Costo</th>
+              <th className="listTableTh">Estado</th>
+              <th className="listTableThCenter">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {activities.map((activity : ActivityResponse) => (
+              <tr key={activity.id} className="hover:bg-slate-50/70">
+                <td className="listTableTd">
+                  <span className="font-semibold text-slate-800">{activity.name}</span>
+                </td>
+                <td className="listTableTd">
+                  <span className="listBadgeTypeInfo">{activity.type}</span>
+                </td>
+                <td className="listTableTd">
+                  <div>{new Date(activity.date).toLocaleDateString('es-ES')}</div>
+                  <small className="text-slate-500">{activity.hourStart}</small>
+                </td>
+                <td className="listTableTd">
+                  <div>{activity.hourStart}</div>
+                  <small className="text-slate-500">{activity.hourStart}</small>
+                </td>
+                <td className="listTableTd">
+                  <div>{activity.hourEnd}</div>
+                  <small className="text-slate-500">{activity.hourEnd}</small>
+                </td>
+                <td className="listTableTd">{activity.user.name}</td>
+                <td className="listTableTd">
+                  {typeof activity.cost === 'number'
+                    ? `$${activity.cost.toLocaleString()}`
+                    : '-'}
+                </td>
+                <td className="listTableTd">
+                  <span className={activity.facility.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
+                    {activity.facility.isActive ? 'Activa' : 'Inactiva'}
+                  </span>
+                </td>
+                <td className="listTableTd text-center">
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      type="button"
+                      className="listActionBtnEdit"
+                      onClick={() => navigate(`/actividades/editar/${activity.id}`)}
+                      title="Editar"
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="listActionBtnDelete"
                       onClick={() => navigate(`/actividades/eliminar/${activity.id}`)}
                       title="Eliminar"
                     >
-                    <i className="bi bi-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {activities.length === 0 && (
-        <p className="text-center text-muted py-4 mb-0">No hay actividades registradas</p>
+        <div className="mt-5 rounded-md border border-dashed border-slate-200 bg-slate-50/90 py-12 text-center text-sm text-slate-500">
+          No hay actividades registradas
+        </div>
       )}
-    </div>
+    </>
   );
 }

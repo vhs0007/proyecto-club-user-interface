@@ -1,15 +1,15 @@
 @import "tailwindcss";
-/* VARIABLES */
+
 :root {
-  --club-primary: #eab308;
-  --club-primary-light: #fcd34d;
-  --club-primary-hover: #ca9a06;
-  --club-secondary: #1e293b;
-  --club-dark: #1e293b;
-  --club-black: #000;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --club-primary: #06b6d4;
+  --club-primary-light: #a5f3fc;
+  --club-primary-hover: #0e7490;
+  --club-secondary: #000000;
+  --club-dark: #000000;
+  --club-black: #000000;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.22);
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -98,7 +98,7 @@ body {
 }
 
 .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23eab308' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2306b6d4' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* Prevent Tailwind's .collapse utility from hiding Bootstrap navbar content */

@@ -24,6 +24,9 @@ const formSchema = z
 
 export type CreateActivityFirstStepFormData = z.infer<typeof formSchema>;
 
+const errBorder = (has: boolean) =>
+  has ? "border-red-300 focus:border-red-500 focus:ring-red-200" : "";
+
 export default function CreateActivityFirstStepForm() {
   const navigate = useNavigate();
   const firstStep = useCreateActivityStore((s) => s.firstStep);
@@ -53,62 +56,66 @@ export default function CreateActivityFirstStepForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="mb-3">
-        <label htmlFor="name" className="form-label">Nombre</label>
-        <input
-          type="text"
-          id="name"
-          className={`form-control ${errors.name ? "is-invalid" : ""}`}
-          placeholder="Ej: Clase de natación"
-          {...register("name")}
-        />
-        {errors.name && <div className="invalid-feedback d-block">{errors.name.message}</div>}
-      </div>
-      <div className="mb-3">
-        <label htmlFor="type" className="form-label">Tipo</label>
-        <input
-          type="text"
-          id="type"
-          className={`form-control ${errors.type ? "is-invalid" : ""}`}
-          placeholder="Ej: Deportiva, recreativa"
-          {...register("type")}
-        />
-        {errors.type && <div className="invalid-feedback d-block">{errors.type.message}</div>}
-      </div>
-      <div className="mb-3">
-        <label htmlFor="date" className="form-label">Fecha</label>
-        <input
-          type="date"
-          id="date"
-          className={`form-control ${errors.date ? "is-invalid" : ""}`}
-          {...register("date")}
-        />
-        {errors.date && <div className="invalid-feedback d-block">{errors.date.message}</div>}
-      </div>
-      <div className="mb-3">
-        <label htmlFor="hourStart" className="form-label">Hora de inicio</label>
-        <input
-          type="time"
-          id="hourStart"
-          className={`form-control ${errors.hourStart ? "is-invalid" : ""}`}
-          {...register("hourStart")}
-        />
-        {errors.hourStart && <div className="invalid-feedback d-block">{errors.hourStart.message}</div>}
-      </div>
-      <div className="mb-3">
-        <label htmlFor="hourEnd" className="form-label">Hora de fin</label>
-        <input
-          type="time"
-          id="hourEnd"
-          className={`form-control ${errors.hourEnd ? "is-invalid" : ""}`}
-          {...register("hourEnd")}
-        />
-        {errors.hourEnd && <div className="invalid-feedback d-block">{errors.hourEnd.message}</div>}
-      </div>
-      <button type="submit" className="btn btn-primary">
-        Siguiente
-      </button>
-    </form>
+    <div className="mx-auto w-full max-w-2xl">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="activityFormLabel">Nombre</label>
+          <input
+            type="text"
+            id="name"
+            className={`activityFormControl ${errBorder(!!errors.name)}`}
+            placeholder="Ej: Clase de natación"
+            {...register("name")}
+          />
+          {errors.name && <div className="activityFormError">{errors.name.message}</div>}
+        </div>
+        <div>
+          <label htmlFor="type" className="activityFormLabel">Tipo</label>
+          <input
+            type="text"
+            id="type"
+            className={`activityFormControl ${errBorder(!!errors.type)}`}
+            placeholder="Ej: Deportiva, recreativa"
+            {...register("type")}
+          />
+          {errors.type && <div className="activityFormError">{errors.type.message}</div>}
+        </div>
+        <div>
+          <label htmlFor="date" className="activityFormLabel">Fecha</label>
+          <input
+            type="date"
+            id="date"
+            className={`activityFormControl ${errBorder(!!errors.date)}`}
+            {...register("date")}
+          />
+          {errors.date && <div className="activityFormError">{errors.date.message}</div>}
+        </div>
+        <div>
+          <label htmlFor="hourStart" className="activityFormLabel">Hora de inicio</label>
+          <input
+            type="time"
+            id="hourStart"
+            className={`activityFormControl ${errBorder(!!errors.hourStart)}`}
+            {...register("hourStart")}
+          />
+          {errors.hourStart && <div className="activityFormError">{errors.hourStart.message}</div>}
+        </div>
+        <div>
+          <label htmlFor="hourEnd" className="activityFormLabel">Hora de fin</label>
+          <input
+            type="time"
+            id="hourEnd"
+            className={`activityFormControl ${errBorder(!!errors.hourEnd)}`}
+            {...register("hourEnd")}
+          />
+          {errors.hourEnd && <div className="activityFormError">{errors.hourEnd.message}</div>}
+        </div>
+        <div className="flex items-center gap-2 pt-2">
+          <button type="submit" className="activityPrimaryButton">
+            Siguiente
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

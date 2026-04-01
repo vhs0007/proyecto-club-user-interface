@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,14 +15,22 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+const errBorder = (has: boolean) =>
+  has ? "border-red-300 focus:border-red-500 focus:ring-red-200" : "";
+
 export default function EditActivityFormSecondStep({ activity }: { activity: ActivityResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const firstStep = useEditActivityStore((s) => s.firstStep);
   const editingActivityId = useEditActivityStore((s) => s.editingActivityId);
+  const leavingAfterSuccessfulSave = useRef(false);
 
   useEffect(() => {
     if (!firstStep.name.trim()) {
+      if (leavingAfterSuccessfulSave.current) {
+        leavingAfterSuccessfulSave.current = false;
+        return;
+      }
       if (id) navigate(`/actividades/editar/${id}`, { replace: true });
       return;
     }
@@ -64,6 +72,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
       const response = await AxiosInstance.patch<ActivityResponse>(`/activities/${id}`, payload);
       if (response?.data) {
         useActivityStore.getState().updateActivity(response.data);
+        leavingAfterSuccessfulSave.current = true;
         useEditActivityStore.getState().resetEditActivity();
         alert("Actividad actualizada correctamente");
         navigate("/actividades");
@@ -85,7 +94,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
       >
         <div>
-          <Link to={id ? `/actividades/editar/${id}` : "/actividades"} className="text-sm text-slate-600 underline">
+          <Link to={id ? `/actividades/editar/${id}` : "/actividades"} className="pageBackButton">
             Volver al paso 1
           </Link>
         </div>
@@ -95,7 +104,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         </p>
 
         <div className="space-y-1.5">
-          <label htmlFor="userId" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="userId" className="activityFormLabel">
             ID de usuario
           </label>
           <input
@@ -103,14 +112,14 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
             type="number"
             min={1}
             placeholder="ID del usuario"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.userId)}`}
             {...register("userId", { valueAsNumber: true })}
           />
-          {errors.userId && <span className="text-sm text-red-600">{errors.userId.message}</span>}
+          {errors.userId && <span className="activityFormError">{errors.userId.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="cost" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="cost" className="activityFormLabel">
             Costo
           </label>
           <input
@@ -119,14 +128,14 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
             step="0.01"
             min={0}
             placeholder="0"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.cost)}`}
             {...register("cost", { valueAsNumber: true })}
           />
-          {errors.cost && <span className="text-sm text-red-600">{errors.cost.message}</span>}
+          {errors.cost && <span className="activityFormError">{errors.cost.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="facilityId" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="facilityId" className="activityFormLabel">
             ID de instalación
           </label>
           <input
@@ -134,16 +143,13 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
             type="number"
             min={1}
             placeholder="ID de la instalación"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.facilityId)}`}
             {...register("facilityId", { valueAsNumber: true })}
           />
-          {errors.facilityId && <span className="text-sm text-red-600">{errors.facilityId.message}</span>}
+          {errors.facilityId && <span className="activityFormError">{errors.facilityId.message}</span>}
         </div>
 
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
-        >
+        <button type="submit" className="activityPrimaryButton">
           Guardar cambios
         </button>
       </form>

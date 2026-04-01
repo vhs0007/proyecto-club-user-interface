@@ -94,17 +94,17 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
               {error && (
-                <div className="alert alert-danger py-2 mb-3">
+                <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
                   {error}
                 </div>
               )}
               <div className="row g-3">
                 <div className="col-12">
-                  <label htmlFor="name" className="form-label">Nombre *</label>
+                  <label htmlFor="name" className="activityFormLabel">Nombre *</label>
                   <input
                     type="text"
                     id="name"
-                    className="form-control"
+                    className="activityFormControl"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ej: Clase de natación"
@@ -112,11 +112,11 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
                   />
                 </div>
                 <div className="col-12">
-                  <label htmlFor="type" className="form-label">Tipo *</label>
+                  <label htmlFor="type" className="activityFormLabel">Tipo *</label>
                   <input
                     type="text"
                     id="type"
-                    className="form-control"
+                    className="activityFormControl"
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     placeholder="Ej: Deportiva, Recreativa"
@@ -124,44 +124,44 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="date" className="form-label">Fecha *</label>
+                  <label htmlFor="date" className="activityFormLabel">Fecha *</label>
                   <input
                     type="date"
                     id="date"
-                    className="form-control"
+                    className="activityFormControl"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="hourStart" className="form-label">Hora Inicio *</label>
+                  <label htmlFor="hourStart" className="activityFormLabel">Hora Inicio *</label>
                   <input
                     type="time"
                     id="hourStart"
-                    className="form-control"
+                    className="activityFormControl"
                     value={hourStart}
                     onChange={(e) => setHourStart(e.target.value)}
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="hourEnd" className="form-label">Hora Fin *</label>
+                  <label htmlFor="hourEnd" className="activityFormLabel">Hora Fin *</label>
                   <input
                     type="time"
                     id="hourEnd"
-                    className="form-control"
+                    className="activityFormControl"
                     value={hourEnd}
                     onChange={(e) => setHourEnd(e.target.value)}
                     required
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="userId" className="form-label">Usuario (ID) *</label>
+                  <label htmlFor="userId" className="activityFormLabel">Usuario (ID) *</label>
                   <input
                     type="number"
                     id="userId"
-                    className="form-control"
+                    className="activityFormControl"
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     placeholder="ID del usuario"
@@ -169,11 +169,11 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="cost" className="form-label">Costo *</label>
+                  <label htmlFor="cost" className="activityFormLabel">Costo *</label>
                   <input
                     type="number"
                     id="cost"
-                    className="form-control"
+                    className="activityFormControl"
                     value={cost}
                     onChange={(e) => setCost(e.target.value)}
                     placeholder="0"
@@ -183,10 +183,10 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={onClose}>
+              <button type="button" className="activitySecondaryButton" onClick={onClose}>
                 Cancelar
               </button>
-              <button type="submit" className="btn btn-club-primary" disabled={loading}>
+              <button type="submit" className="activityPrimaryButton" disabled={loading}>
                 {loading ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>

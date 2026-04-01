@@ -33,6 +33,9 @@ function toDateInputValue(d: Date | string) {
   return date.toISOString().slice(0, 10);
 }
 
+const errBorder = (has: boolean) =>
+  has ? "border-red-300 focus:border-red-500 focus:ring-red-200" : "";
+
 export default function EditActivityFormFirstStep({ activity }: { activity: ActivityResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -113,13 +116,13 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
         <input type="hidden" value={activity.id} readOnly disabled />
 
         <div className="space-y-1.5">
-          <label htmlFor="activityId" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="activityId" className="activityFormLabel">
             ID
           </label>
           <input
             id="activityId"
             type="number"
-            className="w-full rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-700"
+            className="activityFormControl bg-slate-50"
             value={activity.id}
             disabled
             readOnly
@@ -127,68 +130,68 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="name" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="name" className="activityFormLabel">
             Nombre
           </label>
           <input
             id="name"
             type="text"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.name)}`}
             {...register("name")}
           />
-          {errors.name && <span className="text-sm text-red-600">{errors.name.message}</span>}
+          {errors.name && <span className="activityFormError">{errors.name.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="type" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="type" className="activityFormLabel">
             Tipo
           </label>
           <input
             id="type"
             type="text"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.type)}`}
             {...register("type")}
           />
-          {errors.type && <span className="text-sm text-red-600">{errors.type.message}</span>}
+          {errors.type && <span className="activityFormError">{errors.type.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="date" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="date" className="activityFormLabel">
             Fecha
           </label>
           <input
             id="date"
             type="date"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.date)}`}
             {...register("date")}
           />
-          {errors.date && <span className="text-sm text-red-600">{errors.date.message}</span>}
+          {errors.date && <span className="activityFormError">{errors.date.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="hourStart" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="hourStart" className="activityFormLabel">
             Hora de inicio
           </label>
           <input
             id="hourStart"
             type="time"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.hourStart)}`}
             {...register("hourStart")}
           />
-          {errors.hourStart && <span className="text-sm text-red-600">{errors.hourStart.message}</span>}
+          {errors.hourStart && <span className="activityFormError">{errors.hourStart.message}</span>}
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="hourEnd" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="hourEnd" className="activityFormLabel">
             Hora de fin
           </label>
           <input
             id="hourEnd"
             type="time"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className={`activityFormControl ${errBorder(!!errors.hourEnd)}`}
             {...register("hourEnd")}
           />
-          {errors.hourEnd && <span className="text-sm text-red-600">{errors.hourEnd.message}</span>}
+          {errors.hourEnd && <span className="activityFormError">{errors.hourEnd.message}</span>}
         </div>
 
         <div className="flex items-center gap-2">
@@ -212,10 +215,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
           />
         </div>
 
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
-        >
+        <button type="submit" className="activityPrimaryButton">
           Siguiente
         </button>
       </form>

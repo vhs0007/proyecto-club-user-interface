@@ -20,50 +20,70 @@ export default function DeleteActivityForm({ activity }: { activity: Activity}) 
   };
 
   return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      onSubmit({ id: activity.id! ?? 0 });
-    }}>
-      <div className="mb-3">
-        <label htmlFor="facilityId" className="form-label">ID de instalación</label>
-        <input
-          type="number"
-          id="facilityId"
-          min={1}
-          placeholder="ID de la instalación"
-          disabled
-          value={"instalación: "+ activity.facilityId}
-        />
-      </div>
+    <div className="mx-auto w-full max-w-2xl">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit({ id: activity.id! ?? 0 });
+        }}
+        className="space-y-4"
+      >
+        <div className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          ¿Estás seguro de que querés eliminar esta actividad?
+        </div>
 
-      <div className="mb-3">
-        <label htmlFor="userId" className="form-label">ID de usuario</label>
-        <input
-          type="number"
-          id="userId"
-          min={1}
-          placeholder="ID del usuario"
-          disabled
-          value={"usuario: "+ activity.userId}
-        />
-      </div>
+        <div>
+          <label htmlFor="facilityId" className="activityFormLabel">ID de instalación</label>
+          <input
+            type="text"
+            id="facilityId"
+            readOnly
+            disabled
+            aria-label="ID de instalación"
+            className="activityFormControl bg-slate-50"
+            value={"instalación: "+ activity.facilityId}
+          />
+        </div>
 
-      <div className="mb-3">
-        <label htmlFor="cost" className="form-label">Costo</label>
-        <input
-          type="number"
-          id="cost"
-          step="0.01"
-          min={0}
-          placeholder="0"
-          disabled
-          value={"costo actividad: $"+ activity.cost}
-        />
-      </div>
+        <div>
+          <label htmlFor="userId" className="activityFormLabel">ID de usuario</label>
+          <input
+            type="text"
+            id="userId"
+            readOnly
+            disabled
+            aria-label="ID de usuario"
+            className="activityFormControl bg-slate-50"
+            value={"usuario: "+ activity.userId}
+          />
+        </div>
 
-      <button type="submit" className="btn btn-danger">
-        Eliminar actividad
-      </button>
-    </form>
+        <div>
+          <label htmlFor="cost" className="activityFormLabel">Costo</label>
+          <input
+            type="text"
+            id="cost"
+            readOnly
+            disabled
+            aria-label="Costo"
+            className="activityFormControl bg-slate-50"
+            value={"costo actividad: $"+ activity.cost}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          <button type="submit" className="activityDangerButton">
+            Eliminar actividad
+          </button>
+          <button
+            type="button"
+            className="activitySecondaryButton"
+            onClick={() => navigate("/actividades")}
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

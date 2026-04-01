@@ -11,6 +11,16 @@ interface MonthIncomeProgressionTableProps {
   dateForApiEnd: string;
 }
 
+function format(value: number | undefined): string {
+  if (value == null || Number.isNaN(value)) {
+    return '—';
+  }
+  return value.toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export default function MonthIncomeProgressionTable({ clubId, dateForApiStart, dateForApiEnd }: MonthIncomeProgressionTableProps) {
   const [data, setData] = useState<MonthIncomeProgressionReportResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -70,9 +80,9 @@ export default function MonthIncomeProgressionTable({ clubId, dateForApiStart, d
         </thead>
         <tbody>
           <tr>
-            <td>{data?.totalIncome}</td>
-            <td>{data?.totalIncomeMemberships}</td>
-            <td>{data?.totalIncomeActivities}</td>
+            <td>{format(data?.totalIncome)}</td>
+            <td>{format(data?.totalIncomeMemberships)}</td>
+            <td>{format(data?.totalIncomeActivities)}</td>
           </tr>
         </tbody>
       </table>

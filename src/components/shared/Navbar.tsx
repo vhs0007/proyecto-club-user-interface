@@ -21,7 +21,7 @@ export default function Navbar() {
           onClick={() => navigate('/home')}
           className="nav-brand"
         >
-          Peñarol
+          Club deportivo
         </span>
 
         <button
@@ -54,6 +54,11 @@ export default function Navbar() {
             <li className="nav-item">
               <Link to="/membresias" className={getLinkClass('/membresias')}>
                 Membresías
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/tipos-membresia" className={getLinkClass('/tipos-membresia')}>
+                Tipos de membresía
               </Link>
             </li>
             <li className="nav-item">

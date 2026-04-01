@@ -12,14 +12,14 @@ export interface ClubBrandingColors {
 
 export const DEFAULT_CLUB_BRANDING_COLORS: ClubBrandingColors = {
   primary: '#06b6d4',
-  primaryLight: '#67e8f9',
-  primaryHover: '#0891b2',
+  primaryLight: '#a5f3fc',
+  primaryHover: '#0e7490',
   secondary: '#000000',
   dark: '#000000',
   black: '#000000',
-  shadowSm: '0 2px 4px rgba(0, 0, 0, 0.15)',
-  shadowMd: '0 4px 6px rgba(0, 0, 0, 0.2)',
-  shadowLg: '0 10px 25px rgba(0, 0, 0, 0.25)',
+  shadowSm: '0 2px 4px rgba(0, 0, 0, 0.12)',
+  shadowMd: '0 4px 6px rgba(0, 0, 0, 0.18)',
+  shadowLg: '0 10px 25px rgba(0, 0, 0, 0.22)',
 }
 
 const CSS_VAR_MAP: Record<keyof ClubBrandingColors, string> = {
