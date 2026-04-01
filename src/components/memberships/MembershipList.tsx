@@ -16,6 +16,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
                 <th className="listTableTh">Tipo</th>
                 <th className="listTableTh">Usuario</th>
                 <th className="listTableTh">Expiración</th>
+                <th className="listTableTh">Fecha de creación</th>
                 <th className="listTableThCenter">Acciones</th>
             </tr>
         </thead>
@@ -28,6 +29,7 @@ export default function MembershipList({ membershipsList }: { membershipsList: M
                     </td>
                     <td className="listTableTd">{membership.user?.name ?? membership.user?.id ?? '-'}</td>
                     <td className="listTableTd">{membership.expiration ? new Date(membership.expiration).toLocaleDateString() : '-'}</td>
+                    <td className="listTableTd">{membership.createdAt ? new Date(membership.createdAt).toLocaleDateString() : '-'}</td>
                     <td className="listTableTd text-center">
                       <div className="flex justify-center gap-2">
                         <button className="listActionBtnEdit" onClick={() => navigate(`/membresias/editar/${membership.id}`)}>Editar</button>

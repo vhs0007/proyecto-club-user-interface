@@ -57,6 +57,11 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link to="/reportes" className={getLinkClass('/reportes')}>
+                Reportes
+              </Link>
+            </li>
+            <li className="nav-item">
               <button
                 type="button"
                 className="btn-danger"

@@ -4,6 +4,7 @@ import type { MembershipResponse, MembershipType, UserType, UserResponse } from 
 import type { FacilityResponse } from '../entities/Entities';
 import type { ActivityResponse } from '../entities/Entities';
 
+
 interface AuthState {
   token: string | null;
   setToken: (token: string) => void;
