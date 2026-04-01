@@ -16,7 +16,6 @@ const formSchema = z
     date: z.string().min(1, "Fecha requerida"),
     hourStart: z.string().min(1, "Hora de inicio requerida"),
     hourEnd: z.string().min(1, "Hora de fin requerida"),
-    isActive: z.boolean(),
   })
   .refine((data) => toMinutes(data.hourEnd) > toMinutes(data.hourStart), {
     message: "La fecha de fin debe ser posterior al inicio",
@@ -37,7 +36,6 @@ export default function CreateActivityFirstStepForm() {
       date: '',
       hourStart: firstStep.hourStart,
       hourEnd: firstStep.hourEnd,
-      isActive: firstStep.isActive,
     },
   });
 
@@ -48,7 +46,7 @@ export default function CreateActivityFirstStepForm() {
       date: new Date(data.date),
       hourStart: data.hourStart,
       hourEnd: data.hourEnd,
-      isActive: data.isActive,
+      isActive: true,
       clubId: useClubIdStore.getState().clubId,
     });
     navigate("/actividades/crear/paso-2");
@@ -107,12 +105,6 @@ export default function CreateActivityFirstStepForm() {
           {...register("hourEnd")}
         />
         {errors.hourEnd && <div className="invalid-feedback d-block">{errors.hourEnd.message}</div>}
-      </div>
-      <div className="mb-3 form-check">
-        <input type="checkbox" className="form-check-input" id="isActive" {...register("isActive")} />
-        <label className="form-check-label" htmlFor="isActive">
-          Activa
-        </label>
       </div>
       <button type="submit" className="btn btn-primary">
         Siguiente

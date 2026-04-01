@@ -159,18 +159,30 @@ interface EditUserFirstStep {
   isActive: boolean;
 }
 
-interface EditActivity {
+interface EditActivityFirstStep {
   name: string;
   type: string;
   hourStart: string;
   hourEnd: string;
   date: Date;
   isActive: boolean;
+  clubId: number;
+}
+
+interface EditActivitySecondStep {
+  facilityId: number;
+  userId: number;
+  cost: number;
 }
 
 interface EditActivityState {
-  activity: EditActivity;
-  setActivity: (activity: EditActivity) => void;
+  editingActivityId: number | null;
+  firstStep: EditActivityFirstStep;
+  secondStep: EditActivitySecondStep;
+  setEditingActivityId: (id: number | null) => void;
+  setFirstStep: (firstStep: EditActivityFirstStep) => void;
+  setSecondStep: (secondStep: EditActivitySecondStep) => void;
+  resetEditActivity: () => void;
 }
 
 interface EditUserState {
@@ -191,11 +203,37 @@ export const useEditUserStore = create<EditUserState>()(
   )
 );
 
+const initialEditActivityFirstStep: EditActivityFirstStep = {
+  name: '',
+  type: '',
+  hourStart: '',
+  hourEnd: '',
+  date: new Date(),
+  isActive: true,
+  clubId: 0,
+};
+
+const initialEditActivitySecondStep: EditActivitySecondStep = {
+  facilityId: 0,
+  userId: 0,
+  cost: 0,
+};
+
 export const useEditActivityStore = create<EditActivityState>()(
   persist(
     (set) => ({
-      activity: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), isActive: true },
-      setActivity: (activity: EditActivity) => set({ activity }),
+      editingActivityId: null,
+      firstStep: initialEditActivityFirstStep,
+      secondStep: initialEditActivitySecondStep,
+      setEditingActivityId: (id: number | null) => set({ editingActivityId: id }),
+      setFirstStep: (firstStep: EditActivityFirstStep) => set({ firstStep }),
+      setSecondStep: (secondStep: EditActivitySecondStep) => set({ secondStep }),
+      resetEditActivity: () =>
+        set({
+          editingActivityId: null,
+          firstStep: initialEditActivityFirstStep,
+          secondStep: initialEditActivitySecondStep,
+        }),
     }),
     {
       name: 'edit-activity-storage',
