@@ -3,12 +3,18 @@ import { Link } from "react-router-dom";
 
 export default function CreateUserAthleteSpecific() {
     return (
-        <div className="container py-4">
-            <Link to="/usuarios" className="pageBackButton mb-3">
-                ← Atrás
-            </Link>
-            <h1 className="mb-4">Datos del atleta</h1>
-            <CreateUserAthleteForm />
+        <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
+            <div className="mx-auto w-full max-w-2xl">
+                <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h1 className="mb-0 text-2xl font-bold tracking-tight text-slate-800">
+                        Datos del atleta
+                    </h1>
+                    <Link to="/usuarios" className="pageBackButton shrink-0 self-end sm:self-auto">
+                        ← Atrás
+                    </Link>
+                </div>
+                <CreateUserAthleteForm />
+            </div>
         </div>
     );
 }

@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore, useUserTypeStore } from "../../store/store";
-import type { UserType } from "../../entities/Entities";
+import { useEditUserStore } from "../../store/store";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -19,8 +18,6 @@ type FormData = z.infer<typeof formSchema>;
 export default function EditUserFormFirstStep({ user }: { user: UserResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const userTypes: UserType[] = useUserTypeStore((state) => state.userTypes);
-
   const {
     register,
     control,
@@ -89,24 +86,7 @@ export default function EditUserFormFirstStep({ user }: { user: UserResponse }) 
           {errors.name && <span className="text-sm text-red-600">{errors.name.message}</span>}
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="typeId" className="block text-sm font-medium text-slate-700">
-            Tipo de usuario
-          </label>
-          <select
-            id="typeId"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-            {...register("typeId", { valueAsNumber: true })}
-          >
-            <option value={0}>Seleccione un tipo</option>
-            {userTypes.map((ut) => (
-              <option key={ut.id} value={ut.id}>
-                {ut.name}
-              </option>
-            ))}
-          </select>
-          {errors.typeId && <span className="text-sm text-red-600">{errors.typeId.message}</span>}
-        </div>
+        <input type="hidden" {...register("typeId", { valueAsNumber: true })} />
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-sm font-medium text-slate-700">

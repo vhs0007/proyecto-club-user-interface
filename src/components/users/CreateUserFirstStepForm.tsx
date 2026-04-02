@@ -1,12 +1,10 @@
-import type { ChangeEvent } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useClubIdStore, useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { MembershipResponse, MembershipType, UserResponse } from "../../entities/Entities";
-import { useUserTypeStore } from "../../store/store";
-import type { UserType } from "../../entities/Entities";
 import { useNavigate } from "react-router-dom";
 import { useMembershipTypeStore } from "../../store/store";
 
@@ -17,20 +15,23 @@ const formSchema = z.object({
   document: z.string().min(1, 'El documento es requerido'),
 });
 
-export default function CreateUserFirstStepForm() {
+export default function CreateUserFirstStepForm(params: { typeId: number }) {
     const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            typeId: params.typeId,
+            name: '',
+            email: '',
+            document: '',
+        },
     });
     const navigate = useNavigate();
-    const userTypes: UserType[] = useUserTypeStore((state) => state.userTypes);
     const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes);
-    const setVisibility = (_visible: boolean) => {
-        void _visible;
-    };
-    const handleUserTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const id = Number(e.target.value);
-        if (id === 2){
+    useEffect(() => {
+        if (params.typeId === 2) {
             const contenedor = document.getElementById('Contenedor');
+            if (!contenedor) return;
+            contenedor.innerHTML = '';
             const div = document.createElement('div');
             div.className = 'space-y-1.5';
             const label = document.createElement('label');
@@ -44,16 +45,14 @@ export default function CreateUserFirstStepForm() {
             });
             div.appendChild(label);
             div.appendChild(select);
-            contenedor?.appendChild(div);
-
-        }else{
+            contenedor.appendChild(div);
+        } else {
             const contenedor = document.getElementById('Contenedor');
             if (contenedor) {
                 contenedor.innerHTML = '';
             }
         }
-    };
-    const { onChange: typeIdOnChangeReg, ...typeIdRegisterRest } = register("typeId", { valueAsNumber: true });
+    }, [params.typeId, membershipTypes]);
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         debugger;
         console.log(data);
@@ -72,7 +71,7 @@ export default function CreateUserFirstStepForm() {
             if(user.typeId === 0){
                 throw new Error("Seleccioná un tipo de usuario");
             }
-            if(user.membership === 0){
+            if(user.typeId === 2 && user.membership === 0){
                 throw new Error("Seleccioná un tipo de membresía");
             }
             if(user.typeId === 1){ //suponemos es worker el primer tipo
@@ -152,6 +151,7 @@ export default function CreateUserFirstStepForm() {
     return (
         <div className="mx-auto w-full max-w-2xl">
         <form id="createUserFirstStepForm" onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <input type="hidden" {...register("typeId", { valueAsNumber: true })} />
             <div className="space-y-1.5">
                 <label htmlFor="name" className="block text-sm font-medium text-slate-700">Nombre</label>
                 <input
@@ -171,24 +171,6 @@ export default function CreateUserFirstStepForm() {
                     {...register("document")}
                 />
                 {errors.document && <span className="text-sm text-red-600">{errors.document.message}</span>}
-            </div>
-            <div className="space-y-1.5">
-                <label htmlFor="typeId" className="block text-sm font-medium text-slate-700">Tipo de usuario</label>
-                <select
-                    id="typeId"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-                    {...typeIdRegisterRest}
-                    onChange={(e) => {
-                        typeIdOnChangeReg(e);
-                        handleUserTypeChange(e);
-                    }}
-                >
-                    <option value={0}>Seleccione un tipo de usuario</option>
-                    {userTypes.map((userType) => (
-                        <option key={userType.id} value={userType.id}>{userType.name}</option>
-                    ))}
-                </select>
-                {errors.typeId && <span className="text-sm text-red-600">{errors.typeId.message}</span>}
             </div>
             <div className="space-y-1.5">
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email</label>

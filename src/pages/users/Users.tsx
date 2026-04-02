@@ -1,10 +1,11 @@
-import UserList from '../../components/users/UserList';
+import { useState } from 'react';
+import UserListWorkers from '../../components/users/UserListWorkers';
+import UserListMembers from '../../components/users/UserListMembers';
 import { useNavigate } from 'react-router-dom';
-
-
 
 export default function Users() {
   const navigate = useNavigate();
+  const [WorkerFlag, setWorkerFlag] = useState(true);
 
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
@@ -15,7 +16,9 @@ export default function Users() {
         <button
           type="button"
           className="pageHeaderPrimaryButton"
-          onClick={() => navigate('/usuarios/crear/paso-general')}
+          onClick={() =>
+            navigate(`/usuarios/crear/paso-general?typeId=${WorkerFlag ? 1 : 2}`)
+          }
         >
           <i className="bi bi-plus-lg mr-2"></i>
           Nuevo Usuario
@@ -24,11 +27,33 @@ export default function Users() {
 
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         <div className="p-4 md:p-6">
-          <UserList
-          />
+          <div className="mb-4 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5">
+            <button
+              type="button"
+              onClick={() => setWorkerFlag(true)}
+              className={
+                WorkerFlag
+                  ? 'rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-800 shadow-sm ring-1 ring-slate-200/80'
+                  : 'rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-800'
+              }
+            >
+              Trabajadores
+            </button>
+            <button
+              type="button"
+              onClick={() => setWorkerFlag(false)}
+              className={
+                !WorkerFlag
+                  ? 'rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-800 shadow-sm ring-1 ring-slate-200/80'
+                  : 'rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-800'
+              }
+            >
+              Socios
+            </button>
+          </div>
+          {WorkerFlag ? <UserListWorkers /> : <UserListMembers />}
         </div>
       </div>
-
     </div>
   );
 }
