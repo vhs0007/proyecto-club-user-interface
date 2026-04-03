@@ -3,7 +3,8 @@ import { useAuthStore } from '../store/store';
 import Login from '../pages/login/Login';
 import Home from '../pages/home/Home';
 import FacilitiesList from '../pages/facilities/FacilitiesList';
-import Users from '../pages/users/Users';
+import WorkerList from '../pages/users/WorkerList';
+import MemberList from '../pages/users/MemberList';
 import Activities from '../pages/activities/Activities';
 import CreateActivity from '../pages/activities/CreateActivity';
 import CreateActivitySecondStep from '../pages/activities/CreateActivitySecondStep';
@@ -20,22 +21,25 @@ import EditFacilitySecondStep from '../pages/facilities/EditFacilitySecondStep';
 import DeleteFacility from '../pages/facilities/DeleteFacility';
 import CreateUserWorkerSpecific from '../pages/users/CreateUserWorkerSpecific';
 import CreateUserAthleteSpecific from '../pages/users/CreateUserAthleteSpecific';
-import EditUserFirstStep from '../pages/users/EditUserFirstStep';
-import EditUserSecondStep from '../pages/users/EditUserSecondStep';
+import EditWorkerFirstStep from '../pages/users/EditWorkerFirstStep';
+import EditMemberFirstStep from '../pages/users/EditMemberFirstStep';
+import EditUserWorkerSpecific from '../pages/users/EditUserWorkerSpecific';
+import EditUserAthleteSpecific from '../pages/users/EditUserAthleteSpecific';
 import DeleteUser from '../pages/users/DeleteUser';
 import DeleteActivity from '../pages/activities/DeleteActivity';
-import CreateUserFirstStep from '../pages/users/CreateUserFirstStep';
+import CreateWorkerFirstStep from '../pages/users/CreateWorkerFirstStep';
 import Reports from '../pages/reports/Reports';
 import ReportSalaryStep from '../pages/reports/ReportSalaryStep';
 import SalaryReportPage from '../pages/reports/SalaryReportPage';
 import NewUsersReportPage from '../pages/reports/NewUsersReportPage';
-
 import EditActivityFirstStep from '../pages/activities/EditActivityFirstStep';
 import EditActivitySecondStep from '../pages/activities/EditActivitySecondStep';
 import MembershipTypes from '../pages/membershipType/MembershipTypes';
 import CreateMembershipType from '../pages/membershipType/CreateMembershipType';
 import EditMembershipType from '../pages/membershipType/EditMembershipType';
 import DeleteMembershipType from '../pages/membershipType/DeleteMembershipType';
+import CreateMemberFirstStep from '../pages/users/CreateMemberFirstStep';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
   return token ? <>{children}</> : <Navigate to="/login" replace />;
@@ -109,23 +113,23 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/usuarios"
+          path="/trabajadores"
           element={
             <ProtectedRoute>
-              <Users />
+              <WorkerList />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/usuarios/crear/paso-general"
+          path="/trabajadores/crear/paso-general"
           element={
             <ProtectedRoute>
-              <CreateUserFirstStep />
+              <CreateWorkerFirstStep />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/usuarios/crear/paso-especifico-trabajador"
+          path="/trabajadores/crear/paso-especifico-trabajador"
           element={
             <ProtectedRoute>
               <CreateUserWorkerSpecific />
@@ -133,7 +137,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/usuarios/crear/paso-especifico-atleta"
+          path="/trabajadores/crear/paso-especifico-atleta"
           element={
             <ProtectedRoute>
               <CreateUserAthleteSpecific />
@@ -141,23 +145,79 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/usuarios/editar/:id/paso-1"
+          path="/trabajadores/editar/:id/paso-1"
           element={
             <ProtectedRoute>
-              <EditUserFirstStep />
+              <EditWorkerFirstStep />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/usuarios/editar/:id/paso-2"
+          path="/trabajadores/editar/:id/paso-especifico-trabajador"
           element={
             <ProtectedRoute>
-              <EditUserSecondStep />
+              <EditUserWorkerSpecific />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/usuarios/eliminar/:id"
+          path="/trabajadores/editar/:id/paso-especifico-atleta"
+          element={
+            <ProtectedRoute>
+              <EditUserAthleteSpecific />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trabajadores/eliminar/:id"
+          element={
+            <ProtectedRoute>
+              <DeleteUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros"
+          element={
+            <ProtectedRoute>
+              <MemberList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros/crear/paso-general"
+          element={
+            <ProtectedRoute>
+              <CreateMemberFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros/crear/paso-especifico-atleta"
+          element={
+            <ProtectedRoute>
+              <CreateUserAthleteSpecific />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros/editar/:id/paso-1"
+          element={
+            <ProtectedRoute>
+              <EditMemberFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros/editar/:id/paso-especifico-atleta"
+          element={
+            <ProtectedRoute>
+              <EditUserAthleteSpecific />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/miembros/eliminar/:id"
           element={
             <ProtectedRoute>
               <DeleteUser />

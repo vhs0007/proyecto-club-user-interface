@@ -15,11 +15,11 @@ const formSchema = z.object({
   document: z.string().min(1, 'El documento es requerido'),
 });
 
-export default function CreateUserFirstStepForm(params: { typeId: number }) {
+export default function CreateMemberFirstStepForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            typeId: params.typeId,
+            typeId: 2,
             name: '',
             email: '',
             document: '',
@@ -28,7 +28,6 @@ export default function CreateUserFirstStepForm(params: { typeId: number }) {
     const navigate = useNavigate();
     const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes);
     useEffect(() => {
-        if (params.typeId === 2) {
             const contenedor = document.getElementById('Contenedor');
             if (!contenedor) return;
             contenedor.innerHTML = '';
@@ -46,15 +45,9 @@ export default function CreateUserFirstStepForm(params: { typeId: number }) {
             div.appendChild(label);
             div.appendChild(select);
             contenedor.appendChild(div);
-        } else {
-            const contenedor = document.getElementById('Contenedor');
-            if (contenedor) {
-                contenedor.innerHTML = '';
-            }
-        }
-    }, [params.typeId, membershipTypes]);
+    }, [membershipTypes]);
+
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        debugger;
         console.log(data);
         const membershipEl = document.getElementById('membershipTypeId');
         const membership =
@@ -68,20 +61,6 @@ export default function CreateUserFirstStepForm(params: { typeId: number }) {
             membership,
         }
         try{
-            if(user.typeId === 0){
-                throw new Error("Seleccioná un tipo de usuario");
-            }
-            if(user.typeId === 2 && user.membership === 0){
-                throw new Error("Seleccioná un tipo de membresía");
-            }
-            if(user.typeId === 1){ //suponemos es worker el primer tipo
-                useCreateUserStore.getState().setFirstStep({
-                    ...user,
-                    clubId: useClubIdStore.getState().clubId,
-                });
-                console.log('primer paso seteado ', useCreateUserStore.getState().firstStep);
-                navigate('/usuarios/crear/paso-especifico-trabajador')
-            }
             if(user.typeId === 2){ //suponemos es member el segundo tipo
                 useCreateUserStore.getState().setFirstStep({
                     ...user,
@@ -139,8 +118,11 @@ export default function CreateUserFirstStepForm(params: { typeId: number }) {
                         membership: user.membership,
                         clubId: useClubIdStore.getState().clubId,
                     });
-                    navigate('/usuarios/crear/paso-especifico-atleta')
+                    navigate('/socios/crear/paso-especifico-atleta')
                 }
+            }
+            else{
+                return;
             }
         }catch(error){
             alert(error);
@@ -188,7 +170,7 @@ export default function CreateUserFirstStepForm(params: { typeId: number }) {
                 type="submit"
                 className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
             >
-                Crear usuario
+                Crear Socio
             </button>
         </form>
         </div>

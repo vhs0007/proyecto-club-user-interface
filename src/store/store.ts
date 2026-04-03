@@ -129,7 +129,7 @@ interface CreateUserFirstStep{
   typeId: number;
   email: string;
   isActive: boolean;
-  membership: number;
+  membership?: number;
   document: string;
 }
 

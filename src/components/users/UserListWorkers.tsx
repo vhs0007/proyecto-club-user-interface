@@ -1,5 +1,5 @@
-import { useUserStore, useUserTypeStore } from '../../store/store';
-import type { UserResponse, UserType } from '../../entities/Entities';
+import { useUserStore } from '../../store/store';
+import type { UserResponse } from '../../entities/Entities';
 import { useNavigate } from 'react-router-dom';
 
 

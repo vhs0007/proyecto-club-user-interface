@@ -15,7 +15,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export default function EditUserFormFirstStep({ user }: { user: UserResponse }) {
+export default function EditMemberFirstStepForm({ user }: { user: UserResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const {
@@ -28,7 +28,7 @@ export default function EditUserFormFirstStep({ user }: { user: UserResponse }) 
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: user.name ?? "",
-      typeId: user.type?.id ?? user.typeId ?? 0,
+      typeId: 2,
       email: user.email ?? "",
       isActive: user.isActive,
     },
@@ -37,7 +37,7 @@ export default function EditUserFormFirstStep({ user }: { user: UserResponse }) 
   useEffect(() => {
     reset({
       name: user.name ?? "",
-      typeId: user.type?.id ?? user.typeId ?? 0,
+      typeId: 2,
       email: user.email ?? "",
       isActive: user.isActive,
     });
@@ -51,7 +51,7 @@ export default function EditUserFormFirstStep({ user }: { user: UserResponse }) 
       isActive: data.isActive,
     });
     if (!id) return;
-    navigate(`/usuarios/editar/${id}/paso-2`);
+    navigate(`/miembros/editar/${id}/paso-especifico-atleta`);
   };
 
   return (
