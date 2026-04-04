@@ -37,8 +37,13 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto nav-links">
             <li className="nav-item">
-              <Link to="/usuarios" className={getLinkClass('/usuarios')}>
-                Usuarios
+              <Link to="/miembros" className={getLinkClass('/miembros')}>
+                Socios
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/trabajadores" className={getLinkClass('/trabajadores')}>
+                Trabajadores
               </Link>
             </li>
             <li className="nav-item">

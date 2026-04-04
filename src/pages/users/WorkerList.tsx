@@ -13,7 +13,7 @@ export default function WorkerList() {
         <button
           type="button"
           className="pageHeaderPrimaryButton"
-          onClick={() => navigate(`/usuarios/crear/paso-general`)}
+          onClick={() => navigate(`/trabajadores/crear/paso-general`)}
         >
           <i className="bi bi-plus-lg mr-2"></i>
           Nuevo Trabajador

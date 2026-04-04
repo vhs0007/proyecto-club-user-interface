@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useClubIdStore, useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useCreateUserStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { UserResponse } from "../../entities/Entities";
 import { useNavigate } from "react-router-dom";
@@ -46,26 +46,12 @@ export default function CreateUserWorkerForm() {
             };
 
             const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
-            if (response) {
+            console.log(response);
+            if(response.data){
                 useUserStore.getState().setUser(response.data);
-                try{
-                    const membership = {
-                        userId: response.data.id,
-                        type: useCreateUserStore.getState().firstStep.membership,
-                        clubId: useClubIdStore.getState().clubId,
-                    }
-                    const membershipResponse = await AxiosInstance.post("/membership", membership);
-                    if(membershipResponse.data){
-                        useMembershipStore.getState().setMembership(membershipResponse.data);
-                        navigate("/usuarios");
-                    }else{
-                        AxiosInstance.delete(`/users/${response.data.id}`);
-                        throw new Error("Error al crear la membresía");
-                    }
-                }catch(error){
-                    alert("Error al crear la membresía");
-                    console.error(error);
-                }
+                navigate("/trabajadores");
+            }else{
+                throw new Error("Error al crear el usuario");
             }
         } catch (error) {
             alert("Error al crear el usuario");

@@ -90,7 +90,7 @@ export default function CreateMemberFirstStepForm() {
                                     const membershipRes : MembershipResponse = response.data;
                                     useMembershipStore.getState().setMembership(membershipRes);
                                     if(membershipRes.id){
-                                        navigate('/usuarios')
+                                        navigate('/miembros')
                                     }else{
                                         useUserStore.getState().deleteUser(userRes.id);
                                         AxiosInstance.delete(`/users/${userRes.id}`);

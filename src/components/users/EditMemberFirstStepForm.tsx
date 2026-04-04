@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore } from "../../store/store";
+import { useEditUserStore, useUserStore } from "../../store/store";
+import AxiosInstance from "../../config/axios";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -43,7 +44,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
     });
   }, [user, reset]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     useEditUserStore.getState().setFirstStep({
       name: data.name,
       typeId: data.typeId,
@@ -51,7 +52,19 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       isActive: data.isActive,
     });
     if (!id) return;
-    navigate(`/miembros/editar/${id}/paso-especifico-atleta`);
+    if(user.membership?.id === 3){
+      navigate(`/miembros/editar/${id}/paso-especifico-atleta`);
+    }else{
+      const response = await AxiosInstance.patch(`/users/${id}`, {
+        name: data.name,
+        email: data.email,
+        isActive: data.isActive,
+      });
+      if(response.status === 200){
+        useUserStore.getState().updateUser(response.data);
+        navigate(`/miembros`);
+      }
+    }
   };
 
   return (

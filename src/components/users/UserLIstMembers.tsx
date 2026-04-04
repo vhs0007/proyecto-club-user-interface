@@ -59,7 +59,7 @@ export default function UserList() {
                     <button
                       type="button"
                       className="listActionBtnEdit"
-                      onClick={() => navigate(`/usuarios/editar/${user.id}/paso-1`)}
+                      onClick={() => navigate(`/miembros/editar/${user.id}/paso-1`)}
                       title="Editar"
                     >
                       <i className="bi bi-pencil"></i>
@@ -68,7 +68,7 @@ export default function UserList() {
                       <button
                         type="button"
                         className="listActionBtnDelete"
-                        onClick={() => navigate(`/usuarios/eliminar/${user.id}`)}
+                        onClick={() => navigate(`/miembros/eliminar/${user.id}`)}
                         title="Dar de baja"
                       >
                         <i className="bi bi-person-x"></i>

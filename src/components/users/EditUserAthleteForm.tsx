@@ -1,4 +1,3 @@
-import type { FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,14 +13,6 @@ function toDateInput(d: Date | string | null | undefined): string {
   return date.toISOString().slice(0, 10);
 }
 
-function isAthleteProfile(user: UserResponse): boolean {
-  const name = user.type?.name?.toLowerCase();
-  if (name === "athlete") return true;
-  if (user.weight != null && user.weight > 0) return true;
-  if (user.height != null && user.height > 0) return true;
-  if (user.birthDate != null) return true;
-  return false;
-}
 
 const athleteSchema = z.object({
   weight: z.number().min(1, "El peso es requerido"),
@@ -44,9 +35,6 @@ export default function EditUserAthleteForm({ user }: { user: UserResponse }) {
   const firstStep = useEditUserStore((s) => s.firstStep);
 
   const listPath = location.pathname.includes("/miembros") ? "/miembros" : "/trabajadores";
-  const showAthlete = firstStep.typeId === 2 && isAthleteProfile(user);
-
-  if (showAthlete) {
     return (
       <EditAthleteFields
         user={user}
@@ -57,67 +45,7 @@ export default function EditUserAthleteForm({ user }: { user: UserResponse }) {
       />
     );
   }
-  return (
-    <EditMemberGeneralOnly
-      user={user}
-      idParam={idParam}
-      firstStep={firstStep}
-      listPath={listPath}
-      navigate={navigate}
-    />
-  );
-}
 
-function EditMemberGeneralOnly({
-  user,
-  idParam,
-  firstStep,
-  listPath,
-  navigate,
-}: {
-  user: UserResponse;
-  idParam: string | undefined;
-  firstStep: FirstStep;
-  listPath: string;
-  navigate: ReturnType<typeof useNavigate>;
-}) {
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!user.id || !idParam) return;
-    try {
-      const payload = {
-        name: firstStep.name,
-        email: firstStep.email,
-        typeId: firstStep.typeId,
-        isActive: firstStep.isActive,
-      };
-      const response = await AxiosInstance.patch<UserResponse>(`/users/${user.id}`, payload);
-      if (response?.data) {
-        useUserStore.getState().updateUser(response.data);
-        alert("Usuario actualizado correctamente");
-        navigate(listPath);
-      }
-    } catch (error) {
-      alert("Error al actualizar el usuario");
-      console.error(error);
-    }
-  };
-
-  return (
-    <div className="mx-auto w-full max-w-2xl">
-      <form onSubmit={onSubmit} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
-        <input type="hidden" value={user.id} readOnly disabled />
-        <p className="text-sm text-slate-700">Confirmá los datos generales del usuario.</p>
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
-        >
-          Guardar
-        </button>
-      </form>
-    </div>
-  );
-}
 
 function EditAthleteFields({
   user,

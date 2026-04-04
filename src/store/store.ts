@@ -157,6 +157,7 @@ interface EditUserFirstStep {
   typeId: number;
   email: string;
   isActive: boolean;
+  membership?: number;
 }
 
 interface EditActivityFirstStep {
@@ -193,7 +194,7 @@ interface EditUserState {
 export const useEditUserStore = create<EditUserState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', typeId: 0, email: '', isActive: true },
+      firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0 },
       setFirstStep: (firstStep: EditUserFirstStep) => set({ firstStep }),
     }),
     {

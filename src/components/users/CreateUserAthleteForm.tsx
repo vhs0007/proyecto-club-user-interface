@@ -77,9 +77,10 @@ export default function CreateUserAthleteForm() {
                     const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if (membershipResponse.data) {
                         useMembershipStore.getState().setMembership(membershipResponse.data);
-                        navigate("/usuarios");
+                        navigate("/miembros");
                     } else {
                         await AxiosInstance.delete(`/users/${response.data.id}`);
+                        useUserStore.getState().deleteUser(response.data.id);
                         throw new Error("Error al crear la membresía");
                     }
                 } catch (error) {

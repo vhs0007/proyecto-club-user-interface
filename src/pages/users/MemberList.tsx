@@ -14,7 +14,7 @@ export default function MemberList() {
           type="button"
           className="pageHeaderPrimaryButton"
           onClick={() =>
-            navigate(`/socios/crear/paso-general`)
+            navigate(`/miembros/crear/paso-general`)
           }
         >
           <i className="bi bi-plus-lg mr-2"></i>
