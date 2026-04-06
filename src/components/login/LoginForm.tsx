@@ -28,7 +28,12 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await api.post('/auth/login', data)
+      const toSend = {
+        email: data.email,
+        password: data.password,
+        clubId: import.meta.env.VITE_CLUB_ID,
+      }
+      const response = await api.post('/auth/login', toSend)
       console.log(response)
       console.log(response.data)
 
