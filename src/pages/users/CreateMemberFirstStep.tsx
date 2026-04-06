@@ -10,7 +10,7 @@ export default function CreateMemberFirstStep() {
           <h1 className="mb-0 text-2xl font-bold tracking-tight text-slate-800">
             Crear socio
           </h1>
-          <Link to="/socios" className="pageBackButton shrink-0 self-end sm:self-auto">
+          <Link to="/miembros" className="pageBackButton shrink-0 self-end sm:self-auto">
             ← Atrás
           </Link>
         </div>

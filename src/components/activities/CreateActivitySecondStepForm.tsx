@@ -3,7 +3,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useCreateActivityStore } from "../../store/store";
+import {
+  useActivityStore,
+  useCreateActivityStore,
+  useFacilityStore,
+  useUserStore,
+} from "../../store/store";
 import type { ActivityResponse } from "../../entities/Entities";
 
 const schema = z.object({
@@ -20,6 +25,8 @@ const errBorder = (has: boolean) =>
 export default function CreateActivitySecondStepForm() {
   const navigate = useNavigate();
   const setActivity = useActivityStore((state) => state.setActivity);
+  const users = useUserStore((state) => state.users);
+  const facilities = useFacilityStore((state) => state.facilities);
 
   const {
     register,
@@ -53,9 +60,8 @@ export default function CreateActivitySecondStepForm() {
       const created = response.data;
       if (created) setActivity(created);
       navigate("/actividades");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[CreateActivity] error", error);
-      console.error("[CreateActivity] response data", error?.response?.data);
     }
   };
 
@@ -63,15 +69,21 @@ export default function CreateActivitySecondStepForm() {
     <div className="mx-auto w-full max-w-2xl">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="create-step2-userId" className="activityFormLabel">ID de usuario</label>
-          <input
+          <label htmlFor="create-step2-userId" className="activityFormLabel">
+            Usuario
+          </label>
+          <select
             id="create-step2-userId"
-            type="number"
-            min={1}
-            placeholder="ID del usuario"
             className={`activityFormControl ${errBorder(!!errors.userId)}`}
             {...register("userId", { valueAsNumber: true })}
-          />
+          >
+            <option value={0}>Seleccioná un usuario</option>
+            {users.filter((u) => u.typeId === 1).map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
           {errors.userId && (
             <div className="activityFormError">{errors.userId.message}</div>
           )}
@@ -94,15 +106,21 @@ export default function CreateActivitySecondStepForm() {
         </div>
 
         <div>
-          <label htmlFor="create-step2-facilityId" className="activityFormLabel">ID de instalación</label>
-          <input
+          <label htmlFor="create-step2-facilityId" className="activityFormLabel">
+            Instalación
+          </label>
+          <select
             id="create-step2-facilityId"
-            type="number"
-            min={1}
-            placeholder="ID de la instalación"
             className={`activityFormControl ${errBorder(!!errors.facilityId)}`}
             {...register("facilityId", { valueAsNumber: true })}
-          />
+          >
+            <option value={0}>Seleccioná una instalación</option>
+            {facilities.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.type}
+              </option>
+            ))}
+          </select>
           {errors.facilityId && (
             <div className="activityFormError">{errors.facilityId.message}</div>
           )}

@@ -16,6 +16,8 @@ export default function DeleteUser() {
 
   if (!user) return null
 
+  const listPath = user.typeId === 2 ? '/miembros' : '/trabajadores'
+
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
       <div className="mx-auto w-full max-w-2xl">
@@ -23,7 +25,7 @@ export default function DeleteUser() {
           <h1 className="mb-0 text-2xl font-bold tracking-tight text-slate-800">
             Eliminar usuario
           </h1>
-          <Link to="/usuarios" className="pageBackButton shrink-0 self-end sm:self-auto">
+          <Link to={listPath} className="pageBackButton shrink-0 self-end sm:self-auto">
             ← Atrás
           </Link>
         </div>

@@ -34,7 +34,9 @@ export default function CreateMemberFirstStepForm() {
             const div = document.createElement('div');
             div.className = 'space-y-1.5';
             const label = document.createElement('label');
-            label.htmlFor = 'membershipType';
+            label.htmlFor = 'membershipTypeId';
+            label.className = 'block text-sm font-medium text-slate-700';
+            label.textContent = 'Tipo de membresía';
             const select = document.createElement('select');
             select.id = 'membershipTypeId';
             select.classList.add('w-full', 'rounded-md', 'border', 'border-slate-300', 'bg-white', 'px-3', 'py-2', 'text-sm', 'text-slate-900', 'shadow-sm', 'outline-none', 'transition', 'focus:border-slate-500', 'focus:ring-2', 'focus:ring-slate-200');

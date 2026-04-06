@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useClubIdStore, useMembershipTypeStore } from "../../store/store";
+import { useClubIdStore, useMembershipTypeStore, useUserStore } from "../../store/store";
 import { useMembershipStore } from "../../store/store";
 import Axios from '../../config/axios';
 import type { MembershipResponse } from "../../entities/Entities";
@@ -18,6 +18,7 @@ export default function CreateMembershipForm() {
   debugger;
   const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
   const setMembership = useMembershipStore((state) => state.setMembership);
+  const users = useUserStore((state) => state.users);
   console.log("membership types en el form", membershipTypes);
   const navigate = useNavigate();
   const {
@@ -69,7 +70,7 @@ export default function CreateMembershipForm() {
           className={`activityFormControl ${errors.type ? "border-red-300 focus:border-red-500 focus:ring-red-200" : ""}`}
           {...register("type", { valueAsNumber: true })}
         >
-          <option value={0}>Seleccionar...</option>
+          <option value={0}>Seleccioná un tipo de membresía</option>
           {membershipTypes.map((mt) => (
             <option key={mt.id} value={mt.id}>
               {mt.name}
@@ -83,12 +84,18 @@ export default function CreateMembershipForm() {
 
       <div>
         <label className="activityFormLabel">Usuario</label>
-        <input
-          type="number"
-          placeholder="ID del usuario"
+        <select
+          id="userId"
           className={`activityFormControl ${errors.userId ? "border-red-300 focus:border-red-500 focus:ring-red-200" : ""}`}
           {...register("userId", { valueAsNumber: true })}
-        />
+        >
+          <option value={0}>Seleccioná un usuario</option>
+          {users.filter((u) => u.typeId === 2).map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.name}
+            </option>
+          ))}
+        </select>
         {errors.userId && (
           <div className="activityFormError">{errors.userId.message}</div>
         )}

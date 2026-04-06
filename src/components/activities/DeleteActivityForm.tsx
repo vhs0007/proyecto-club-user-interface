@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore } from "../../store/store";
-import type { Activity, ActivityResponse } from "../../entities/Entities";
+import type { ActivityResponse } from "../../entities/Entities";
+import { useActivityStore, useFacilityStore, useUserStore } from "../../store/store";
 
-export default function DeleteActivityForm({ activity }: { activity: Activity}) {
+export default function DeleteActivityForm({ activity }: { activity: ActivityResponse}) {
   const navigate = useNavigate();
 
+  const user = useUserStore((s) => s.getUser(activity.user.id));
+  const facility = useFacilityStore((s) => s.getFacility(activity.facility.id));
   const onSubmit = async (data: { id: number }) => {
     try {
       const response = await AxiosInstance.delete<ActivityResponse>(`/activities/${data.id}`);
@@ -41,7 +43,7 @@ export default function DeleteActivityForm({ activity }: { activity: Activity}) 
             disabled
             aria-label="ID de instalación"
             className="activityFormControl bg-slate-50"
-            value={"instalación: "+ activity.facilityId}
+            value={"instalación: "+ facility?.type}
           />
         </div>
 
@@ -54,7 +56,7 @@ export default function DeleteActivityForm({ activity }: { activity: Activity}) 
             disabled
             aria-label="ID de usuario"
             className="activityFormControl bg-slate-50"
-            value={"usuario: "+ activity.userId}
+            value={"usuario: "+ user?.name}
           />
         </div>
 

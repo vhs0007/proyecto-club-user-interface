@@ -42,13 +42,17 @@ export default function UserList() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filtered.map((user) => (
+              console.log(user),
+              console.log(user.membership),
               <tr key={user.id} className="hover:bg-slate-50/70">
                 <td className="listTableTd">
                   <div className="fw-semibold text-slate-800">{user.name}</div>
                   <small className="text-slate-500">{user.email || 'Sin email'}</small>
                 </td>
                 <td className="listTableTd">{formatDate(user.createdAt)}</td>
-                <td className="listTableTd">{formatDate(user.membership?.expiration ?? new Date())}</td>
+                <td className="listTableTd">
+                  {user.membership?.expiration ? new Date(user.membership.expiration).toLocaleDateString() : '-'}
+                </td>
                 <td className="listTableTd">
                   <span className={user.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
                     {user.isActive ? 'Activo' : 'Inactivo'}
