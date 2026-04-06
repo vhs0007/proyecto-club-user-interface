@@ -6,7 +6,6 @@ export default function MembershipTypes() {
   const navigate = useNavigate();
   const clubId = useClubIdStore((s) => s.clubId);
   const membershipTypes = useMembershipTypeStore((s) => s.membershipTypes);
-  const itemsForClub = clubId > 0 ? membershipTypes.filter((mt) => mt.clubId === clubId) : [];
 
   return (
     <div className="mx-auto max-w-7xl py-4 px-3 md:py-5 md:px-4">
@@ -31,7 +30,7 @@ export default function MembershipTypes() {
 
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         <div className="p-4 md:p-6">
-          <MembershipTypeList items={itemsForClub} />
+          <MembershipTypeList items={membershipTypes} />
         </div>
       </div>
     </div>

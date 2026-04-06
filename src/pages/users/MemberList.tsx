@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import UserListMembers from '../../components/users/UserListMembers';
+import UserList from '../../components/users/UserLIstMembers';
 
 export default function MemberList() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function MemberList() {
               Socios
             </button>
           </div>
-          <UserListMembers />
+          <UserList />
         </div>
       </div>
     </div>

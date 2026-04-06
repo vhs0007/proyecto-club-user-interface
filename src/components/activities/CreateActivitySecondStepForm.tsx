@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
 import {
   useActivityStore,
-  useClubIdStore,
   useCreateActivityStore,
   useFacilityStore,
   useUserStore,
@@ -26,12 +25,8 @@ const errBorder = (has: boolean) =>
 export default function CreateActivitySecondStepForm() {
   const navigate = useNavigate();
   const setActivity = useActivityStore((state) => state.setActivity);
-  const clubId = useClubIdStore((s) => s.clubId);
   const users = useUserStore((state) => state.users);
   const facilities = useFacilityStore((state) => state.facilities);
-
-  const userOptions = users.filter((u) => u.clubId === clubId && u.isActive);
-  const facilityOptions = facilities.filter((f) => f.clubId === clubId);
 
   const {
     register,
@@ -83,7 +78,7 @@ export default function CreateActivitySecondStepForm() {
             {...register("userId", { valueAsNumber: true })}
           >
             <option value={0}>Seleccioná un usuario</option>
-            {userOptions.map((u) => (
+            {users.filter((u) => u.typeId === 1).map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>
@@ -120,10 +115,9 @@ export default function CreateActivitySecondStepForm() {
             {...register("facilityId", { valueAsNumber: true })}
           >
             <option value={0}>Seleccioná una instalación</option>
-            {facilityOptions.map((f) => (
+            {facilities.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.type}
-                {typeof f.capacity === "number" ? ` (cap. ${f.capacity})` : ""}
               </option>
             ))}
           </select>

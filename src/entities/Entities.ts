@@ -25,8 +25,9 @@ export interface User {
     isActive: boolean;
     salary?: number | null;
     hoursToWorkPerDay?: number | null;
-    startWorkAt?: Date | null;
-    endWorkAt?: Date | null;
+    employmentStartDate?: Date | null;
+    startWorkAt?: string | null;
+    endWorkAt?: string | null;
     weight?: number | null;
     height?: number | null;
     gender?: string | null;
@@ -52,8 +53,9 @@ export interface UserResponse {
     isActive: boolean;
     salary?: number | null;
     hoursToWorkPerDay?: number | null;
-    startWorkAt?: Date | null;
-    endWorkAt?: Date | null;
+    employmentStartDate?: Date | null;
+    startWorkAt?: string | null;
+    endWorkAt?: string | null;
     weight?: number | null;
     height?: number | null;
     gender?: string | null;

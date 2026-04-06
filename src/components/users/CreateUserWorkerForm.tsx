@@ -10,6 +10,7 @@ export default function CreateUserWorkerForm() {
     const formSchema = z.object({
         salary: z.number().min(1, "El salario es requerido"),
         hoursToWorkPerDay: z.number().min(1, "Las horas por día son requeridas"),
+        employmentStartDate: z.string().min(1, "La fecha de inicio de empleo es requerida"),
         startWorkAt: z.string().min(1, "La fecha de inicio es requerida"),
         endWorkAt: z.string().min(1, "La fecha de fin es requerida"),
     });
@@ -25,8 +26,9 @@ export default function CreateUserWorkerForm() {
             const workerSpecificStep = {
                 salary: data.salary,
                 hoursToWorkPerDay: data.hoursToWorkPerDay,
-                startWorkAt: new Date(data.startWorkAt),
-                endWorkAt: new Date(data.endWorkAt),
+                employmentStartDate: new Date(data.employmentStartDate),
+                startWorkAt: data.startWorkAt,
+                endWorkAt: data.endWorkAt,
             };
 
             useCreateUserStore.getState().setWorkerSpecificStep(workerSpecificStep);
@@ -40,6 +42,7 @@ export default function CreateUserWorkerForm() {
                 isActive: true,
                 salary: workerSpecificStep.salary,
                 hoursToWorkPerDay: workerSpecificStep.hoursToWorkPerDay,
+                employmentStartDate: workerSpecificStep.employmentStartDate,
                 startWorkAt: workerSpecificStep.startWorkAt,
                 endWorkAt: workerSpecificStep.endWorkAt,
                 clubId: useClubIdStore.getState().clubId,
@@ -97,12 +100,25 @@ export default function CreateUserWorkerForm() {
             </div>
 
             <div className="space-y-1.5">
+                <label htmlFor="employmentStartDate" className="block text-sm font-medium text-slate-700">
+                    Fecha de inicio de empleo
+                </label>
+                <input
+                    id="employmentStartDate"
+                    type="date"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    {...register("employmentStartDate")}
+                />
+                {errors.employmentStartDate && <span className="text-sm text-red-600">{errors.employmentStartDate.message}</span>}
+            </div>
+
+            <div className="space-y-1.5">
                 <label htmlFor="startWorkAt" className="block text-sm font-medium text-slate-700">
                     Inicio de trabajo
                 </label>
                 <input
                     id="startWorkAt"
-                    type="datetime-local"
+                    type="time"
                     className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("startWorkAt")}
                 />
@@ -115,7 +131,7 @@ export default function CreateUserWorkerForm() {
                 </label>
                 <input
                     id="endWorkAt"
-                    type="datetime-local"
+                    type="time"
                     className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                     {...register("endWorkAt")}
                 />

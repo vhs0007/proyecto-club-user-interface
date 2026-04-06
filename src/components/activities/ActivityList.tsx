@@ -14,6 +14,7 @@ function formatActivityDate(date: Date | string | null | undefined): string {
 
 export default function ActivityList({ activities }: { activities: ActivityResponse[] }) {
   const navigate = useNavigate();
+  console.log(activities);
 
   return (
     <>
@@ -47,9 +48,6 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                 <td className="listTableTd">{activity.hourEnd || '-'}</td>
                 <td className="listTableTd">
                   <span className="text-slate-800">{activity.facility?.type ?? '-'}</span>
-                  {typeof activity.facility?.capacity === 'number' && (
-                    <small className="block text-slate-500">Cap. {activity.facility.capacity}</small>
-                  )}
                 </td>
                 <td className="listTableTd">{activity.user?.name ?? '-'}</td>
                 <td className="listTableTd">
