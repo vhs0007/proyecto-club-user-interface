@@ -136,8 +136,9 @@ interface CreateUserFirstStep{
 interface CreateUserWorkerSpecificStep{
   salary: number;
   hoursToWorkPerDay: number;
-  startWorkAt: Date;
-  endWorkAt: Date;
+  employmentStartDate: Date;
+  startWorkAt: string;
+  endWorkAt: string;
 }
 
 interface CreateUserAthleteSpecificStep{
@@ -403,7 +404,7 @@ export const useCreateUserStore = create<CreateUserState>()(
     (set) => ({
       firstStep: { name: '', typeId: 0, email: '', isActive: true, membership: 0, clubId: 0, document: '' },
       setFirstStep: (firstStep: CreateUserFirstStep) => set({ firstStep }),
-      workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, startWorkAt: new Date(), endWorkAt: new Date() },
+      workerSpecificStep: { salary: 0, hoursToWorkPerDay: 0, employmentStartDate: new Date(), startWorkAt: '', endWorkAt: '' },
       setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => set({ workerSpecificStep }),
       athleteSpecificStep: { weight: 0, height: 0, gender: '', birthDate: '', diet: '', trainingPlan: '', allergies: '', medications: '', medicalConditions: '' },
       setAthleteSpecificStep: (athleteSpecificStep: CreateUserAthleteSpecificStep) => set({ athleteSpecificStep }),
