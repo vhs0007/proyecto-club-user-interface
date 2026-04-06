@@ -1,10 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import type { ActivityResponse } from '../../entities/Entities';
 
+function formatActivityDate(date: Date | string | null | undefined): string {
+  if (date == null) return '-';
+  try {
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch {
+    return '-';
+  }
+}
+
 export default function ActivityList({ activities }: { activities: ActivityResponse[] }) {
   const navigate = useNavigate();
 
-  console.log(activities);
   return (
     <>
       <div className="overflow-x-auto rounded-md border border-slate-200/80 bg-white -mx-0.5">
@@ -16,6 +26,7 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
               <th className="listTableTh">Fecha</th>
               <th className="listTableTh">Hora Inicio</th>
               <th className="listTableTh">Hora Fin</th>
+              <th className="listTableTh">Instalación</th>
               <th className="listTableTh">Usuario</th>
               <th className="listTableTh">Costo</th>
               <th className="listTableTh">Estado</th>
@@ -23,7 +34,7 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {activities.map((activity : ActivityResponse) => (
+            {activities.map((activity: ActivityResponse) => (
               <tr key={activity.id} className="hover:bg-slate-50/70">
                 <td className="listTableTd">
                   <span className="font-semibold text-slate-800">{activity.name}</span>
@@ -31,27 +42,24 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                 <td className="listTableTd">
                   <span className="listBadgeTypeInfo">{activity.type}</span>
                 </td>
+                <td className="listTableTd">{formatActivityDate(activity.date)}</td>
+                <td className="listTableTd">{activity.hourStart || '-'}</td>
+                <td className="listTableTd">{activity.hourEnd || '-'}</td>
                 <td className="listTableTd">
-                  <div>{new Date(activity.date).toLocaleDateString('es-ES')}</div>
-                  <small className="text-slate-500">{activity.hourStart}</small>
+                  <span className="text-slate-800">{activity.facility?.type ?? '-'}</span>
+                  {typeof activity.facility?.capacity === 'number' && (
+                    <small className="block text-slate-500">Cap. {activity.facility.capacity}</small>
+                  )}
                 </td>
-                <td className="listTableTd">
-                  <div>{activity.hourStart}</div>
-                  <small className="text-slate-500">{activity.hourStart}</small>
-                </td>
-                <td className="listTableTd">
-                  <div>{activity.hourEnd}</div>
-                  <small className="text-slate-500">{activity.hourEnd}</small>
-                </td>
-                <td className="listTableTd">{activity.user.name}</td>
+                <td className="listTableTd">{activity.user?.name ?? '-'}</td>
                 <td className="listTableTd">
                   {typeof activity.cost === 'number'
                     ? `$${activity.cost.toLocaleString()}`
                     : '-'}
                 </td>
                 <td className="listTableTd">
-                  <span className={activity.facility.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
-                    {activity.facility.isActive ? 'Activa' : 'Inactiva'}
+                  <span className={activity.facility?.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
+                    {activity.facility?.isActive ? 'Activa' : 'Inactiva'}
                   </span>
                 </td>
                 <td className="listTableTd text-center">

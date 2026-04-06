@@ -48,7 +48,11 @@ export default function UserList() {
                   <small className="text-slate-500">{user.email || 'Sin email'}</small>
                 </td>
                 <td className="listTableTd">{formatDate(user.createdAt)}</td>
-                <td className="listTableTd">{formatDate(user.membership?.expiration ?? new Date())}</td>
+                <td className="listTableTd">
+                  {user.membership?.expiration && !isNaN(new Date(user.membership.expiration).getTime())
+                    ? formatDate(user.membership.expiration)
+                    : '-'}
+                </td>
                 <td className="listTableTd">
                   <span className={user.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
                     {user.isActive ? 'Activo' : 'Inactivo'}

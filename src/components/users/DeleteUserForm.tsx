@@ -18,6 +18,7 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
 
   const typeId = user?.type?.id ?? user?.typeId
   const userType: UserType | null = typeId != null ? getUserType(typeId) : null
+  const listPath = typeId === 2 ? '/miembros' : '/trabajadores'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,7 +30,7 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
     try {
       await AxiosInstance.delete(`/users/${user.id}`)
       deleteUser(user.id)
-      navigate('/usuarios')
+      navigate(listPath)
     } catch {
       setError('No se pudo eliminar el usuario. Intentá de nuevo.')
     } finally {
@@ -93,7 +94,7 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
           <button
             type="button"
             className="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200"
-            onClick={() => navigate('/usuarios')}
+            onClick={() => navigate(listPath)}
           >
             Cancelar
           </button>
