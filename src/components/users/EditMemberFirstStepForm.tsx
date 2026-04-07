@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore, useUserStore } from "../../store/store";
+import { useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
 const formSchema = z.object({
@@ -62,6 +62,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       });
       if(response.status === 200){
         useUserStore.getState().updateUser(response.data);
+        useMembershipStore.getState().setMembership(response.data.membership?.[0]);
         navigate(`/miembros`);
       }
     }

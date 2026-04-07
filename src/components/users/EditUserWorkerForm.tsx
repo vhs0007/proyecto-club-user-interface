@@ -6,17 +6,25 @@ import type { UserResponse } from "../../entities/Entities";
 import { useEditUserStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
-function toDatetimeLocal(d: Date | string | null | undefined): string {
+function toTimeInput(d: Date | string | null | undefined): string {
   if (d == null) return "";
   const date = new Date(d);
   if (Number.isNaN(date.getTime())) return "";
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function toDateInput(d: Date | string | null | undefined): string {
+  if (d == null) return "";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
 }
 
 const workerSchema = z.object({
   salary: z.number().min(1, "El salario es requerido"),
   hoursToWorkPerDay: z.number().min(1, "Las horas por día son requeridas"),
+  employmentStartDate: z.string().min(1, "La fecha de inicio de empleo es requerida"),
   startWorkAt: z.string().min(1, "La fecha de inicio es requerida"),
   endWorkAt: z.string().min(1, "La fecha de fin es requerida"),
 });
@@ -31,8 +39,9 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
     defaultValues: {
       salary: user.salary ?? 0,
       hoursToWorkPerDay: user.hoursToWorkPerDay ?? 0,
-      startWorkAt: toDatetimeLocal(user.startWorkAt),
-      endWorkAt: toDatetimeLocal(user.endWorkAt),
+      employmentStartDate: toDateInput(user.employmentStartDate),
+      startWorkAt: toTimeInput(user.startWorkAt),
+      endWorkAt: toTimeInput(user.endWorkAt),
     },
   });
 
@@ -46,8 +55,9 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
         isActive: firstStep.isActive,
         salary: data.salary,
         hoursToWorkPerDay: data.hoursToWorkPerDay,
-        startWorkAt: new Date(data.startWorkAt),
-        endWorkAt: new Date(data.endWorkAt),
+        employmentStartDate: new Date(data.employmentStartDate),
+        startWorkAt: data.startWorkAt,
+        endWorkAt: data.endWorkAt,
       };
       const response = await AxiosInstance.patch<UserResponse>(`/users/${user.id}`, payload);
       if (response?.data) {
@@ -92,9 +102,18 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
           )}
         </div>
         <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-slate-700">Fecha de inicio de empleo</label>
+          <input
+            type="date"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("employmentStartDate")}
+          />
+          {errors.employmentStartDate && <span className="text-sm text-red-600">{errors.employmentStartDate.message}</span>}
+        </div>
+        <div className="space-y-1.5">
           <label className="block text-sm font-medium text-slate-700">Inicio de trabajo</label>
           <input
-            type="datetime-local"
+            type="time"
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
             {...register("startWorkAt")}
           />
@@ -103,7 +122,7 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-slate-700">Fin de trabajo</label>
           <input
-            type="datetime-local"
+            type="time"
             className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
             {...register("endWorkAt")}
           />

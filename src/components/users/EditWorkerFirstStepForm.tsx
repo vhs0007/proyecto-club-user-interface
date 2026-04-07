@@ -51,11 +51,7 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
       isActive: data.isActive,
     });
     if (!id) return;
-    if (data.typeId === 1) {
       navigate(`/trabajadores/editar/${id}/paso-especifico-trabajador`);
-    } else {
-      navigate(`/trabajadores/editar/${id}/paso-especifico-atleta`);
-    }
   };
 
   return (

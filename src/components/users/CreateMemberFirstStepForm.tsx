@@ -89,10 +89,10 @@ export default function CreateMemberFirstStepForm() {
                                 });
                                 if(response){
                                     const membershipRes : MembershipResponse = response.data;
-                                    useMembershipStore.getState().setMembership(membershipRes);
                                     if(membershipRes.id){
                                         userRes.membership?.push(membershipRes);
                                         useUserStore.getState().setUser(userRes);
+                                        useMembershipStore.getState().setMembership(membershipRes);
                                         navigate('/miembros')
                                     }else{
                                         useUserStore.getState().deleteUser(userRes.id);
