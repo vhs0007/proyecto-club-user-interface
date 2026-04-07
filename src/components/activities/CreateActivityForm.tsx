@@ -59,7 +59,7 @@ export default function CreateActivityForm() {
       const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
       if (created) setActivity(created);
-      navigate("/actividades");
+      navigate("/reservas");
     } catch (error: any) {
       console.error("[CreateActivity] error", error);
       console.error("[CreateActivity] response data", error?.response?.data);

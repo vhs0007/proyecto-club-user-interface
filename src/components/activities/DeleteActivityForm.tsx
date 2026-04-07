@@ -14,7 +14,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
       const deleted = response.data;
       if (deleted) {
         useActivityStore.getState().deleteActivity(deleted.id!);
-        navigate("/actividades");
+        navigate("/reservas");
       }
     } catch (error: unknown) {
       console.error("[DeleteActivity] error", error);
@@ -31,7 +31,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
         className="space-y-4"
       >
         <div className="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-          ¿Estás seguro de que querés eliminar esta actividad?
+          ¿Estás seguro de que querés eliminar esta reserva?
         </div>
 
         <div>
@@ -75,12 +75,12 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
 
         <div className="flex flex-wrap items-center gap-2 pt-2">
           <button type="submit" className="activityDangerButton">
-            Eliminar actividad
+            Eliminar reserva
           </button>
           <button
             type="button"
             className="activitySecondaryButton"
-            onClick={() => navigate("/actividades")}
+            onClick={() => navigate("/reservas")}
           >
             Cancelar
           </button>

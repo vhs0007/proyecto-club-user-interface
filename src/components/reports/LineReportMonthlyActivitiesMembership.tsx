@@ -59,7 +59,7 @@ import {
           backgroundColor: '#dc3545',
         },
         {
-            label: 'Ingresos Actividades ',
+            label: 'Ingresos Reservas',
             data: data.map((month) => month.monthIncomeActivities),
             borderColor: '#ffc107',
             backgroundColor: '#ffc107',

@@ -59,7 +59,7 @@ export default function CreateActivitySecondStepForm() {
       const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
       if (created) setActivity(created);
-      navigate("/actividades");
+      navigate("/reservas");
     } catch (error: unknown) {
       console.error("[CreateActivity] error", error);
     }
@@ -67,8 +67,11 @@ export default function CreateActivitySecondStepForm() {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
+      >
+        <div className="space-y-1.5">
           <label htmlFor="create-step2-userId" className="activityFormLabel">
             Usuario
           </label>
@@ -89,7 +92,7 @@ export default function CreateActivitySecondStepForm() {
           )}
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="create-step2-cost" className="activityFormLabel">Costo</label>
           <input
             id="create-step2-cost"
@@ -105,7 +108,7 @@ export default function CreateActivitySecondStepForm() {
           )}
         </div>
 
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="create-step2-facilityId" className="activityFormLabel">
             Instalación
           </label>

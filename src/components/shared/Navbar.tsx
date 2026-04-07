@@ -47,8 +47,8 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/actividades" className={getLinkClass('/actividades')}>
-                Actividades
+              <Link to="/reservas" className={getLinkClass('/reservas')}>
+                Reservas
               </Link>
             </li>
             <li className="nav-item">

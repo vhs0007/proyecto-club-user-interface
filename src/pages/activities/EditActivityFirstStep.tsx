@@ -18,10 +18,10 @@ export default function EditActivityFirstStep() {
 
   return (
     <div className="container py-4">
-      <Link to="/actividades" className="pageBackButton mb-3">
+      <Link to="/reservas" className="pageBackButton mb-3">
         ← Atrás
       </Link>
-      <h1 className="mb-4">Editar actividad</h1>
+      <h1 className="mb-4">Editar reserva</h1>
       <EditActivityFormFirstStep activity={activity} />
     </div>
   );

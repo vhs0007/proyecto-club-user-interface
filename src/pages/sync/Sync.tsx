@@ -182,7 +182,7 @@ export default function Sync() {
       {error && <p className="text-danger">{error}</p>}
       <SyncBar progress={membershipTypesProgress} dataName="Tipos de membresía" />
       <SyncBar progress={membershipsProgress} dataName="Membresías" />
-      <SyncBar progress={activitiesProgress} dataName="Actividades" />
+      <SyncBar progress={activitiesProgress} dataName="Reservas" />
       <SyncBar progress={facilitiesProgress} dataName="Instalaciones" />
       <SyncBar progress={usersProgress} dataName="Usuarios" />
     </div>

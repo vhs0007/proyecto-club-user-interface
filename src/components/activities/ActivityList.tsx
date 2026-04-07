@@ -65,7 +65,7 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                     <button
                       type="button"
                       className="listActionBtnEdit"
-                      onClick={() => navigate(`/actividades/editar/${activity.id}`)}
+                      onClick={() => navigate(`/reservas/editar/${activity.id}`)}
                       title="Editar"
                     >
                       <i className="bi bi-pencil"></i>
@@ -74,7 +74,7 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                     <button
                       type="button"
                       className="listActionBtnDelete"
-                      onClick={() => navigate(`/actividades/eliminar/${activity.id}`)}
+                      onClick={() => navigate(`/reservas/eliminar/${activity.id}`)}
                       title="Eliminar"
                     >
                       <i className="bi bi-trash"></i>
@@ -88,7 +88,7 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
       </div>
       {activities.length === 0 && (
         <div className="mt-5 rounded-md border border-dashed border-slate-200 bg-slate-50/90 py-12 text-center text-sm text-slate-500">
-          No hay actividades registradas
+          No hay reservas registradas
         </div>
       )}
     </>

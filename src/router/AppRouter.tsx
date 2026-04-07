@@ -225,7 +225,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades"
+          path="/reservas"
           element={
             <ProtectedRoute>
               <Activities />
@@ -233,7 +233,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/crear/paso-1"
+          path="/reservas/crear/paso-1"
           element={
             <ProtectedRoute>
               <CreateActivity />
@@ -241,7 +241,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/crear/paso-2"
+          path="/reservas/crear/paso-2"
           element={
             <ProtectedRoute>
               <CreateActivitySecondStep />
@@ -249,7 +249,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/eliminar/:id"
+          path="/reservas/eliminar/:id"
           element={
             <ProtectedRoute>
               <DeleteActivity />
@@ -257,7 +257,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/editar/:id"
+          path="/reservas/editar/:id"
           element={
             <ProtectedRoute>
               <EditActivityFirstStep />
@@ -265,7 +265,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/actividades/editar/:id/paso-2"
+          path="/reservas/editar/:id/paso-2"
           element={
             <ProtectedRoute>
               <EditActivitySecondStep />

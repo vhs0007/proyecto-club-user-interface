@@ -104,7 +104,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
     });
     useEditActivityStore.getState().setEditingActivityId(activity.id);
     if (!id) return;
-    navigate(`/actividades/editar/${id}/paso-2`);
+    navigate(`/reservas/editar/${id}/paso-2`);
   };
 
   return (
