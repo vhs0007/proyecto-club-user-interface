@@ -68,7 +68,8 @@ export default function CreateUserAthleteForm() {
 
             const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
             if (response) {
-                useUserStore.getState().setUser(response.data);
+                const userRes : UserResponse = response.data;
+
                 try {
                     const membership = {
                         userId: response.data.id,
@@ -77,6 +78,8 @@ export default function CreateUserAthleteForm() {
                     const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if (membershipResponse.data) {
                         useMembershipStore.getState().setMembership(membershipResponse.data);
+                        userRes.membership?.push(membershipResponse.data);
+                        useUserStore.getState().setUser(userRes);
                         navigate("/miembros");
                     } else {
                         await AxiosInstance.delete(`/users/${response.data.id}`);

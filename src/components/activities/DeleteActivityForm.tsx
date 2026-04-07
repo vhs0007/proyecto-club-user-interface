@@ -43,7 +43,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
             disabled
             aria-label="ID de instalación"
             className="activityFormControl bg-slate-50"
-            value={"instalación: "+ facility?.type}
+            value={facility?.type}
           />
         </div>
 
@@ -56,7 +56,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
             disabled
             aria-label="ID de usuario"
             className="activityFormControl bg-slate-50"
-            value={"usuario: "+ user?.name}
+            value={user?.name}
           />
         </div>
 
@@ -69,7 +69,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
             disabled
             aria-label="Costo"
             className="activityFormControl bg-slate-50"
-            value={"costo actividad: $"+ activity.cost}
+            value={activity.cost}
           />
         </div>
 

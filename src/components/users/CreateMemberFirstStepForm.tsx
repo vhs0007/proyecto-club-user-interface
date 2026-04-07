@@ -81,7 +81,6 @@ export default function CreateMemberFirstStepForm() {
                         const response = await AxiosInstance.post<UserResponse>("/users", userToSend);
                         if(response){
                             const userRes : UserResponse = response.data;
-                            useUserStore.getState().setUser(userRes);
                             try{
                                 const response = await AxiosInstance.post("/membership", {
                                     userId: userRes.id,
@@ -92,6 +91,8 @@ export default function CreateMemberFirstStepForm() {
                                     const membershipRes : MembershipResponse = response.data;
                                     useMembershipStore.getState().setMembership(membershipRes);
                                     if(membershipRes.id){
+                                        userRes.membership?.push(membershipRes);
+                                        useUserStore.getState().setUser(userRes);
                                         navigate('/miembros')
                                     }else{
                                         useUserStore.getState().deleteUser(userRes.id);

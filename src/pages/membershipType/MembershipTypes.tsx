@@ -5,7 +5,7 @@ import { useClubIdStore, useMembershipTypeStore } from '../../store/store';
 export default function MembershipTypes() {
   const navigate = useNavigate();
   const clubId = useClubIdStore((s) => s.clubId);
-  const membershipTypes = useMembershipTypeStore((s) => s.membershipTypes);
+  const membershipTypes = useMembershipTypeStore.getState().membershipTypes;
 
   return (
     <div className="mx-auto max-w-7xl py-4 px-3 md:py-5 md:px-4">
