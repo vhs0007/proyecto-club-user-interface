@@ -3,7 +3,7 @@ import type { UserResponse } from '../../entities/Entities';
 import { useNavigate } from 'react-router-dom';
 
 
-function formatDate(date: Date | null | undefined): string {
+function formatDate(date: Date | string | null | undefined): string {
   if (!date) return '-';
   try {
     return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -17,6 +17,7 @@ export default function UserList() {
   const navigate = useNavigate();
   const users: UserResponse[] = useUserStore((state) => state.users);
   const filtered = users.filter((u) => u.typeId === 2);
+  console.log("estos son usuarios bobin", filtered)
   return (
     <div className="user-directory">
       <div className="overflow-x-auto rounded-md border border-slate-200/80 bg-white -mx-0.5">
@@ -28,6 +29,9 @@ export default function UserList() {
               </th>
               <th className="listTableTh">
                 Fecha registro
+              </th>
+              <th className="listTableTh">
+                Tipo membresía
               </th>
               <th className="listTableTh">
                 Vencimiento membresía
@@ -42,8 +46,6 @@ export default function UserList() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filtered.map((user) => (
-              console.log(user),
-              console.log(user.membership),
               <tr key={user.id} className="hover:bg-slate-50/70">
                 <td className="listTableTd">
                   <div className="fw-semibold text-slate-800">{user.name}</div>
@@ -51,7 +53,12 @@ export default function UserList() {
                 </td>
                 <td className="listTableTd">{formatDate(user.createdAt)}</td>
                 <td className="listTableTd">
-                  {user.membership?.expiration ? new Date(user.membership.expiration).toLocaleDateString() : '-'}
+                  <span className="listBadgeTypeInfo">
+                    {user.membership?.at(-1)?.membershipType?.name}
+                  </span>
+                </td>
+                <td className="listTableTd">
+                  {formatDate(user.membership?.at(-1)?.expiration)}
                 </td>
                 <td className="listTableTd">
                   <span className={user.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>

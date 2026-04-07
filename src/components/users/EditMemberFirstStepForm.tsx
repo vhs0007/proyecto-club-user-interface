@@ -52,7 +52,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       isActive: data.isActive,
     });
     if (!id) return;
-    if(user.membership?.id === 3){
+    if(user.type?.id === 3){
       navigate(`/miembros/editar/${id}/paso-especifico-atleta`);
     }else{
       const response = await AxiosInstance.patch(`/users/${id}`, {

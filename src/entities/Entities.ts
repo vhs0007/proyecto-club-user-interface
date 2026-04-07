@@ -64,7 +64,7 @@ export interface UserResponse {
     trainingPlan?: string | null;
     allergies?: string | null;
     medications?: string | null;
-    membership?: MembershipResponse | null;
+    membership?: UserMembershipNavigation[];
     medicalConditions?: string | null;
 }
 
@@ -83,6 +83,14 @@ export interface MembershipResponse {
     membershipType: MembershipType;
     expiration: Date;
     createdAt: Date;
+}
+
+/** Navegación embebida en UserResponse (API: arreglo de membresías) */
+export interface UserMembershipNavigation {
+    id: number;
+    expiration: string | Date;
+    createdAt?: string | Date;
+    membershipType: MembershipType;
 }
 
 /** Request: CreateFacilityDto / Update */
