@@ -1,15 +1,16 @@
 import { Link, useParams } from 'react-router-dom'
 import type { UserResponse } from '../../entities/Entities'
-import { useUserStore } from '../../store/store'
+import { useClubIdStore, useUserStore } from '../../store/store'
 import DeleteUserForm from '../../components/users/DeleteUserForm'
 
 export default function DeleteUser() {
   const { id } = useParams<{ id: string }>()
   const identifier = id ? parseInt(id, 10) : NaN
+  const clubId = useClubIdStore((state) => state.clubId)
 
   const user: UserResponse | null = useUserStore((state) => {
-    if (!Number.isNaN(identifier)) {
-      return state.getUser(identifier)
+    if (!Number.isNaN(identifier) && clubId > 0) {
+      return state.getUser(identifier, clubId)
     }
     return null
   })

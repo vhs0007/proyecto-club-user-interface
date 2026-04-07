@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import type { UserResponse, UserType } from '../../entities/Entities'
-import { useUserStore, useUserTypeStore } from '../../store/store'
+import { useClubIdStore, useUserStore, useUserTypeStore } from '../../store/store'
 import AxiosInstance from '../../config/axios'
 import { useState } from 'react'
 
@@ -12,6 +12,7 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
   const navigate = useNavigate()
   const deleteUser = useUserStore((state) => state.deleteUser)
   const getUserType = useUserTypeStore((state) => state.getUserType)
+  const clubId = useClubIdStore((state) => state.clubId)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -22,14 +23,19 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user?.id) return
+    if (!user?.id || clubId <= 0) return
 
     setLoading(true)
     setError(null)
 
     try {
-      await AxiosInstance.delete(`/users/${user.id}`)
-      deleteUser(user.id)
+      await AxiosInstance.delete(`/users/${user.id}`, {
+        data: {
+          id: user.id,
+          clubId,
+        },
+      })
+      deleteUser(user.id, clubId)
       navigate(listPath)
     } catch {
       setError('No se pudo eliminar el usuario. Intentá de nuevo.')

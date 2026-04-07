@@ -51,7 +51,7 @@ export default function UserList() {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50/70">
+              <tr key={`${user.clubId}-${user.id}`} className="hover:bg-slate-50/70">
                 <td className="listTableTd">
                   <div className="fw-semibold text-slate-800">{user.name}</div>
                   <small className="text-slate-500">{user.email || 'Sin email'}</small>
