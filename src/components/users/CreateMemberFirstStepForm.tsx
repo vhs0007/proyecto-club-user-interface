@@ -68,7 +68,7 @@ export default function CreateMemberFirstStepForm() {
                     ...user,
                     clubId: useClubIdStore.getState().clubId,
                 });
-                if(user.membership !== 3){
+                if(user.typeId !== 3){
                     try{
                         const userToSend = {
                             name: data.name,
@@ -115,7 +115,7 @@ export default function CreateMemberFirstStepForm() {
                         alert("Error al crear la membresía");
                         console.error(error);
                     }
-                }else if(user.membership === 3){
+                }else if(user.typeId === 3){
                     useCreateUserStore.getState().setFirstStep({
                         ...user,
                         membership: user.membership,
