@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
 const formSchema = z.object({
@@ -19,6 +19,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function EditMemberFirstStepForm({ user }: { user: UserResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const clubId = useClubIdStore((state) => state.clubId);
   const {
     register,
     control,
@@ -59,6 +60,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
         name: data.name,
         email: data.email,
         isActive: data.isActive,
+        clubId,
       });
       if(response.status === 200){
         useUserStore.getState().updateUser(response.data);

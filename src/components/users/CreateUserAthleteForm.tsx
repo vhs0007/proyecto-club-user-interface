@@ -88,7 +88,7 @@ export default function CreateUserAthleteForm() {
                                 clubId: response.data.clubId,
                             },
                         });
-                        useUserStore.getState().deleteUser(response.data.id, response.data.clubId);
+                        useUserStore.getState().deleteUser(response.data.id);
                         throw new Error("Error al crear la membresía");
                     }
                 } catch (error) {

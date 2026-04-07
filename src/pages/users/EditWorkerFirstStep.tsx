@@ -1,16 +1,15 @@
 import { useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useClubIdStore, useUserStore } from "../../store/store";
+import { useUserStore } from "../../store/store";
 import EditWorkerFirstStepForm from "../../components/users/EditWorkerFirstStepForm";
 import { Link } from "react-router-dom";
 
 export default function EditWorkerFirstStep() {
   const { id } = useParams<{ id: string }>();
   const identifier = id ? parseInt(id, 10) : NaN;
-  const clubId = useClubIdStore((state) => state.clubId);
   const user: UserResponse | null = useUserStore((state) => {
-    if (!Number.isNaN(identifier) && clubId > 0) {
-      return state.getUser(identifier, clubId);
+    if (!Number.isNaN(identifier)) {
+      return state.getUser(identifier);
     }
     return null;
   });

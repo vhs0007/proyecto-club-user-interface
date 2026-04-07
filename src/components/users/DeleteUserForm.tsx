@@ -29,13 +29,8 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
     setError(null)
 
     try {
-      await AxiosInstance.delete(`/users/${user.id}`, {
-        data: {
-          id: user.id,
-          clubId,
-        },
-      })
-      deleteUser(user.id, clubId)
+      await AxiosInstance.delete(`/users/${user.id}?clubId=${clubId}`)
+      deleteUser(user.id)
       navigate(listPath)
     } catch {
       setError('No se pudo eliminar el usuario. Intentá de nuevo.')

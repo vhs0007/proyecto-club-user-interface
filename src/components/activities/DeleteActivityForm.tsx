@@ -6,7 +6,7 @@ import { useActivityStore, useFacilityStore, useUserStore } from "../../store/st
 export default function DeleteActivityForm({ activity }: { activity: ActivityResponse}) {
   const navigate = useNavigate();
 
-  const user = useUserStore((s) => s.getUser(activity.user.id, activity.user.clubId));
+  const user = useUserStore((s) => s.getUser(activity.user.id));
   const facility = useFacilityStore((s) => s.getFacility(activity.facility.id));
   const onSubmit = async (data: { id: number }) => {
     try {

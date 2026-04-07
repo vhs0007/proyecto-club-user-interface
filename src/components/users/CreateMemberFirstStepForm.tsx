@@ -95,7 +95,7 @@ export default function CreateMemberFirstStepForm() {
                                         useMembershipStore.getState().setMembership(membershipRes);
                                         navigate('/miembros')
                                     }else{
-                                        useUserStore.getState().deleteUser(userRes.id, userRes.clubId);
+                                        useUserStore.getState().deleteUser(userRes.id);
                                         AxiosInstance.delete(`/users/${userRes.id}`, {
                                             data: {
                                                 id: userRes.id,
@@ -105,7 +105,7 @@ export default function CreateMemberFirstStepForm() {
                                         throw new Error("Error al crear la membresía");
                                     }
                                 }else{
-                                    useUserStore.getState().deleteUser(userRes.id, userRes.clubId);
+                                    useUserStore.getState().deleteUser(userRes.id);
                                     AxiosInstance.delete(`/users/${userRes.id}`, {
                                         data: {
                                             id: userRes.id,

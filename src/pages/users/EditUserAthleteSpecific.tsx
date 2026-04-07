@@ -1,16 +1,15 @@
 import { Link, useParams, useLocation } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useClubIdStore, useUserStore } from "../../store/store";
+import { useUserStore } from "../../store/store";
 import EditUserAthleteForm from "../../components/users/EditUserAthleteForm";
 
 export default function EditUserAthleteSpecific() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const identifier = id ? parseInt(id, 10) : NaN;
-  const clubId = useClubIdStore((state) => state.clubId);
   const user: UserResponse | null = useUserStore((state) => {
-    if (!Number.isNaN(identifier) && clubId > 0) {
-      return state.getUser(identifier, clubId);
+    if (!Number.isNaN(identifier)) {
+      return state.getUser(identifier);
     }
     return null;
   });
