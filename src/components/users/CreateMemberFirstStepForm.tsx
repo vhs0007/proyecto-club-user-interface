@@ -132,7 +132,7 @@ export default function CreateMemberFirstStepForm() {
                         membership: user.membership,
                         clubId: useClubIdStore.getState().clubId,
                     });
-                    navigate('/socios/crear/paso-especifico-atleta')
+                    navigate('/miembros/crear/paso-especifico-atleta')
                 }
             else{
                 throw new Error("Error al crear el usuario tipo id invalido");

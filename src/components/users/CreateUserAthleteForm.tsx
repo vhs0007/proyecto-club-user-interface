@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useCreateUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import type { UserResponse } from "../../entities/Entities";
 import { useNavigate } from "react-router-dom";
@@ -50,11 +50,14 @@ export default function CreateUserAthleteForm() {
             useCreateUserStore.getState().setAthleteSpecificStep(athleteSpecificStep);
 
             const firstStep = useCreateUserStore.getState().firstStep;
+            const clubId = firstStep.clubId || useClubIdStore.getState().clubId;
             const userToSend = {
                 name: firstStep.name,
                 typeId: firstStep.typeId,
                 email: firstStep.email,
+                document: firstStep.document,
                 isActive: true,
+                clubId,
                 weight: athleteSpecificStep.weight,
                 height: athleteSpecificStep.height,
                 gender: athleteSpecificStep.gender,
@@ -74,6 +77,8 @@ export default function CreateUserAthleteForm() {
                     const membership = {
                         userId: response.data.id,
                         type: firstStep.membership,
+                        clubId,
+                        userTypeId: response.data.typeId,
                     };
                     const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if (membershipResponse.data) {

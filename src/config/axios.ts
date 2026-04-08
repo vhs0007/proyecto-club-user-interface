@@ -48,15 +48,8 @@ AxiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const status = error.response?.status;
-    const data = error.response?.data as { message?: string | string[]; error?: string } | undefined;
-    const message =
-      data?.message ??
-      data?.error ??
-      error.message ??
-      'Error inesperado';
-
-    if (status && [400, 401, 404, 500, 501, 502].includes(status)) {
-      alert(`Error ${status}: ${Array.isArray(message) ? message.join(', ') : message}`);
+    if (status && (String(status).startsWith('4') || String(status).startsWith('5'))) {
+      alert('error en servidor');
     }
     return Promise.reject(error);
   }

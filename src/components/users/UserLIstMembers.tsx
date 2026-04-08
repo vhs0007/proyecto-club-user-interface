@@ -16,7 +16,7 @@ export default function UserList() {
   
   const navigate = useNavigate();
   const users: UserResponse[] = useUserStore((state) => state.users);
-  const filtered = users.filter((u) => u.typeId === 2);
+  const filtered = users.filter((u) => u.typeId === 2 || u.typeId === 3);
   console.log("estos son usuarios bobin", filtered)
   return (
     <div className="user-directory">
