@@ -81,13 +81,14 @@ export default function CreateMemberFirstStepForm() {
                         if(response){
                             const userRes : UserResponse = response.data;
                             try{
-                                const response = await AxiosInstance.post("/membership", {
+                                const responseMem = await AxiosInstance.post("/membership", {
                                     userId: userRes.id,
                                     type: user.membership,
                                     clubId: useClubIdStore.getState().clubId,
+                                    userTypeId: userRes.typeId,
                                 });
-                                if(response){
-                                    const membershipRes : MembershipResponse = response.data;
+                                if(responseMem){
+                                    const membershipRes : MembershipResponse = responseMem.data;
                                     if(membershipRes.id){
                                         userRes.membership?.push(membershipRes);
                                         useUserStore.getState().setUser(userRes);

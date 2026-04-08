@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useEditUserStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
 function toTimeInput(d: Date | string | null | undefined): string {
@@ -58,6 +58,7 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
         employmentStartDate: new Date(data.employmentStartDate),
         startWorkAt: data.startWorkAt,
         endWorkAt: data.endWorkAt,
+        clubId: useClubIdStore.getState().clubId,
       };
       const response = await AxiosInstance.patch<UserResponse>(`/users/${user.id}`, payload);
       if (response?.data) {
