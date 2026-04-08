@@ -61,6 +61,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
         email: data.email,
         isActive: data.isActive,
         clubId,
+        typeId: user.typeId,
       });
       if(response.status === 200){
         useUserStore.getState().updateUser(response.data);

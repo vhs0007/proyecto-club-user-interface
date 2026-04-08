@@ -86,6 +86,7 @@ export default function CreateUserAthleteForm() {
                             data: {
                                 id: response.data.id,
                                 clubId: response.data.clubId,
+                                typeId: response.data.typeId,
                             },
                         });
                         useUserStore.getState().deleteUser(response.data.id);

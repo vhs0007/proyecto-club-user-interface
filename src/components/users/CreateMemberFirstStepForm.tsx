@@ -68,7 +68,6 @@ export default function CreateMemberFirstStepForm() {
                     ...user,
                     clubId: useClubIdStore.getState().clubId,
                 });
-                if(user.typeId !== 3){
                     try{
                         const userToSend = {
                             name: data.name,
@@ -110,6 +109,7 @@ export default function CreateMemberFirstStepForm() {
                                         data: {
                                             id: userRes.id,
                                             clubId: userRes.clubId,
+                                            typeId: userRes.typeId,
                                         },
                                     });
                                     throw new Error("Error al crear la membresía");
@@ -133,9 +133,8 @@ export default function CreateMemberFirstStepForm() {
                     });
                     navigate('/socios/crear/paso-especifico-atleta')
                 }
-            }
             else{
-                return;
+                throw new Error("Error al crear el usuario tipo id invalido");
             }
         }catch(error){
             alert(error);
