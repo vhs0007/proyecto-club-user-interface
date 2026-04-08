@@ -8,6 +8,7 @@ import AxiosInstance from "../../config/axios";
 
 function toTimeInput(d: Date | string | null | undefined): string {
   if (d == null) return "";
+  if (typeof d === "string") return d.slice(0, 5);
   const date = new Date(d);
   if (Number.isNaN(date.getTime())) return "";
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -16,9 +17,11 @@ function toTimeInput(d: Date | string | null | undefined): string {
 
 function toDateInput(d: Date | string | null | undefined): string {
   if (d == null) return "";
+  if (typeof d === "string") return d.slice(0, 10);
   const date = new Date(d);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toISOString().slice(0, 10);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 const workerSchema = z.object({
