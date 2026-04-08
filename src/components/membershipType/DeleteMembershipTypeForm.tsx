@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AxiosInstance from '../../config/axios';
-import { useMembershipTypeStore } from '../../store/store';
+import { useClubIdStore, useMembershipTypeStore } from '../../store/store';
 import type { MembershipType } from '../../entities/Entities';
 
 export interface DeleteMembershipTypeFormProps {
@@ -11,15 +11,18 @@ export interface DeleteMembershipTypeFormProps {
 export default function DeleteMembershipTypeForm({ membershipType }: DeleteMembershipTypeFormProps) {
   const navigate = useNavigate();
   const deleteMembershipType = useMembershipTypeStore((s) => s.deleteMembershipType);
+  const clubIdFromStore = useClubIdStore((s) => s.clubId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const clubId = membershipType.clubId ?? clubIdFromStore;
+    if (!clubId) return;
     setLoading(true);
     setError(null);
     try {
-      await AxiosInstance.delete(`/membership-type/${membershipType.id}`);
+      await AxiosInstance.delete(`/membership-type/${membershipType.id}?clubId=${clubId}`);
       deleteMembershipType(membershipType.id);
       navigate('/tipos-membresia');
     } catch {

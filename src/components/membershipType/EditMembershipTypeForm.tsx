@@ -48,7 +48,9 @@ export default function EditMembershipTypeForm({ membershipType }: EditMembershi
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await AxiosInstance.patch<MembershipType>(`/membership-type/${membershipType.id}`, {
+      const resolvedClubId = membershipType.clubId ?? clubId;
+      if (!resolvedClubId) return;
+      const response = await AxiosInstance.patch<MembershipType>(`/membership-type/${membershipType.id}?clubId=${resolvedClubId}`, {
         name: data.name,
         price: data.price,
       });

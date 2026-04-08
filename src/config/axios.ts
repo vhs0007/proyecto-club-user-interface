@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders } from 'axios';
+import axios, { AxiosError, AxiosHeaders } from 'axios';
 import { useAuthStore, useClubIdStore } from '../store/store';
 
 const AxiosInstance = axios.create({
@@ -43,5 +43,23 @@ AxiosInstance.interceptors.request.use(async (config) => {
 
   return config;
 });
+
+AxiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    const status = error.response?.status;
+    const data = error.response?.data as { message?: string | string[]; error?: string } | undefined;
+    const message =
+      data?.message ??
+      data?.error ??
+      error.message ??
+      'Error inesperado';
+
+    if (status && [400, 401, 404, 500, 501, 502].includes(status)) {
+      alert(`Error ${status}: ${Array.isArray(message) ? message.join(', ') : message}`);
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default AxiosInstance;

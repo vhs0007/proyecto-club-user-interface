@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { MembershipResponse } from "../../entities/Entities";
-import { useMembershipStore } from "../../store/store";
+import { useClubIdStore, useMembershipStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import React, { useState } from "react";
 
@@ -11,6 +11,7 @@ export interface DeleteMembershipFormProps {
 const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership }) => {
   const navigate = useNavigate();
   const deleteMembership = useMembershipStore((state) => state.deleteMembership);
+  const clubIdFromStore = useClubIdStore((state) => state.clubId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,10 +20,12 @@ const DeleteMembershipForm: React.FC<DeleteMembershipFormProps> = ({ membership 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!membership?.id) return;
+    const clubId = membership.clubId ?? clubIdFromStore;
+    if (!clubId) return;
     setLoading(true);
     setError(null);
     try {
-      await AxiosInstance.delete(`/membership/${membership.id}`);
+      await AxiosInstance.delete(`/membership/${membership.id}?clubId=${clubId}`);
       deleteMembership(membership.id);
       navigate("/membresias");
     } catch {

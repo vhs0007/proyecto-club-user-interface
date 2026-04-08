@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import type { MembershipResponse } from "../../entities/Entities";
-import { useMembershipTypeStore, useMembershipStore } from "../../store/store";
+import { useClubIdStore, useMembershipTypeStore, useMembershipStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +20,7 @@ export interface EditMembershipFormProps {
 export default function EditMembershipForm({ membership }: EditMembershipFormProps) {
   const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
   const updateMembership = useMembershipStore((state) => state.updateMembership);
+  const clubIdFromStore = useClubIdStore((state) => state.clubId);
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, reset } = useForm<EditMembershipFormData>({
     resolver: zodResolver(schema),
@@ -38,11 +39,13 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
 
   const onSubmit = async (data: EditMembershipFormData) => {
     if (!membership?.id) return;
+    const clubId = membership.clubId ?? clubIdFromStore;
+    if (!clubId) return;
     console.log(data);
     const membershipToSend = {
       ...data,
     }
-    const response = await AxiosInstance.patch(`/membership/${membership.id}`, membershipToSend);
+    const response = await AxiosInstance.patch(`/membership/${membership.id}?clubId=${clubId}`, membershipToSend);
     console.log(response);
     if (response.status === 200 && response.data) {
       updateMembership(response.data as MembershipResponse);
