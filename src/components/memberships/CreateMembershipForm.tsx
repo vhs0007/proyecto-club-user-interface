@@ -36,11 +36,13 @@ export default function CreateMembershipForm() {
   const onSubmit = async (data: CreateMembershipFormData) => {
     debugger;
     console.log(data);
-    
+    const user = users.find((u) => u.id === data.userId);
+    const userType = user?.typeId;
     try {
       const membership = {
         ...data,
         clubId: useClubIdStore.getState().clubId,
+        userTypeId: userType,
       }
       const response = await Axios.post('/membership', membership);
       console.log(response);
@@ -49,6 +51,7 @@ export default function CreateMembershipForm() {
           id: response.data.id,
           clubId: response.data.clubId,
           user: response.data.user,
+          createdAt: response.data.createdAt,
           membershipType: response.data.membershipType,
           expiration: response.data.expiration,
         } as MembershipResponse;

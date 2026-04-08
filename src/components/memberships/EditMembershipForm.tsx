@@ -3,12 +3,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import type { MembershipResponse } from "../../entities/Entities";
-import { useClubIdStore, useMembershipTypeStore, useMembershipStore } from "../../store/store";
+import { useClubIdStore, useMembershipTypeStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   type: z.number().min(1, "Seleccioná un tipo de membresía"),
+  userId: z.number().min(1, "El usuario es requerido"),
 });
 
 export type EditMembershipFormData = z.infer<typeof schema>;
@@ -22,10 +23,12 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
   const updateMembership = useMembershipStore((state) => state.updateMembership);
   const clubIdFromStore = useClubIdStore((state) => state.clubId);
   const navigate = useNavigate();
+  const users = useUserStore.getState().users;
   const { register, handleSubmit, formState: { errors }, reset } = useForm<EditMembershipFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       type: 0,
+      userId: 0,
     },
   });
 
@@ -33,6 +36,7 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
     if (membership) {
       reset({
         type: membership.membershipType?.id ?? 0,
+        userId: membership.user?.id ?? 0,
       });
     }
   }, [membership, reset]);
@@ -42,8 +46,12 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
     const clubId = membership.clubId ?? clubIdFromStore;
     if (!clubId) return;
     console.log(data);
+    const user = users.find((u) => u.id === data.userId);
+    const userType = user?.typeId;
     const membershipToSend = {
       ...data,
+      userTypeId: userType,
+      clubId: clubId,
     }
     const response = await AxiosInstance.patch(`/membership/${membership.id}?clubId=${clubId}`, membershipToSend);
     console.log(response);
@@ -75,6 +83,8 @@ export default function EditMembershipForm({ membership }: EditMembershipFormPro
         </select>
         {errors.type && <div className="activityFormError">{errors.type.message}</div>}
       </div>
+
+      <input type="hidden" value={membership.user?.id} {...register("userId", { valueAsNumber: true })} />
 
       <div className="flex items-center gap-2 pt-2">
         <button type="submit" className="activityPrimaryButton">Guardar</button>
