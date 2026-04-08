@@ -67,6 +67,7 @@ interface CreateActivitySecondStep {
   facilityId: number;
   userId: number;
   cost: number;
+  userTypeId: number;
 }
 
 interface CreateActivityState {
@@ -175,6 +176,7 @@ interface EditActivitySecondStep {
   facilityId: number;
   userId: number;
   cost: number;
+  userTypeId: number;
 }
 
 interface EditActivityState {
@@ -219,6 +221,7 @@ const initialEditActivitySecondStep: EditActivitySecondStep = {
   facilityId: 0,
   userId: 0,
   cost: 0,
+  userTypeId: 0,
 };
 
 export const useEditActivityStore = create<EditActivityState>()(
@@ -429,7 +432,7 @@ export const useCreateActivityStore = create<CreateActivityState>()(
   persist(
     (set) => ({
       firstStep: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), isActive: true, clubId: 0 },
-      secondStep: { facilityId: 0, userId: 0, cost: 0 },
+      secondStep: { facilityId: 0, userId: 0, cost: 0, userTypeId: 0 },
       setFirstStep: (firstStep: CreateActivityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateActivitySecondStep) => set({ secondStep }),
     }),

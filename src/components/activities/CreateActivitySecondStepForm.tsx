@@ -44,6 +44,7 @@ export default function CreateActivitySecondStepForm() {
   const onSubmit = async (data: CreateActivityFormData) => {
     try {
       const firstStep = useCreateActivityStore.getState().firstStep;
+      const userTypeId = users.find((u) => u.id === data.userId)?.typeId;
       const payload = {
         name: firstStep.name,
         type: firstStep.type,
@@ -52,6 +53,7 @@ export default function CreateActivitySecondStepForm() {
         hourStart: firstStep.hourStart,
         hourEnd: firstStep.hourEnd,
         userId: data.userId,
+        userTypeId,
         cost: data.cost,
         facilityId: data.facilityId,
         isActive: firstStep.isActive,

@@ -4,8 +4,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useEditActivityStore } from "../../store/store";
-import type { ActivityResponse } from "../../entities/Entities";
+import { useActivityStore, useEditActivityStore, useUserStore } from "../../store/store";
+import type { ActivityResponse, UserResponse } from "../../entities/Entities";
 
 const schema = z.object({
   userId: z.number().min(1, "Usuario requerido"),
@@ -24,6 +24,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
   const firstStep = useEditActivityStore((s) => s.firstStep);
   const editingActivityId = useEditActivityStore((s) => s.editingActivityId);
   const leavingAfterSuccessfulSave = useRef(false);
+  const users: UserResponse[] = useUserStore.getState().users;
 
   useEffect(() => {
     if (!firstStep.name.trim()) {
@@ -56,6 +57,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
   const onSubmit = async (data: FormData) => {
     if (!id) return;
     const fs = useEditActivityStore.getState().firstStep;
+    const userTypeId = users.find((u) => u.id === data.userId)?.typeId;
     try {
       const payload = {
         name: fs.name,
@@ -65,6 +67,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         hourStart: fs.hourStart,
         hourEnd: fs.hourEnd,
         userId: data.userId,
+        userTypeId,
         cost: data.cost,
         facilityId: data.facilityId,
         isActive: fs.isActive ?? true,
