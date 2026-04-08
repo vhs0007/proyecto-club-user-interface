@@ -31,12 +31,12 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         leavingAfterSuccessfulSave.current = false;
         return;
       }
-      if (id) navigate(`/actividades/editar/${id}`, { replace: true });
+      if (id) navigate(`/reservas/editar/${id}`, { replace: true });
       return;
     }
     if (editingActivityId !== null && editingActivityId !== activity.id) {
       useEditActivityStore.getState().resetEditActivity();
-      navigate(`/actividades/editar/${activity.id}`, { replace: true });
+      navigate(`/reservas/editar/${activity.id}`, { replace: true });
     }
   }, [firstStep.name, editingActivityId, activity.id, id, navigate]);
 
@@ -74,11 +74,11 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         useActivityStore.getState().updateActivity(response.data);
         leavingAfterSuccessfulSave.current = true;
         useEditActivityStore.getState().resetEditActivity();
-        alert("Actividad actualizada correctamente");
-        navigate("/actividades");
+        alert("Reserva actualizada correctamente");
+        navigate("/reservas");
       }
     } catch (error) {
-      alert("Error al actualizar la actividad");
+      alert("Error al actualizar la reserva");
       console.error(error);
     }
   };
@@ -94,7 +94,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
       >
         <div>
-          <Link to={id ? `/actividades/editar/${id}` : "/actividades"} className="pageBackButton">
+          <Link to={id ? `/reservas/editar/${id}` : "/reservas"} className="pageBackButton">
             Volver al paso 1
           </Link>
         </div>

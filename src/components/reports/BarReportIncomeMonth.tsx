@@ -37,7 +37,7 @@ const options: ChartOptions<'bar'> = {
 
 function buildChartData(report: MonthIncomeReportResponse): ChartData<'bar'> {
   return {
-    labels: ['Actividades', 'Membresías'],
+    labels: ['Reservas', 'Membresías'],
     datasets: [
       {
         label: 'Ingresos',

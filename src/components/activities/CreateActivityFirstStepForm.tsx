@@ -52,13 +52,16 @@ export default function CreateActivityFirstStepForm() {
       isActive: true,
       clubId: useClubIdStore.getState().clubId,
     });
-    navigate("/actividades/crear/paso-2");
+    navigate("/reservas/crear/paso-2");
   };
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
+      >
+        <div className="space-y-1.5">
           <label htmlFor="name" className="activityFormLabel">Nombre</label>
           <input
             type="text"
@@ -69,7 +72,7 @@ export default function CreateActivityFirstStepForm() {
           />
           {errors.name && <div className="activityFormError">{errors.name.message}</div>}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="type" className="activityFormLabel">Tipo</label>
           <input
             type="text"
@@ -80,7 +83,7 @@ export default function CreateActivityFirstStepForm() {
           />
           {errors.type && <div className="activityFormError">{errors.type.message}</div>}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="date" className="activityFormLabel">Fecha</label>
           <input
             type="date"
@@ -90,7 +93,7 @@ export default function CreateActivityFirstStepForm() {
           />
           {errors.date && <div className="activityFormError">{errors.date.message}</div>}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="hourStart" className="activityFormLabel">Hora de inicio</label>
           <input
             type="time"
@@ -100,7 +103,7 @@ export default function CreateActivityFirstStepForm() {
           />
           {errors.hourStart && <div className="activityFormError">{errors.hourStart.message}</div>}
         </div>
-        <div>
+        <div className="space-y-1.5">
           <label htmlFor="hourEnd" className="activityFormLabel">Hora de fin</label>
           <input
             type="time"

@@ -32,7 +32,7 @@ export default function FacilityList({ facilities, onEdit, onDelete }: FacilityL
               <td className="listTableTd">{facility.capacity}</td>
               <td className="listTableTd">{facility.responsibleWorker?.name ?? facility.responsibleWorker?.id ?? '-'}</td>
               <td className="listTableTd">{facility.assistantWorker?.name ?? facility.assistantWorker?.id ?? '-'}</td>
-              <td className="listTableTd">{facility.membershipTypes[0]?.name ?? '-'}</td>
+              <td className="listTableTd">{facility.membershipTypes.map((membershipType) => membershipType.name).join(', ') ?? '-'}</td>
               <td className="listTableTd">
                 <span className={facility.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
                   {facility.isActive ? 'Activa' : 'Inactiva'}

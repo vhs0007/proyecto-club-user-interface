@@ -18,7 +18,7 @@ export default function DeleteActivity() {
 
   return (
     <div className="container py-4">
-      <h1 className="mb-4">Eliminar actividad</h1>
+      <h1 className="mb-4">Eliminar reserva</h1>
       <DeleteActivityForm activity={activity} />
     </div>
   );

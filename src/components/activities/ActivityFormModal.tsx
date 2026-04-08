@@ -74,7 +74,7 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
     } catch (error: any) {
       console.error('[ActivityFormModal] error', error);
       console.error('[ActivityFormModal] response data', error?.response?.data);
-      setError(error?.response?.data?.message || 'Error al guardar actividad');
+      setError(error?.response?.data?.message || 'Error al guardar reserva');
     } finally {
       setLoading(false);
     }
@@ -87,7 +87,7 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
           <div className="modal-header bg-light">
             <h5 className="modal-title">
               <i className={`bi ${isEditing ? 'bi-pencil-square' : 'bi-calendar-plus'} me-2`}></i>
-              {isEditing ? 'Editar Actividad' : 'Nueva Actividad'}
+              {isEditing ? 'Editar Reserva' : 'Nueva Reserva'}
             </h5>
             <button type="button" className="btn-close" onClick={onClose} aria-label="Cerrar"></button>
           </div>
