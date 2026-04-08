@@ -311,7 +311,11 @@ export const useMembershipStore = create<MembershipState>()(
       memberships: [],
       setMemberships: (memberships: MembershipResponse[]) => set({ memberships }),
       setMembership: (membership: MembershipResponse) =>
-        set((state) => ({ memberships: [...state.memberships, membership] })),
+        set((state) => ({
+          memberships: state.memberships.some((m) => m.id === membership.id)
+            ? state.memberships.map((m) => (m.id === membership.id ? membership : m))
+            : [...state.memberships, membership],
+        })),
       getMembership: (id: number) => get().memberships.find((m) => m.id === id) ?? null,
       deleteMembership: (id: number) => set((state) => ({ memberships: state.memberships.filter((m) => m.id !== id) })),
       updateMembership: (membership: MembershipResponse) => set((state) => ({ memberships: state.memberships.map((m) => m.id === membership.id ? membership : m) })),
@@ -386,7 +390,12 @@ export const useUserStore = create<UserState>()(
     (set, get) => ({
       users: [],
       setUsers: (users: UserResponse[]) => set({ users }),
-      setUser: (user: UserResponse) => set((state) => ({ users: [...state.users, user] })),
+      setUser: (user: UserResponse) =>
+        set((state) => ({
+          users: state.users.some((u) => u.id === user.id)
+            ? state.users.map((u) => (u.id === user.id ? user : u))
+            : [...state.users, user],
+        })),
       getUser: (id: number) => get().users.find((u) => u.id === id) ?? null,
       deleteUser: (id: number) => set((state) => ({ users: state.users.filter((u) => u.id !== id) })),
       updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id ? user : u) })),

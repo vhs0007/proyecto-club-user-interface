@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { UserResponse } from "../../entities/Entities";
+import type { MembershipResponse, UserResponse } from "../../entities/Entities";
 import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
@@ -65,7 +65,17 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       });
       if(response.status === 200){
         useUserStore.getState().updateUser(response.data);
-        useMembershipStore.getState().setMembership(response.data.membership?.[0]);
+        console.log(response.data);
+        const membership : MembershipResponse = {
+          id: response.data.membership?.[0].id,
+          user: response.data,
+          membershipType: response.data.membership?.[0].membershipType,
+          expiration: response.data.membership?.[0].expiration,
+          createdAt: response.data.membership?.[0].createdAt,
+          clubId: useClubIdStore.getState().clubId,
+        }
+        console.log(membership);
+        useMembershipStore.getState().updateMembership(membership);
         navigate(`/miembros`);
       }
     }
