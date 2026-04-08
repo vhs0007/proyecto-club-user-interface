@@ -4,8 +4,18 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
+<<<<<<< Updated upstream
 import { useActivityStore, useEditActivityStore, useUserStore } from "../../store/store";
 import type { ActivityResponse, UserResponse } from "../../entities/Entities";
+=======
+import {
+  useActivityStore,
+  useEditActivityStore,
+  useFacilityStore,
+  useUserStore,
+} from "../../store/store";
+import type { ActivityResponse } from "../../entities/Entities";
+>>>>>>> Stashed changes
 
 const schema = z.object({
   userId: z.number().min(1, "Usuario requerido"),
@@ -23,6 +33,8 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
   const navigate = useNavigate();
   const firstStep = useEditActivityStore((s) => s.firstStep);
   const editingActivityId = useEditActivityStore((s) => s.editingActivityId);
+  const users = useUserStore((state) => state.users);
+  const facilities = useFacilityStore((state) => state.facilities);
   const leavingAfterSuccessfulSave = useRef(false);
   const users: UserResponse[] = useUserStore.getState().users;
 
@@ -108,16 +120,20 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
 
         <div className="space-y-1.5">
           <label htmlFor="userId" className="activityFormLabel">
-            ID de usuario
+            Usuario
           </label>
-          <input
+          <select
             id="userId"
-            type="number"
-            min={1}
-            placeholder="ID del usuario"
             className={`activityFormControl ${errBorder(!!errors.userId)}`}
             {...register("userId", { valueAsNumber: true })}
-          />
+          >
+            <option value={0}>Seleccioná un usuario</option>
+            {users.filter((u) => u.typeId === 2).map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
           {errors.userId && <span className="activityFormError">{errors.userId.message}</span>}
         </div>
 
@@ -139,16 +155,20 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
 
         <div className="space-y-1.5">
           <label htmlFor="facilityId" className="activityFormLabel">
-            ID de instalación
+            Instalación
           </label>
-          <input
+          <select
             id="facilityId"
-            type="number"
-            min={1}
-            placeholder="ID de la instalación"
             className={`activityFormControl ${errBorder(!!errors.facilityId)}`}
             {...register("facilityId", { valueAsNumber: true })}
-          />
+          >
+            <option value={0}>Seleccioná una instalación</option>
+            {facilities.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.type}
+              </option>
+            ))}
+          </select>
           {errors.facilityId && <span className="activityFormError">{errors.facilityId.message}</span>}
         </div>
 
