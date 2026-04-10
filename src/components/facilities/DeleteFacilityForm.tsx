@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import type { FacilityResponse } from '../../entities/Entities'
-import { useFacilityStore } from '../../store/store'
+import { useClubIdStore, useFacilityStore } from '../../store/store'
 import AxiosInstance from '../../config/axios'
 import { useState } from 'react'
 
@@ -10,6 +10,7 @@ export interface DeleteFacilityFormProps {
 
 export default function DeleteFacilityForm({ facility }: DeleteFacilityFormProps) {
   const navigate = useNavigate()
+  const clubIdFromStore = useClubIdStore((state) => state.clubId)
   const deleteFacility = useFacilityStore((state) => state.deleteFacility)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -17,12 +18,17 @@ export default function DeleteFacilityForm({ facility }: DeleteFacilityFormProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!facility?.id) return
+    const clubId = facility.clubId ?? clubIdFromStore
+    if (!clubId) {
+      setError('No se pudo determinar el club de la instalación.')
+      return
+    }
 
     setLoading(true)
     setError(null)
 
     try {
-      await AxiosInstance.delete(`/facilities/${facility.id}`)
+      await AxiosInstance.delete(`/facilities/${facility.id}?clubId=${clubId}`)
       deleteFacility(facility.id)
       navigate('/instalaciones')
     } catch {

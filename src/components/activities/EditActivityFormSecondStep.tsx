@@ -6,6 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
 import {
   useActivityStore,
+  useClubIdStore,
   useEditActivityStore,
   useFacilityStore,
   useUserStore,
@@ -26,6 +27,7 @@ const errBorder = (has: boolean) =>
 export default function EditActivityFormSecondStep({ activity }: { activity: ActivityResponse }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const clubIdFromStore = useClubIdStore((s) => s.clubId);
   const firstStep = useEditActivityStore((s) => s.firstStep);
   const editingActivityId = useEditActivityStore((s) => s.editingActivityId);
   const users = useUserStore((state) => state.users);
@@ -65,6 +67,11 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
     const fs = useEditActivityStore.getState().firstStep;
     const userTypeId = users.find((u) => u.id === data.userId)?.typeId;
     try {
+      const resolvedClubId = (fs.clubId || activity.clubId) ?? clubIdFromStore;
+      if (!resolvedClubId) {
+        alert("No se pudo determinar el club de la reserva");
+        return;
+      }
       const payload = {
         name: fs.name,
         type: fs.type,
@@ -78,7 +85,10 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         facilityId: data.facilityId,
         isActive: fs.isActive ?? true,
       };
-      const response = await AxiosInstance.patch<ActivityResponse>(`/activities/${id}`, payload);
+      const response = await AxiosInstance.patch<ActivityResponse>(
+        `/activities/${id}?clubId=${resolvedClubId}`,
+        payload,
+      );
       if (response?.data) {
         useActivityStore.getState().updateActivity(response.data);
         leavingAfterSuccessfulSave.current = true;

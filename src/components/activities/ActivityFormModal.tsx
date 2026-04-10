@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AxiosInstance from '../../config/axios';
 import type { Activity } from '../../entities/Entities';
+import { useClubIdStore } from '../../store/store';
 
 interface ActivityFormModalProps {
   activity: Activity | null;
@@ -11,6 +12,7 @@ interface ActivityFormModalProps {
 export default function ActivityFormModal({ activity, onClose, onSuccess }: ActivityFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const clubIdFromStore = useClubIdStore((s) => s.clubId);
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
@@ -61,8 +63,14 @@ export default function ActivityFormModal({ activity, onClose, onSuccess }: Acti
 
     try {
       if (isEditing && activity) {
+        const clubId = activity.clubId ?? clubIdFromStore;
+        if (!clubId) {
+          setError('No se pudo determinar el club de la reserva');
+          setLoading(false);
+          return;
+        }
         console.log('[ActivityFormModal] PATCH payload', payload);
-        const response = await AxiosInstance.patch(`/activities/${activity.id}`, payload);
+        const response = await AxiosInstance.patch(`/activities/${activity.id}?clubId=${clubId}`, payload);
         console.log('[EditActivity] response data', response.data);
       } else {
         console.log('[ActivityFormModal] POST payload', payload);

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Facility, FacilityResponse, MembershipType, UserResponse } from '../../entities/Entities'
 import AxiosInstance from '../../config/axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useCreateFacilityStore, useFacilityStore, useMembershipTypeStore, useUserStore } from '../../store/store'
+import { useClubIdStore, useCreateFacilityStore, useFacilityStore, useMembershipTypeStore, useUserStore } from '../../store/store'
 
 const formSchema = z.object({
   responsibleWorker: z.number().min(1),
@@ -17,6 +17,7 @@ type FormData = z.infer<typeof formSchema>
 export default function EditFacilityFormSecondStep({ facility }: { facility: FacilityResponse | null }) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const clubIdFromStore = useClubIdStore((s) => s.clubId)
 
   const [membershipTypeIds, setMembershipTypeIds] = useState<number[]>([])
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -57,6 +58,11 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
     useCreateFacilityStore.getState().setSecondStep(secondStep)
 
     try {
+      const resolvedClubId = facility.clubId ?? clubIdFromStore
+      if (!resolvedClubId) {
+        alert('No se pudo determinar el club de la instalación')
+        return
+      }
       const request: Facility = {
         type: useCreateFacilityStore.getState().firstStep.type,
         capacity: useCreateFacilityStore.getState().firstStep.capacity,
@@ -67,7 +73,10 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
         isActive: facility.isActive,
       }
 
-      const response = await AxiosInstance.patch<FacilityResponse>(`/facilities/${facility.id}`, request)
+      const response = await AxiosInstance.patch<FacilityResponse>(
+        `/facilities/${facility.id}?clubId=${resolvedClubId}`,
+        request,
+      )
 
       if (response) {
         useFacilityStore.getState().updateFacility(response.data)
