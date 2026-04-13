@@ -49,7 +49,6 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
   });
 
   console.log("user", user);
-  console.log("fecha empleo", user.employmentStartDate);
   const onSubmit = async (data: z.infer<typeof workerSchema>) => {
     if (!user.id || !idParam) return;
     try {

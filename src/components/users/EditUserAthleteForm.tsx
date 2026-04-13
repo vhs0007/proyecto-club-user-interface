@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useEditUserStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useEditUserStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
 function toDateInput(d: Date | string | null | undefined): string {
@@ -33,7 +33,6 @@ export default function EditUserAthleteForm({ user }: { user: UserResponse }) {
   const navigate = useNavigate();
   const location = useLocation();
   const firstStep = useEditUserStore((s) => s.firstStep);
-
   const listPath = location.pathname.includes("/miembros") ? "/miembros" : "/trabajadores";
     return (
       <EditAthleteFields
@@ -60,6 +59,7 @@ function EditAthleteFields({
   listPath: string;
   navigate: ReturnType<typeof useNavigate>;
 }) {
+  const clubId = useClubIdStore((state) => state.clubId);
   const form = useForm<z.infer<typeof athleteSchema>>({
     resolver: zodResolver(athleteSchema),
     defaultValues: {
@@ -83,6 +83,7 @@ function EditAthleteFields({
         email: firstStep.email,
         typeId: firstStep.typeId,
         isActive: firstStep.isActive,
+        clubId,
         weight: data.weight,
         height: data.height,
         gender: data.gender,

@@ -2,7 +2,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
 import { useEditUserStore } from "../../store/store";
 
@@ -16,7 +16,6 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }) {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const {
     register,
@@ -50,8 +49,8 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
       email: data.email,
       isActive: data.isActive,
     });
-    if (!id) return;
-      navigate(`/trabajadores/editar/${id}/paso-especifico-trabajador`);
+    if (!user.id) return;
+      navigate(`/trabajadores/editar/${user.id}/paso-especifico-trabajador`);
   };
 
   return (

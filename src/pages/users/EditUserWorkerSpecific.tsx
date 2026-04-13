@@ -8,7 +8,7 @@ export default function EditUserWorkerSpecific() {
   const identifier = id ? parseInt(id, 10) : NaN;
   const user: UserResponse | null = useUserStore((state) => {
     if (!Number.isNaN(identifier)) {
-      return state.getUser(identifier);
+      return state.getUser(identifier, 1) ?? null;
     }
     return null;
   });

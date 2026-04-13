@@ -2,7 +2,7 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { MembershipResponse, UserResponse } from "../../entities/Entities";
 import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
@@ -17,7 +17,6 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function EditMemberFirstStepForm({ user }: { user: UserResponse }) {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const clubId = useClubIdStore((state) => state.clubId);
   const {
@@ -30,7 +29,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: user.name ?? "",
-      typeId: 2,
+      typeId: user.typeId,
       email: user.email ?? "",
       isActive: user.isActive,
     },
@@ -39,7 +38,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
   useEffect(() => {
     reset({
       name: user.name ?? "",
-      typeId: 2,
+      typeId: user.typeId,
       email: user.email ?? "",
       isActive: user.isActive,
     });
@@ -52,11 +51,10 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       email: data.email,
       isActive: data.isActive,
     });
-    if (!id) return;
     if(user.type?.id === 3){
-      navigate(`/miembros/editar/${id}/paso-especifico-atleta`);
+      navigate(`/miembros/editar/${user.id}/paso-especifico-atleta`);
     }else{
-      const response = await AxiosInstance.patch(`/users/${id}`, {
+      const response = await AxiosInstance.patch(`/users/${user.id}`, {
         name: data.name,
         email: data.email,
         isActive: data.isActive,
