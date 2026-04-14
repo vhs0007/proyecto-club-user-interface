@@ -83,7 +83,7 @@ export default function CreateActivitySecondStepForm() {
             {...register("userId", { valueAsNumber: true })}
           >
             <option value={0}>Seleccioná un usuario</option>
-            {users.filter((u) => u.typeId === 2).map((u) => (
+            {users.filter((u) => u.typeId === 2 || u.typeId === 3).map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>

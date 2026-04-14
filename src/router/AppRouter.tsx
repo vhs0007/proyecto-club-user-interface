@@ -201,7 +201,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/miembros/editar/:id/paso-1"
+          path="/miembros/editar/:id/:typeId/paso-1"
           element={
             <ProtectedRoute>
               <EditMemberFirstStep />
@@ -217,7 +217,7 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/miembros/eliminar/:id"
+          path="/miembros/eliminar/:id/:typeId"
           element={
             <ProtectedRoute>
               <DeleteUser />

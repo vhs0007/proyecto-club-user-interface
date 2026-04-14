@@ -29,6 +29,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
   })
 
   const users: UserResponse[] = useUserStore((state) => state.users)
+  const workerUsers = users.filter((u) => u.typeId === 1)
   const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes)
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
           {...register('responsibleWorker', { valueAsNumber: true })}
         >
-          {users.map((user) => (
+          {workerUsers.map((user) => (
             <option key={user.id} value={user.id}>
               {user.name}
             </option>
@@ -119,7 +120,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
           {...register('assistantWorker', { valueAsNumber: true })}
         >
-          {users.map((user) => (
+          {workerUsers.map((user) => (
             <option key={user.id} value={user.id}>
               {user.name}
             </option>

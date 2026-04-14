@@ -17,7 +17,6 @@ export default function UserList() {
   const navigate = useNavigate();
   const users: UserResponse[] = useUserStore((state) => state.users);
   const filtered = users.filter((u) => u.typeId === 2 || u.typeId === 3);
-  console.log("estos son usuarios bobin", filtered)
   return (
     <div className="user-directory">
       <div className="overflow-x-auto rounded-md border border-slate-200/80 bg-white -mx-0.5">
@@ -70,7 +69,7 @@ export default function UserList() {
                     <button
                       type="button"
                       className="listActionBtnEdit"
-                      onClick={() => navigate(`/miembros/editar/${user.id}/paso-1`)}
+                      onClick={() => navigate(`/miembros/editar/${user.id}/${user.typeId}/paso-1`)}
                       title="Editar"
                     >
                       <i className="bi bi-pencil"></i>
@@ -79,7 +78,7 @@ export default function UserList() {
                       <button
                         type="button"
                         className="listActionBtnDelete"
-                        onClick={() => navigate(`/miembros/eliminar/${user.id}`)}
+                        onClick={() => navigate(`/miembros/eliminar/${user.id}/${user.typeId}`)}
                         title="Dar de baja"
                       >
                         <i className="bi bi-person-x"></i>

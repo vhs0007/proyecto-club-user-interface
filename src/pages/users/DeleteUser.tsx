@@ -4,19 +4,21 @@ import { useUserStore } from '../../store/store'
 import DeleteUserForm from '../../components/users/DeleteUserForm'
 
 export default function DeleteUser() {
-  const { id } = useParams<{ id: string }>()
+  const { id, typeId: typeIdParam } = useParams<{ id: string; typeId?: string }>()
   const identifier = id ? parseInt(id, 10) : NaN
+  const typeIdFromRoute = typeIdParam != null ? parseInt(typeIdParam, 10) : NaN
 
   const user: UserResponse | null = useUserStore((state) => {
-    if (!Number.isNaN(identifier)) {
-      return state.getUser(identifier)
+    if (Number.isNaN(identifier)) return null
+    if (!Number.isNaN(typeIdFromRoute)) {
+      return state.getUser(identifier, typeIdFromRoute)
     }
-    return null
+    return state.getUser(identifier, 1)
   })
 
   if (!user) return null
 
-  const listPath = user.typeId === 2 ? '/miembros' : '/trabajadores'
+  const listPath = user.typeId === 2 || user.typeId === 3 ? '/miembros' : '/trabajadores'
 
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">

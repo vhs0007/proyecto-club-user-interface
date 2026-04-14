@@ -110,8 +110,8 @@ interface UserState {
   users: UserResponse[];
   setUsers: (users: UserResponse[]) => void;
   setUser: (user: UserResponse) => void;
-  getUser: (id: number) => UserResponse | null;
-  deleteUser: (id: number) => void;
+  getUser: (id: number, typeId: number) => UserResponse | null;
+  deleteUser: (id: number, typeId: number) => void;
   updateUser: (user: UserResponse) => void;
 }
 
@@ -387,6 +387,7 @@ export const useCreateFacilityStore = create<CreateFacilityState>()(
     }
   )
 );
+ 
 
 export const useUserStore = create<UserState>()(
   persist(
@@ -395,13 +396,16 @@ export const useUserStore = create<UserState>()(
       setUsers: (users: UserResponse[]) => set({ users }),
       setUser: (user: UserResponse) =>
         set((state) => ({
-          users: state.users.some((u) => u.id === user.id)
-            ? state.users.map((u) => (u.id === user.id ? user : u))
+          users: state.users.some((u) => u.id === user.id && u.typeId === user.typeId)
+            ? state.users.map((u) => (u.id === user.id && u.typeId === user.typeId ? user : u))
             : [...state.users, user],
         })),
-      getUser: (id: number) => get().users.find((u) => u.id === id) ?? null,
-      deleteUser: (id: number) => set((state) => ({ users: state.users.filter((u) => u.id !== id) })),
-      updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id ? user : u) })),
+      getUser: (id: number, typeId: number) => get().users.find((u) => u.id === id && u.typeId === typeId) ?? null,
+      deleteUser: (id: number, typeId: number) =>
+        set((state) => ({
+          users: state.users.filter((u) => !(u.id === id && u.typeId === typeId)),
+        })),
+      updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id && u.typeId === user.typeId ? user : u) })),
     }),
     {
       name: 'users-storage',

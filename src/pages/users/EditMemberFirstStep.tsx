@@ -5,11 +5,12 @@ import EditMemberFirstStepForm from "../../components/users/EditMemberFirstStepF
 import { Link } from "react-router-dom";
 
 export default function EditMemberFirstStep() {
-  const { id } = useParams<{ id: string }>();
+  const { id, typeId: typeIdParam } = useParams<{ id: string; typeId: string }>();
   const identifier = id ? parseInt(id, 10) : NaN;
+  const typeIdFromRoute = typeIdParam ? parseInt(typeIdParam, 10) : NaN;
   const user: UserResponse | null = useUserStore((state) => {
-    if (!Number.isNaN(identifier)) {
-      return state.getUser(identifier);
+    if (!Number.isNaN(identifier) && !Number.isNaN(typeIdFromRoute)) {
+      return state.getUser(identifier, typeIdFromRoute) ?? null;
     }
     return null;
   });
