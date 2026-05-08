@@ -102,7 +102,7 @@ interface CreateFacilityFirstStep{
 
 interface CreateFacilitySecondStep{
   responsibleWorker: number;
-  assistantWorker: number;
+  assistantWorkers: number[];
   membershipTypeIds: number[];
 }
 
@@ -377,7 +377,7 @@ export const useCreateFacilityStore = create<CreateFacilityState>()(
   persist(
     (set) => ({
       firstStep: { type: '', capacity: 0, isActive: true, clubId: 0 },
-      secondStep: { responsibleWorker: 0, assistantWorker: 0, membershipTypeIds: [] },
+      secondStep: { responsibleWorker: 0, assistantWorkers: [], membershipTypeIds: [] },
       setFirstStep: (firstStep: CreateFacilityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateFacilitySecondStep) => set({ secondStep }),
     }),

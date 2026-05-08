@@ -100,7 +100,7 @@ export interface Facility {
     type: string;
     capacity: number;
     responsibleWorker: number;
-    assistantWorker?: number | null;
+    assistantWorkers?: number[] | null;
     isActive?: boolean;
     membershipTypeIds: number[];
 }
@@ -165,7 +165,7 @@ export interface FacilityResponse {
     type: string;
     capacity: number;
     responsibleWorker: WorkerNavigation;
-    assistantWorker: WorkerNavigation | null;
+    assistantWorkers: WorkerNavigation[] | null;
     isActive: boolean;
     activities: ActivitiesNavigation[];
     membershipTypes: MembershipTypeNavigation[];
@@ -177,7 +177,7 @@ export interface FacilityNavigation {
     type: string;
     capacity: number;
     responsibleWorker: WorkerNavigation;
-    assistantWorker: WorkerNavigation | null;
+    assistantWorkers: WorkerNavigation[] | null;
     isActive: boolean;
 }
 

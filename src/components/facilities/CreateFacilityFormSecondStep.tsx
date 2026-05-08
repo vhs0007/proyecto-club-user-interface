@@ -12,7 +12,11 @@ import { useNavigate } from 'react-router-dom'
 
 const formSchema = z.object({
     responsibleWorker: z.number().min(1),
-    assistantWorker: z.number().min(1),
+    // En el UI se selecciona 1 solo asistente (value number), pero el backend pide array.
+    assistantWorkers: z.union([
+        z.number().min(1),
+        z.array(z.number().min(1)).min(1),
+    ]),
 })
 
 export default function CreateFacilityFormSecondStep() {
@@ -32,9 +36,13 @@ export default function CreateFacilityFormSecondStep() {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         console.log(data)
         console.log('membershipTypeIds seleccionados', membershipTypeIds)
+        const assistantWorkers = Array.isArray(data.assistantWorkers)
+            ? data.assistantWorkers
+            : [data.assistantWorkers]
+
         const secondStep = {
             responsibleWorker: data.responsibleWorker,
-            assistantWorker: data.assistantWorker,
+            assistantWorkers,
             membershipTypeIds,
         }
         useCreateFacilityStore.getState().setSecondStep(secondStep)
@@ -43,7 +51,7 @@ export default function CreateFacilityFormSecondStep() {
                 type: useCreateFacilityStore.getState().firstStep.type,
                 capacity: useCreateFacilityStore.getState().firstStep.capacity,
                 responsibleWorker: data.responsibleWorker,
-                assistantWorker: data.assistantWorker,
+                assistantWorkers,
                 membershipTypeIds,
                 isActive: true,
                 clubId: useClubIdStore.getState().clubId,
@@ -89,15 +97,15 @@ export default function CreateFacilityFormSecondStep() {
           <div className="space-y-1.5">
               <label htmlFor="assistantWorker" className="block text-sm font-medium text-slate-700">Trabajador Asistente</label>
               <select
-                  id="assistantWorker"
+                  id="assistantWorkers"
                   className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-                  {...register('assistantWorker', { valueAsNumber: true })}
+                  {...register('assistantWorkers', { valueAsNumber: true })}
               >
                   {users.filter((user) => user.typeId === 1).map((user) => (
                       <option key={user.id} value={user.id}>{user.name}</option>
                   ))}
               </select>
-              {errors.assistantWorker && <span className="text-sm text-red-600">{errors.assistantWorker.message}</span>}
+              {errors.assistantWorkers && <span className="text-sm text-red-600">{errors.assistantWorkers.message}</span>}
           </div>
           <div className="space-y-1.5">
               <label htmlFor="membershipTypeIds" className="block text-sm font-medium text-slate-700">Seleccione Tipos de membresía</label>

@@ -9,7 +9,11 @@ import { useClubIdStore, useCreateFacilityStore, useFacilityStore, useMembership
 
 const formSchema = z.object({
   responsibleWorker: z.number().min(1),
-  assistantWorker: z.number().min(1),
+  // En el UI se selecciona 1 solo asistente (value number), pero el backend pide array.
+  assistantWorkers: z.union([
+    z.number().min(1),
+    z.array(z.number().min(1)).min(1),
+  ]),
 })
 
 type FormData = z.infer<typeof formSchema>
@@ -24,7 +28,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
     resolver: zodResolver(formSchema),
     defaultValues: {
       responsibleWorker: facility?.responsibleWorker?.id ?? 0,
-      assistantWorker: facility?.assistantWorker?.id ?? 0,
+      assistantWorkers: facility?.assistantWorkers?.map((aw) => aw.id) ?? [],
     },
   })
 
@@ -50,9 +54,13 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
   const onSubmit = async (data: FormData) => {
     if (!facility?.id || !id) return
 
+    const assistantWorkers = Array.isArray(data.assistantWorkers)
+      ? data.assistantWorkers
+      : [data.assistantWorkers]
+
     const secondStep = {
       responsibleWorker: data.responsibleWorker,
-      assistantWorker: data.assistantWorker,
+      assistantWorkers,
       membershipTypeIds,
     }
 
@@ -68,7 +76,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
         type: useCreateFacilityStore.getState().firstStep.type,
         capacity: useCreateFacilityStore.getState().firstStep.capacity,
         responsibleWorker: data.responsibleWorker,
-        assistantWorker: data.assistantWorker,
+        assistantWorkers,
         membershipTypeIds,
         clubId: facility.clubId,
         isActive: facility.isActive,
@@ -116,9 +124,9 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
       <div className="space-y-1.5">
         <label htmlFor="assistantWorker" className="block text-sm font-medium text-slate-700">Trabajador Asistente</label>
         <select
-          id="assistantWorker"
+          id="assistantWorkers"
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-          {...register('assistantWorker', { valueAsNumber: true })}
+          {...register('assistantWorkers', { valueAsNumber: true })}
         >
           {workerUsers.map((user) => (
             <option key={user.id} value={user.id}>
@@ -126,7 +134,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
             </option>
           ))}
         </select>
-        {errors.assistantWorker && <span className="text-sm text-red-600">{errors.assistantWorker.message}</span>}
+        {errors.assistantWorkers && <span className="text-sm text-red-600">{errors.assistantWorkers.message}</span>}
       </div>
 
       <div className="space-y-1.5">

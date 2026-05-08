@@ -7,7 +7,7 @@ export default function DeleteActivityForm({ activity }: { activity: ActivityRes
   const navigate = useNavigate();
   const clubIdFromStore = useClubIdStore((state) => state.clubId);
 
-  const user = useUserStore((s) => s.getUser(activity.user.id));
+  const user = useUserStore((s) => s.getUser(activity.user.id, activity.user.type.id));
   const facility = useFacilityStore((s) => s.getFacility(activity.facility.id));
   const onSubmit = async (data: { id: number }) => {
     const clubId = activity.clubId ?? clubIdFromStore;

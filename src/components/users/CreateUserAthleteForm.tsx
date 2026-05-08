@@ -94,7 +94,7 @@ export default function CreateUserAthleteForm() {
                                 typeId: response.data.typeId,
                             },
                         });
-                        useUserStore.getState().deleteUser(response.data.id);
+                        useUserStore.getState().deleteUser(response.data.id, response.data.typeId);
                         throw new Error("Error al crear la membresía");
                     }
                 } catch (error) {
