@@ -55,6 +55,14 @@ export default function UserList() {
                     <button
                       type="button"
                       className="listActionBtnEdit"
+                      onClick={() => navigate(`/trabajadores/${user.id}/instalaciones`)}
+                      title="Asignar instalaciones"
+                    >
+                      <i>+</i>
+                    </button>
+                    <button
+                      type="button"
+                      className="listActionBtnEdit"
                       onClick={() => navigate(`/trabajadores/editar/${user.id}/paso-1`)}
                       title="Editar"
                     >
