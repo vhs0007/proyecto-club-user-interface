@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AxiosInstance from '../../config/axios'
-import type { Facility, FacilityResponse, UserResponse } from '../../entities/Entities'
+import type { Facility, FacilityResponse, FacilityWorkerRequest, UserResponse } from '../../entities/Entities'
 import { useClubIdStore, useFacilityStore } from '../../store/store'
 
 function isWorkerAssignedToFacility(
@@ -92,7 +92,7 @@ export default function AssignWorkerFacilitiesForm({
       facility.assistantWorkers?.map((aw) => aw.id) ?? []
     const assistantWorkers = [...new Set([...currentAssistantIds, worker.id])]
 
-    const request: any = {
+    const request: FacilityWorkerRequest = {
       facilityId: facility.id,
       userId: worker.id,
       userTypeId: worker.typeId,

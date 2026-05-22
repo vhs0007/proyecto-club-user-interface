@@ -269,3 +269,10 @@ export interface MonthIncomeProgressionReportResponse {
     totalIncomeActivities: number;
     monthlyIncomes: MonthIncomeReportResponse[];
 }
+
+export interface FacilityWorkerRequest {
+    facilityId: number;
+    userId: number;
+    userTypeId: number;
+    clubId: number;
+}
