@@ -48,11 +48,11 @@ export default function Sync() {
         const dataUserTypes = responseUserTypes?.data ?? [];
         const dataFacilities = responseFacilities.data ?? [];
         const dataUsers = responseUsers.data ?? [];
-        console.log("data de membership types", dataMembershipTypes);
-        console.log("data de memberships", dataMemberships);
-        console.log("data de activities", dataActivities);
-        console.log("data de facilities", dataFacilities);
-        console.log("data de Activities", dataActivities);
+        //console.log("data de membership types", dataMembershipTypes);
+        //console.log("data de memberships", dataMemberships);
+        //console.log("data de activities", dataActivities);
+        //console.log("data de facilities", dataFacilities);
+        //console.log("data de Activities", dataActivities);
         console.log("data de users", dataUsers);
 
         setMembershipTypesState(dataMembershipTypes);

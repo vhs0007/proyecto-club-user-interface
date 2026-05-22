@@ -66,6 +66,7 @@ export interface UserResponse {
     medications?: string | null;
     membership?: UserMembershipNavigation[];
     medicalConditions?: string | null;
+    facilities?: FacilityNavigation[];
 }
 
 
