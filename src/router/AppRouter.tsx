@@ -22,6 +22,7 @@ import DeleteFacility from '../pages/facilities/DeleteFacility';
 import CreateUserWorkerSpecific from '../pages/users/CreateUserWorkerSpecific';
 import CreateUserAthleteSpecific from '../pages/users/CreateUserAthleteSpecific';
 import EditWorkerFirstStep from '../pages/users/EditWorkerFirstStep';
+import AssignWorkerFacilities from '../pages/users/AssignWorkerFacilities';
 import EditMemberFirstStep from '../pages/users/EditMemberFirstStep';
 import EditUserWorkerSpecific from '../pages/users/EditUserWorkerSpecific';
 import EditUserAthleteSpecific from '../pages/users/EditUserAthleteSpecific';
@@ -173,6 +174,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <DeleteUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trabajadores/:id/instalaciones"
+          element={
+            <ProtectedRoute>
+              <AssignWorkerFacilities />
             </ProtectedRoute>
           }
         />
