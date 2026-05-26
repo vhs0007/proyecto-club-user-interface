@@ -78,7 +78,7 @@ export default function EditFacilityFormSecondStep({ facility }: { facility: Fac
         responsibleWorker: data.responsibleWorker,
         assistantWorkers,
         membershipTypeIds,
-        clubId: facility.clubId,
+        clubId: resolvedClubId,
         isActive: facility.isActive,
       }
 
