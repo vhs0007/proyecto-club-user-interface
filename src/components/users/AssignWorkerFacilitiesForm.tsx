@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AxiosInstance from '../../config/axios'
-import type { Facility, FacilityResponse, FacilityWorkerRequest, UserResponse } from '../../entities/Entities'
-import { useClubIdStore, useFacilityStore } from '../../store/store'
+import type {
+  FacilityResponse,
+  FacilityWorkerRequest,
+  FacilityWorkerResponse,
+  UserResponse,
+} from '../../entities/Entities'
+import { useClubIdStore, useFacilityStore, useUserStore } from '../../store/store'
 
 function isWorkerAssignedToFacility(
   facility: FacilityResponse,
@@ -32,8 +37,8 @@ export default function AssignWorkerFacilitiesForm({
   const clubId = useClubIdStore((s) => s.clubId)
   const facilities = useFacilityStore((s) => s.facilities)
   const setFacilities = useFacilityStore((s) => s.setFacilities)
-  const updateFacility = useFacilityStore((s) => s.updateFacility)
-  const [selectedFacilityId, setSelectedFacilityId] = useState<number>(0)
+  const assignWorkerFacilities = useUserStore((s) => s.assignWorkerFacilities)
+  const [selectedFacilityIds, setSelectedFacilityIds] = useState<number[]>([0])
   const [loading, setLoading] = useState(false)
   const [loadingFacilities, setLoadingFacilities] = useState(false)
 
@@ -57,65 +62,91 @@ export default function AssignWorkerFacilitiesForm({
     void loadFacilities()
   }, [clubId, facilities.length, setFacilities])
 
-  const assignedFacilities = useMemo(
-    () => facilities.filter((f) => isWorkerAssignedToFacility(f, worker.id)),
-    [facilities, worker.id],
-  )
+  const assignedFacilities = useMemo(() => {
+    if (worker.facilities && worker.facilities.length > 0) {
+      return worker.facilities
+    }
+    return facilities.filter((f) => isWorkerAssignedToFacility(f, worker.id))
+  }, [facilities, worker.facilities, worker.id])
 
   const availableFacilities = useMemo(
     () => facilities.filter((f) => !isWorkerAssignedToFacility(f, worker.id)),
     [facilities, worker.id],
   )
 
+  const getOptionsForRow = (rowIndex: number) => {
+    const selectedElsewhere = selectedFacilityIds
+      .map((id, idx) => (idx === rowIndex ? 0 : id))
+      .filter((id) => id > 0)
+    return availableFacilities.filter((f) => !selectedElsewhere.includes(f.id))
+  }
+
+  const addRow = () => {
+    if (selectedFacilityIds.length >= availableFacilities.length) return
+    setSelectedFacilityIds((prev) => [...prev, 0])
+  }
+
+  const removeRow = (index: number) => {
+    setSelectedFacilityIds((prev) =>
+      prev.length > 1 ? prev.filter((_, i) => i !== index) : prev,
+    )
+  }
+
+  const updateRow = (index: number, facilityId: number) => {
+    setSelectedFacilityIds((prev) =>
+      prev.map((id, i) => (i === index ? facilityId : id)),
+    )
+  }
+
   const refreshFacilities = async () => {
     if (!clubId) return
-    const response = await AxiosInstance.get<FacilityResponse[]>(
-      `/facilities?clubId=${clubId}`,
-    )
-    setFacilities(response.data ?? [])
+    setFacilities(useFacilityStore.getState().facilities)
   }
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!clubId || selectedFacilityId < 1) {
-      alert('Seleccioná una instalación')
+    if (!clubId) return
+
+    const facilityId = [
+      ...new Set(selectedFacilityIds.filter((id) => id > 0)),
+    ]
+    if (facilityId.length === 0) {
+      alert('Seleccioná al menos una instalación')
       return
     }
-
-    const facility = facilities.find((f) => f.id === selectedFacilityId)
-    if (!facility) {
-      alert('Instalación no encontrada')
-      return
-    }
-
-    const currentAssistantIds =
-      facility.assistantWorkers?.map((aw) => aw.id) ?? []
-    const assistantWorkers = [...new Set([...currentAssistantIds, worker.id])]
 
     const request: FacilityWorkerRequest = {
-      facilityId: facility.id,
+      facilityId,
       userId: worker.id,
       userTypeId: worker.typeId,
-      clubId: clubId,
+      clubId,
     }
 
     setLoading(true)
     try {
-      const response = await AxiosInstance.patch<FacilityResponse>(
-        `/facility-workers/${facility.id}`,
+      debugger
+      const response = await AxiosInstance.post<FacilityWorkerResponse>(
+        '/facility-workers',
         request,
       )
-      updateFacility(response.data)
+      console.log(response.data)
+      assignWorkerFacilities(response.data)
       await refreshFacilities()
-      setSelectedFacilityId(0)
-      alert('Instalación asignada correctamente')
+      setSelectedFacilityIds([0])
+      alert(
+        facilityId.length === 1
+          ? 'Instalación asignada correctamente'
+          : 'Instalaciones asignadas correctamente',
+      )
     } catch (error) {
-      alert('Error al asignar la instalación')
+      alert('Error al asignar las instalaciones')
       console.error(error)
     } finally {
       setLoading(false)
     }
   }
+
+  const hasValidSelection = selectedFacilityIds.some((id) => id > 0)
 
   return (
     <div className="space-y-6">
@@ -135,7 +166,12 @@ export default function AssignWorkerFacilitiesForm({
         ) : (
           <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
             {assignedFacilities.map((facility) => {
-              const role = getAssignmentRole(facility, worker.id)
+              const fromStore = facilities.find((f) => f.id === facility.id)
+              const role = fromStore
+                ? getAssignmentRole(fromStore, worker.id)
+                : facility.responsibleWorker?.id === worker.id
+                  ? 'responsable'
+                  : 'asistente'
               return (
                 <li
                   key={facility.id}
@@ -162,39 +198,76 @@ export default function AssignWorkerFacilitiesForm({
         onSubmit={onSubmit}
         className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
       >
-        <div className="space-y-1.5">
-          <label
-            htmlFor="facilityId"
-            className="block text-sm font-medium text-slate-700"
-          >
-            Agregar instalación (como asistente)
-          </label>
-          <select
-            id="facilityId"
-            value={selectedFacilityId}
-            onChange={(e) => setSelectedFacilityId(Number(e.target.value))}
-            disabled={loading || availableFacilities.length === 0}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50"
-          >
-            <option value={0}>
-              {availableFacilities.length === 0
-                ? 'No hay instalaciones disponibles'
-                : 'Seleccionar instalación'}
-            </option>
-            {availableFacilities.map((facility) => (
-              <option key={facility.id} value={facility.id}>
-                {facility.type}
-              </option>
-            ))}
-          </select>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <label className="block text-sm font-medium text-slate-700">
+              Agregar instalaciones (como asistente)
+            </label>
+            <button
+              type="button"
+              onClick={addRow}
+              disabled={
+                loading || selectedFacilityIds.length >= availableFacilities.length
+              }
+              className="text-sm font-medium text-slate-700 underline hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              + Agregar otra
+            </button>
+          </div>
+
+          {availableFacilities.length === 0 ? (
+            <p className="text-sm text-slate-500">No hay instalaciones disponibles</p>
+          ) : (
+            <div className="space-y-2">
+              {selectedFacilityIds.map((selectedId, index) => {
+                const rowOptions = getOptionsForRow(index)
+                return (
+                  <div key={index} className="flex gap-2">
+                    <select
+                      aria-label={`Instalación ${index + 1}`}
+                      value={selectedId}
+                      onChange={(e) => updateRow(index, Number(e.target.value))}
+                      disabled={loading}
+                      className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:bg-slate-50"
+                    >
+                      <option value={0}>Seleccionar instalación</option>
+                      {rowOptions.map((facility) => (
+                        <option key={facility.id} value={facility.id}>
+                          {facility.type}
+                        </option>
+                      ))}
+                      {selectedId > 0 &&
+                        !rowOptions.some((f) => f.id === selectedId) && (
+                          <option value={selectedId}>
+                            {facilities.find((f) => f.id === selectedId)?.type ??
+                              `Instalación #${selectedId}`}
+                          </option>
+                        )}
+                    </select>
+                    {selectedFacilityIds.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRow(index)}
+                        disabled={loading}
+                        className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                        aria-label="Quitar fila"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         <button
           type="submit"
-          disabled={loading || selectedFacilityId < 1}
+          disabled={loading || !hasValidSelection}
           className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? 'Asignando…' : 'Asignar instalación'}
+          {loading ? 'Asignando…' : 'Asignar instalaciones'}
         </button>
       </form>
 

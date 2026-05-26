@@ -1,8 +1,14 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { MembershipResponse, MembershipType, UserType, UserResponse } from '../entities/Entities';
-import type { FacilityResponse } from '../entities/Entities';
-import type { ActivityResponse } from '../entities/Entities';
+import type {
+  MembershipResponse,
+  MembershipType,
+  UserType,
+  UserResponse,
+  FacilityResponse,
+  ActivityResponse,
+  FacilityWorkerResponse,
+} from '../entities/Entities';
 
 
 interface AuthState {
@@ -113,6 +119,7 @@ interface UserState {
   getUser: (id: number, typeId: number) => UserResponse | null;
   deleteUser: (id: number, typeId: number) => void;
   updateUser: (user: UserResponse) => void;
+  assignWorkerFacilities: (response: FacilityWorkerResponse) => void;
 }
 
 interface CreateUserState {
@@ -406,6 +413,30 @@ export const useUserStore = create<UserState>()(
           users: state.users.filter((u) => !(u.id === id && u.typeId === typeId)),
         })),
       updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id && u.typeId === user.typeId ? user : u) })),
+      assignWorkerFacilities: (response: FacilityWorkerResponse) => {
+        debugger
+        const worker = get().getUser(
+          response.userNavigation.id,
+          response.userNavigation.typeId ?? 0,
+        );
+        if (!worker) return;
+        response.facilityNavigation.map((nav) => {
+          const auxiliar = useFacilityStore.getState().getFacility(nav.id);
+          if (auxiliar){
+           auxiliar.assistantWorkers = nav.assistantWorkers;
+           useFacilityStore.getState().updateFacility(auxiliar);        
+          }
+        });
+
+
+        get().updateUser({
+          ...worker,
+          facilities: response.facilityNavigation.map((nav) => ({
+            ...nav,
+            clubId: response.clubId,
+          })),
+        });
+      },
     }),
     {
       name: 'users-storage',

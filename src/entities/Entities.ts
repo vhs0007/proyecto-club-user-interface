@@ -131,6 +131,7 @@ export interface UserNavigation {
     clubId: number;
     name: string;
     type: UserTypeNavigation;
+    typeId?: number | null;
     email: string | null;
     createdAt: Date;
     deletedAt: Date | null;
@@ -170,6 +171,12 @@ export interface FacilityResponse {
     isActive: boolean;
     activities: ActivitiesNavigation[];
     membershipTypes: MembershipTypeNavigation[];
+}
+
+export interface FacilityWorkerResponse {
+    clubId: number;
+    facilityNavigation: FacilityNavigation[];
+    userNavigation: UserNavigation;
 }
 
 export interface FacilityNavigation {
@@ -271,8 +278,9 @@ export interface MonthIncomeProgressionReportResponse {
     monthlyIncomes: MonthIncomeReportResponse[];
 }
 
+/** Request: CreateFacilityWorkerDto / UpdateFacilityWorkerDto */
 export interface FacilityWorkerRequest {
-    facilityId: number;
+    facilityId: number[];
     userId: number;
     userTypeId: number;
     clubId: number;
