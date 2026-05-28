@@ -8,6 +8,7 @@ import type {
   FacilityResponse,
   ActivityResponse,
   FacilityWorkerResponse,
+  ScheduledActivityResponse,
 } from '../entities/Entities';
 
 
@@ -120,6 +121,15 @@ interface UserState {
   deleteUser: (id: number, typeId: number) => void;
   updateUser: (user: UserResponse) => void;
   assignWorkerFacilities: (response: FacilityWorkerResponse) => void;
+}
+
+interface ScheduledActivityState {
+  scheduledActivities: ScheduledActivityResponse[];
+  setScheduledActivities: (scheduledActivities: ScheduledActivityResponse[]) => void;
+  setScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => void;
+  getScheduledActivity: (id: number) => ScheduledActivityResponse | null;
+  deleteScheduledActivity: (id: number) => void;
+  updateScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => void;
 }
 
 interface CreateUserState {
@@ -491,3 +501,21 @@ export const useClubIdStore = create<ClubIdState>()(
     }
   )
 )
+
+export const useScheduledActivityStore = create<ScheduledActivityState>()(
+  persist(
+    (set, get) => ({
+      scheduledActivities: [],
+      setScheduledActivities: (scheduledActivities: ScheduledActivityResponse[]) => set({ scheduledActivities }),
+      setScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => set((state) => ({ scheduledActivities: [...state.scheduledActivities, scheduledActivity] })),
+      getScheduledActivity: (id: number) => get().scheduledActivities.find((sa) => sa.id === id) ?? null,
+      deleteScheduledActivity: (id: number) => set((state) => ({ scheduledActivities: state.scheduledActivities.filter((sa) => sa.id !== id) })),
+      updateScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => set((state) => ({ scheduledActivities: state.scheduledActivities.map((sa) => sa.id === scheduledActivity.id ? scheduledActivity : sa) })),
+    }),
+    {
+      name: 'scheduled-activities-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ scheduledActivities: state.scheduledActivities }),
+    }
+  )
+);

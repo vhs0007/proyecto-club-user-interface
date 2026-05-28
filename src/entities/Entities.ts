@@ -67,6 +67,7 @@ export interface UserResponse {
     membership?: UserMembershipNavigation[];
     medicalConditions?: string | null;
     facilities?: FacilityNavigation[];
+    scheduleActivities?: ScheduledActivityNavigation[] | null;
 }
 
 
@@ -171,6 +172,7 @@ export interface FacilityResponse {
     isActive: boolean;
     activities: ActivitiesNavigation[];
     membershipTypes: MembershipTypeNavigation[];
+    scheduleActivities?: ScheduledActivityNavigation[];
 }
 
 export interface FacilityWorkerResponse {
@@ -284,4 +286,64 @@ export interface FacilityWorkerRequest {
     userId: number;
     userTypeId: number;
     clubId: number;
+}
+
+export interface WorkingDayNavigation {
+    id: number;
+    dayOfWeek: string;
+}
+
+export interface DatetimeScheduledActivityRequest {
+    hourStart: string;
+    hourEnd: string;
+    workingDayId: number;
+}
+
+export interface DatetimeScheduledActivityNavigation {
+    hourStart: string;
+    hourEnd: string;
+    workingDay: WorkingDayNavigation;
+}
+
+export interface ScheduledActivityNavigation {
+    id: number;
+    clubId: number;
+    facilityId: number;
+    userId: number;
+    userTypeId: number;
+    membershipTypes: MembershipTypeNavigation[];
+    assistantWorkerIds: number[];
+    datetimeScheduledActivities: DatetimeScheduledActivityNavigation[];
+}
+
+/** Request: CreateScheduledActivityDto */
+export interface ScheduledActivityRequest {
+    clubId: number;
+    facilityId: number;
+    userId: number;
+    userTypeId: number;
+    membershipTypesIds: number[];
+    datetimeScheduledActivities: DatetimeScheduledActivityRequest[];
+    assistantWorkerIds: number[];
+    name: string;
+}
+
+/** Query: QueryScheduledActivityDto (update, delete, findById) */
+export interface ScheduledActivityQuery {
+    clubId: number;
+    id: number;
+}
+
+/** Response: ScheduledActivityResponseDto */
+export interface ScheduledActivityResponse {
+    id: number;
+    clubId: number;
+    facility: FacilityNavigation;
+    userId: number;
+    user: UserNavigation;
+    userTypeId: number;
+    assistantWorkers: UserNavigation[];
+    membershipTypes: MembershipTypeNavigation[];
+    datetimeScheduledActivities: DatetimeScheduledActivityNavigation[];
+    name: string;
 }

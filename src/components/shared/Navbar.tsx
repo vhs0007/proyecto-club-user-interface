@@ -52,6 +52,11 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link to="/actividades-rutinarias" className={getLinkClass('/actividades-rutinarias')}>
+                Actividades rutinarias
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link to="/instalaciones" className={getLinkClass('/instalaciones')}>
                 Instalaciones
               </Link>

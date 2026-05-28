@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore, useClubIdStore } from "../../store/store";
-import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse } from "../../entities/Entities";
+import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore, useClubIdStore, useScheduledActivityStore } from "../../store/store";
+import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse, ScheduledActivityResponse } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -16,6 +16,8 @@ export default function Sync() {
   const [activities, setActivitiesState] = useState<ActivityResponse[]>([]);
   const [facilities, setFacilitiesState] = useState<FacilityResponse[]>([]);
   const [users, setUsersState] = useState<UserResponse[]>([]);
+  const [scheduledActivities, setScheduledActivitiesState] = useState<ScheduledActivityResponse[]>([]);
+  const [scheduledActivitiesProgress, setScheduledActivitiesProgress] = useState<number>(0);
   const [usersProgress, setUsersProgress] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +28,7 @@ export default function Sync() {
   const setUserTypes = useUserTypeStore((state) => state.setUserTypes);
   const setFacilities = useFacilityStore((state) => state.setFacilities);
   const setUsers = useUserStore((state) => state.setUsers);
+  const setScheduledActivities = useScheduledActivityStore((state) => state.setScheduledActivities);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,18 +36,20 @@ export default function Sync() {
         setLoading(true);
         setError(null);
         const clubId = useClubIdStore.getState().clubId;
-        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers] = await Promise.all([
+        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers, responseScheduledActivities] = await Promise.all([
           AxiosInstance.get<MembershipType[]>(`/membership-type?clubId=${clubId}`),
           AxiosInstance.get<MembershipResponse[]>(`/membership?clubId=${clubId}`),
           AxiosInstance.get<ActivityResponse[]>(`/activities?clubId=${clubId}`),
           AxiosInstance.get<UserType[]>(`/user-type?clubId=${clubId}`),
           AxiosInstance.get<FacilityResponse[]>(`/facilities?clubId=${clubId}`),
           AxiosInstance.get<UserResponse[]>(`/users?clubId=${clubId}`),
+          AxiosInstance.get<ScheduledActivityResponse[]>(`/scheduled-activities?clubId=${clubId}`),
         ]);
 
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
         const dataMemberships = responseMemberships.data ?? [];
         const dataActivities = responseActivities.data ?? [];
+        const dataScheduledActivities = responseScheduledActivities.data ?? [];
         const dataUserTypes = responseUserTypes?.data ?? [];
         const dataFacilities = responseFacilities.data ?? [];
         const dataUsers = responseUsers.data ?? [];
@@ -54,16 +59,19 @@ export default function Sync() {
         console.log("data de facilities", dataFacilities);
         console.log("data de Activities", dataActivities);
         console.log("data de users", dataUsers);
+        console.log("data de scheduled activities", dataScheduledActivities);
 
         setMembershipTypesState(dataMembershipTypes);
         setMembershipsState(dataMemberships);
         setActivitiesState(dataActivities);
+        setScheduledActivitiesState(dataScheduledActivities);
         setMembershipTypes(dataMembershipTypes);
         setMemberships(dataMemberships);
         setActivities(dataActivities);
         setUserTypes(dataUserTypes);
         setFacilitiesState(dataFacilities);
         setUsersState(dataUsers);
+        setScheduledActivities(dataScheduledActivities);
       } catch (err) {
         setError("Error al cargar los datos");
       } finally {
@@ -72,7 +80,7 @@ export default function Sync() {
     };
 
     fetchData();
-  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities, setUsers]);
+  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities, setUsers, setScheduledActivities]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
     console.log(totalMembershipTypes);
@@ -147,6 +155,20 @@ export default function Sync() {
     setUsersProgress(100);
   }
 
+  const runSyncScheduledActivities = async (totalScheduledActivities: number, scheduledActivitiesData: ScheduledActivityResponse[]) => {
+    if (totalScheduledActivities === 0) {
+      setScheduledActivities([]);
+      setScheduledActivitiesProgress(100);
+      return;
+    }
+    for (let i = 0; i < totalScheduledActivities; i++) {
+      await new Promise((r) => setTimeout(r, 1));
+      setScheduledActivitiesProgress(((i + 1) / totalScheduledActivities) * 100);
+    }
+    setScheduledActivities(scheduledActivitiesData);
+    setScheduledActivitiesProgress(100);
+  };
+
   useEffect(() => {
     if (loading) return;
     const totalMembershipTypes = membershipTypes.length;
@@ -154,12 +176,14 @@ export default function Sync() {
     const totalActivities = activities.length;
     const totalFacilities = facilities.length;
     const totalUsers = users.length;
+    const totalScheduledActivities = scheduledActivities.length;
     const runSync = async () => {
       await runSyncMembershipTypes(totalMembershipTypes, membershipTypes);
       await runSyncMemberships(totalMemberships, memberships);
       await runSyncActivities(totalActivities, activities);
       await runSyncFacilities(totalFacilities, facilities);
       await runSyncUsers(totalUsers, users);
+      await runSyncScheduledActivities(totalScheduledActivities, scheduledActivities);
       navigate('/home');
     }
     console.log("membership types", membershipTypes);
@@ -172,8 +196,11 @@ export default function Sync() {
     console.log("activities length", activities.length);
     console.log("activities", activities);
     console.log("activities progress", activitiesProgress);
+    console.log("scheduled activities length", scheduledActivities.length);
+    console.log("scheduled activities", scheduledActivities);
+    console.log("scheduled activities progress", scheduledActivitiesProgress);
     runSync();
-  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate, users, setUsers]);
+  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate, users, setUsers, setScheduledActivities]);
 
   return (
     <div className="container">
@@ -185,6 +212,7 @@ export default function Sync() {
       <SyncBar progress={activitiesProgress} dataName="Reservas" />
       <SyncBar progress={facilitiesProgress} dataName="Instalaciones" />
       <SyncBar progress={usersProgress} dataName="Usuarios" />
+      <SyncBar progress={scheduledActivitiesProgress} dataName="Actividades programadas" />
     </div>
   );
 }

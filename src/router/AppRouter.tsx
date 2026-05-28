@@ -6,6 +6,7 @@ import FacilitiesList from '../pages/facilities/FacilitiesList';
 import WorkerList from '../pages/users/WorkerList';
 import MemberList from '../pages/users/MemberList';
 import Activities from '../pages/activities/Activities';
+import ScheduledActivities from '../pages/scheduledActivities/ScheduledActivities';
 import CreateActivity from '../pages/activities/CreateActivity';
 import CreateActivitySecondStep from '../pages/activities/CreateActivitySecondStep';
 import Navbar from '../components/shared/Navbar';
@@ -278,6 +279,14 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <EditActivitySecondStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades-rutinarias"
+          element={
+            <ProtectedRoute>
+              <ScheduledActivities />
             </ProtectedRoute>
           }
         />
