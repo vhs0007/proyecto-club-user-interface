@@ -308,11 +308,9 @@ export interface DatetimeScheduledActivityNavigation {
 export interface ScheduledActivityNavigation {
     id: number;
     clubId: number;
-    facilityId: number;
-    userId: number;
-    userTypeId: number;
     membershipTypes: MembershipTypeNavigation[];
-    assistantWorkerIds: number[];
+    responsibleWorker: UserNavigation;
+    assistantWorkers: UserNavigation[];
     datetimeScheduledActivities: DatetimeScheduledActivityNavigation[];
 }
 
