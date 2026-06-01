@@ -53,7 +53,7 @@ export default function Navbar() {
             </li>
             <li className="nav-item">
               <Link to="/actividades-rutinarias" className={getLinkClass('/actividades-rutinarias')}>
-                Actividades rutinarias
+                Actividades
               </Link>
             </li>
             <li className="nav-item">

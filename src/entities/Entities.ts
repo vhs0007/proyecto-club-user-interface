@@ -64,7 +64,7 @@ export interface UserResponse {
     trainingPlan?: string | null;
     allergies?: string | null;
     medications?: string | null;
-    membership?: UserMembershipNavigation[];
+    membership?: UserMembershipNavigation;
     medicalConditions?: string | null;
     facilities?: FacilityNavigation[];
     scheduleActivities?: ScheduledActivityNavigation[] | null;

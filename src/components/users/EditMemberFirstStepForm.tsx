@@ -64,16 +64,17 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       if(response.status === 200){
         useUserStore.getState().updateUser(response.data);
         console.log(response.data);
-        const membership : MembershipResponse = {
-          id: response.data.membership?.[0].id,
-          user: response.data,
-          membershipType: response.data.membership?.[0].membershipType,
-          expiration: response.data.membership?.[0].expiration,
-          createdAt: response.data.membership?.[0].createdAt,
-          clubId: useClubIdStore.getState().clubId,
+        const m = response.data.membership;
+        if (m) {
+          useMembershipStore.getState().updateMembership({
+            id: m.id,
+            user: response.data,
+            membershipType: m.membershipType,
+            expiration: m.expiration,
+            createdAt: m.createdAt ?? new Date(),
+            clubId: useClubIdStore.getState().clubId,
+          });
         }
-        console.log(membership);
-        useMembershipStore.getState().updateMembership(membership);
         navigate(`/miembros`);
       }
     }

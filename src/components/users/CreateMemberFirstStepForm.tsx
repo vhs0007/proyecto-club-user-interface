@@ -90,7 +90,12 @@ export default function CreateMemberFirstStepForm() {
                                 if(responseMem){
                                     const membershipRes : MembershipResponse = responseMem.data;
                                     if(membershipRes.id){
-                                        userRes.membership?.push(membershipRes);
+                                        userRes.membership = {
+                                            id: membershipRes.id,
+                                            expiration: membershipRes.expiration,
+                                            createdAt: membershipRes.createdAt,
+                                            membershipType: membershipRes.membershipType,
+                                        };
                                         useUserStore.getState().setUser(userRes);
                                         useMembershipStore.getState().setMembership(membershipRes);
                                         navigate('/miembros')

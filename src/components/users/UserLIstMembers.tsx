@@ -53,11 +53,11 @@ export default function UserList() {
                 <td className="listTableTd">{formatDate(user.createdAt)}</td>
                 <td className="listTableTd">
                   <span className="listBadgeTypeInfo">
-                    {user.membership?.at(-1)?.membershipType?.name}
+                    {user.membership?.membershipType?.name ?? '-'}
                   </span>
                 </td>
                 <td className="listTableTd">
-                  {formatDate(user.membership?.at(-1)?.expiration)}
+                  {formatDate(user.membership?.expiration)}
                 </td>
                 <td className="listTableTd">
                   <span className={user.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>

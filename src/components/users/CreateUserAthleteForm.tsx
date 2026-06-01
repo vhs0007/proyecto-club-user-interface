@@ -83,7 +83,12 @@ export default function CreateUserAthleteForm() {
                     const membershipResponse = await AxiosInstance.post("/membership", membership);
                     if (membershipResponse.data) {
                         useMembershipStore.getState().setMembership(membershipResponse.data);
-                        userRes.membership?.push(membershipResponse.data);
+                        userRes.membership = {
+                            id: membershipResponse.data.id,
+                            expiration: membershipResponse.data.expiration,
+                            createdAt: membershipResponse.data.createdAt,
+                            membershipType: membershipResponse.data.membershipType,
+                        };
                         useUserStore.getState().setUser(userRes);
                         navigate("/miembros");
                     } else {
