@@ -16,7 +16,7 @@ export default function ScheduledActivities() {
         <button
           type="button"
           className="pageHeaderPrimaryButton"
-          onClick={() => navigate('/actividades-rutinarias/crear')}
+          onClick={() => navigate('/actividades-rutinarias/crear/paso-1')}
         >
           <i className="bi bi-plus-lg mr-2"></i>
           Nueva actividad rutinaria

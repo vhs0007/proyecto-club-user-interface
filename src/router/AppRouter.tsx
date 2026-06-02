@@ -41,6 +41,9 @@ import CreateMembershipType from '../pages/membershipType/CreateMembershipType';
 import EditMembershipType from '../pages/membershipType/EditMembershipType';
 import DeleteMembershipType from '../pages/membershipType/DeleteMembershipType';
 import CreateMemberFirstStep from '../pages/users/CreateMemberFirstStep';
+import CreateScheduledActivityFirstStep from '../pages/scheduledActivities/CreateScheduledActivityFirstStep';
+import CreateScheduledActivitySecondStepForm from '../pages/scheduledActivities/CreateScheduledActivitySecondStep';
+import CreateScheduledActivityThirdStep from '../pages/scheduledActivities/CreateScheduledActivityThirdStep';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
@@ -391,6 +394,30 @@ export default function AppRouter() {
           element={
             <ProtectedRoute>
               <Sync />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades-rutinarias/crear/paso-1"
+          element={
+            <ProtectedRoute>
+              <CreateScheduledActivityFirstStep />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades-rutinarias/crear/paso-2"
+          element={
+            <ProtectedRoute>
+              <CreateScheduledActivitySecondStepForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/actividades-rutinarias/crear/paso-3"
+          element={
+            <ProtectedRoute>
+              <CreateScheduledActivityThirdStep />
             </ProtectedRoute>
           }
         />

@@ -9,6 +9,7 @@ import type {
   ActivityResponse,
   FacilityWorkerResponse,
   ScheduledActivityResponse,
+  DatetimeScheduledActivityRequest,
 } from '../entities/Entities';
 
 
@@ -139,6 +140,37 @@ interface CreateUserState {
   setFirstStep: (firstStep: CreateUserFirstStep) => void;
   setWorkerSpecificStep: (workerSpecificStep: CreateUserWorkerSpecificStep) => void;
   setAthleteSpecificStep: (athleteSpecificStep: CreateUserAthleteSpecificStep) => void;
+}
+
+interface CreateScheduledActivityState {
+  firstStep: CreateScheduledActivityFirstStep;
+  setFirstStep: (firstStep: CreateScheduledActivityFirstStep) => void;
+  secondStep: CreateScheduledActivitySecondStep;
+  setSecondStep: (secondStep: CreateScheduledActivitySecondStep) => void;
+  thirdStep: CreateScheduledActivityThirdStep;
+  setThirdStep: (thirdStep: CreateScheduledActivityThirdStep) => void;
+  resetCreateScheduledActivity: () => void;
+}
+
+
+export interface CreateScheduledActivityFirstStep {
+  name: string;
+  type: string;
+  date: string;
+  hourStart: string;
+  hourEnd: string;
+}
+
+export interface CreateScheduledActivitySecondStep {
+  userId: number;
+  cost: number;
+  facilityId: number;
+}
+
+export interface CreateScheduledActivityThirdStep {
+  membershipTypesIds: number[];
+  datetimeScheduledActivities: DatetimeScheduledActivityRequest[];
+  assistantWorkerIds: number[];
 }
 
 interface CreateUserFirstStep{
@@ -517,5 +549,23 @@ export const useScheduledActivityStore = create<ScheduledActivityState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ scheduledActivities: state.scheduledActivities }),
     }
+  )
+);
+
+export const useCreateScheduledActivityStore = create<CreateScheduledActivityState>()(
+  persist(
+    (set) => ({
+      firstStep: { name: '', type: '', date: '', hourStart: '', hourEnd: '' },
+      setFirstStep: (firstStep: CreateScheduledActivityFirstStep) => set({ firstStep }),
+      secondStep: { userId: 0, cost: 0, facilityId: 0 },
+      setSecondStep: (secondStep: CreateScheduledActivitySecondStep) => set({ secondStep }),
+      thirdStep: { membershipTypesIds: [], datetimeScheduledActivities: [], assistantWorkerIds: [] },
+      setThirdStep: (thirdStep: CreateScheduledActivityThirdStep) => set({ thirdStep }),
+      resetCreateScheduledActivity: () => set({ firstStep: { name: '', type: '', date: '', hourStart: '', hourEnd: '' }, secondStep: { userId: 0, cost: 0, facilityId: 0 }, thirdStep: { membershipTypesIds: [], datetimeScheduledActivities: [], assistantWorkerIds: [] } }),
+    }),
+    {
+    name: 'create-scheduled-activity-storage',
+    storage: createJSONStorage(() => localStorage),
+  }
   )
 );

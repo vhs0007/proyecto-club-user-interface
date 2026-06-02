@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import type { MembershipResponse, UserResponse } from "../../entities/Entities";
+import type { UserResponse } from "../../entities/Entities";
 import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
