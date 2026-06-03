@@ -163,7 +163,6 @@ export interface CreateScheduledActivityFirstStep {
 
 export interface CreateScheduledActivitySecondStep {
   userId: number;
-  cost: number;
   facilityId: number;
 }
 
@@ -557,11 +556,11 @@ export const useCreateScheduledActivityStore = create<CreateScheduledActivitySta
     (set) => ({
       firstStep: { name: '', type: '', date: '', hourStart: '', hourEnd: '' },
       setFirstStep: (firstStep: CreateScheduledActivityFirstStep) => set({ firstStep }),
-      secondStep: { userId: 0, cost: 0, facilityId: 0 },
+      secondStep: { userId: 0, facilityId: 0 },
       setSecondStep: (secondStep: CreateScheduledActivitySecondStep) => set({ secondStep }),
       thirdStep: { membershipTypesIds: [], datetimeScheduledActivities: [], assistantWorkerIds: [] },
       setThirdStep: (thirdStep: CreateScheduledActivityThirdStep) => set({ thirdStep }),
-      resetCreateScheduledActivity: () => set({ firstStep: { name: '', type: '', date: '', hourStart: '', hourEnd: '' }, secondStep: { userId: 0, cost: 0, facilityId: 0 }, thirdStep: { membershipTypesIds: [], datetimeScheduledActivities: [], assistantWorkerIds: [] } }),
+      resetCreateScheduledActivity: () => set({ firstStep: { name: '', type: '', date: '', hourStart: '', hourEnd: '' }, secondStep: { userId: 0, facilityId: 0 }, thirdStep: { membershipTypesIds: [], datetimeScheduledActivities: [], assistantWorkerIds: [] } }),
     }),
     {
     name: 'create-scheduled-activity-storage',

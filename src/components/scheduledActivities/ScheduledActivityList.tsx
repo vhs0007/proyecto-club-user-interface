@@ -31,6 +31,7 @@ export default function ScheduledActivityList({
         <table className="min-w-full align-middle">
           <thead className="bg-slate-50">
             <tr>
+              <th className="listTableTh">Nombre</th>
               <th className="listTableTh">Instalación</th>
               <th className="listTableTh">Responsable</th>
               <th className="listTableTh">Membresías</th>
@@ -43,8 +44,9 @@ export default function ScheduledActivityList({
             {scheduledActivities.map((item) => (
               <tr key={item.id} className="hover:bg-slate-50/70">
                 <td className="listTableTd">
-                  <span className="font-semibold text-slate-800">{item.facility?.type ?? '-'}</span>
+                  <span className="font-semibold text-slate-800">{item.name ?? '-'}</span>
                 </td>
+                <td className="listTableTd">{item.facility?.type ?? '-'}</td>
                 <td className="listTableTd">{item.user?.name ?? '-'}</td>
                 <td className="listTableTd">{formatMembershipTypes(item.membershipTypes)}</td>
                 <td className="listTableTd">{formatSchedules(item.datetimeScheduledActivities)}</td>
