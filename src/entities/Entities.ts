@@ -326,6 +326,18 @@ export interface ScheduledActivityRequest {
     name: string;
 }
 
+/** Body: UpdateScheduledActivityDto */
+export interface UpdateScheduledActivityRequest {
+    clubId?: number;
+    facilityId?: number;
+    userId?: number;
+    userTypeId?: number;
+    membershipTypesIds?: number[];
+    datetimeScheduledActivities?: DatetimeScheduledActivityRequest[];
+    assistantWorkerIds?: number[];
+    name?: string;
+}
+
 /** Query: QueryScheduledActivityDto (update, delete, findById) */
 export interface ScheduledActivityQuery {
     clubId: number;

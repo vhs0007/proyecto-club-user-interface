@@ -2,59 +2,105 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { useCreateScheduledActivityStore, useFacilityStore, useUserStore } from "../../store/store";
-import type { FacilityResponse } from "../../entities/Entities";
-import type { UserResponse } from "../../entities/Entities";
+import {
+    useCreateScheduledActivityStore,
+    useFacilityStore,
+    useUserStore,
+    type CreateScheduledActivitySecondStep,
+} from "../../store/store";
 
 const schema = z.object({
-    userId: z.number().min(1, "Usuario requerido"),
-    cost: z.number().min(0, "El costo debe ser mayor o igual a 0"),
+    userId: z.number().min(1, "Trabajador responsable requerido"),
     facilityId: z.number().min(1, "Seleccioná una instalación"),
 });
 
-export type CreateScheduledActivityFormSecondStep = z.infer<typeof schema>;
+const errBorder = (has: boolean) =>
+    has ? "border-red-300 focus:border-red-500 focus:ring-red-200" : "";
+
 export default function CreateScheduledActivityFormSecondStep() {
-    const facilities: FacilityResponse[] = useFacilityStore((state) => state.facilities);
-    const users: UserResponse[] = useUserStore((state) => state.users);
-    const workerUsers = users.filter((u) => u.typeId === 1);
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors } } = useForm<CreateScheduledActivityFormSecondStep>({
+    const secondStep = useCreateScheduledActivityStore((s) => s.secondStep);
+    const users = useUserStore((state) => state.users);
+    const facilities = useFacilityStore((state) => state.facilities);
+    const workerUsers = users.filter((u) => u.typeId === 1);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<CreateScheduledActivitySecondStep>({
         resolver: zodResolver(schema),
         defaultValues: {
-            userId: 0,
-            cost: 0,
-            facilityId: 0,
+            userId: secondStep.userId,
+            facilityId: secondStep.facilityId,
         },
     });
 
-    const onSubmit = (data: CreateScheduledActivityFormSecondStep) => {
+    const onSubmit = (data: CreateScheduledActivitySecondStep) => {
         useCreateScheduledActivityStore.getState().setSecondStep(data);
-        navigate('/actividades-rutinarias/crear/paso-3');
-    }
+        navigate("/actividades-rutinarias/crear/paso-3");
+    };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <select {...register('userId', { valueAsNumber: true })}>
-                <option value={0}>Seleccioná un trabajador responsable</option>
-                {workerUsers.map((u) => (
-                    <option key={u.id} value={u.id}>
-                        {u.name}
-                    </option>
-                ))}
-            </select>
-            {errors.userId && <span className="text-red-500">{errors.userId.message}</span>}
-            <input type="number" {...register('cost', { valueAsNumber: true })} placeholder="Costo" />
-            {errors.cost && <span className="text-red-500">{errors.cost.message}</span>}
-            <select {...register('facilityId', { valueAsNumber: true })}>
-                <option value={0}>Seleccioná una instalación</option>
-                {facilities.map((f) => (
-                    <option key={f.id} value={f.id}>
-                        {f.type}
-                    </option>
-                ))}
-            </select>
-            {errors.facilityId && <span className="text-red-500">{errors.facilityId.message}</span>}
-            <button type="submit">Siguiente</button>
-        </form>
-    )
+        <div className="mx-auto w-full max-w-2xl">
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm"
+            >
+                <div className="space-y-1.5">
+                    <label htmlFor="userId" className="activityFormLabel">
+                        Trabajador responsable
+                    </label>
+                    <select
+                        id="userId"
+                        className={`activityFormControl ${errBorder(!!errors.userId)}`}
+                        {...register("userId", { valueAsNumber: true })}
+                    >
+                        <option value={0}>
+                            Seleccioná un trabajador responsable
+                        </option>
+                        {workerUsers.map((u) => (
+                            <option key={u.id} value={u.id}>
+                                {u.name}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.userId && (
+                        <div className="activityFormError">
+                            {errors.userId.message}
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-1.5">
+                    <label htmlFor="facilityId" className="activityFormLabel">
+                        Instalación
+                    </label>
+                    <select
+                        id="facilityId"
+                        className={`activityFormControl ${errBorder(!!errors.facilityId)}`}
+                        {...register("facilityId", { valueAsNumber: true })}
+                    >
+                        <option value={0}>Seleccioná una instalación</option>
+                        {facilities.map((f) => (
+                            <option key={f.id} value={f.id}>
+                                {f.type}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.facilityId && (
+                        <div className="activityFormError">
+                            {errors.facilityId.message}
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                    <button type="submit" className="activityPrimaryButton">
+                        Siguiente
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
 }
