@@ -75,7 +75,6 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
       const payload = {
         name: fs.name,
         type: fs.type,
-        clubId: fs.clubId || activity.clubId,
         date: new Date(fs.date).toISOString(),
         hourStart: fs.hourStart,
         hourEnd: fs.hourEnd,
