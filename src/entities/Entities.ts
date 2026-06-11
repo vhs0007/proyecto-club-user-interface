@@ -294,6 +294,10 @@ export interface WorkingDayNavigation {
     dayOfWeek: string;
 }
 
+export interface WorkingDay extends WorkingDayNavigation {
+    clubId: number;
+}
+
 export interface DatetimeScheduledActivityRequest {
     hourStart: string;
     hourEnd: string;

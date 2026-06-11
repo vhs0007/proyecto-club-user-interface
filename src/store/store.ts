@@ -10,6 +10,7 @@ import type {
   FacilityWorkerResponse,
   ScheduledActivityResponse,
   DatetimeScheduledActivityRequest,
+  WorkingDay,
 } from '../entities/Entities';
 
 
@@ -131,6 +132,11 @@ interface ScheduledActivityState {
   getScheduledActivity: (id: number) => ScheduledActivityResponse | null;
   deleteScheduledActivity: (id: number) => void;
   updateScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => void;
+}
+
+interface WorkingDayState {
+  workingDays: WorkingDay[];
+  setWorkingDays: (workingDays: WorkingDay[]) => void;
 }
 
 interface CreateUserState {
@@ -547,6 +553,20 @@ export const useScheduledActivityStore = create<ScheduledActivityState>()(
       name: 'scheduled-activities-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ scheduledActivities: state.scheduledActivities }),
+    }
+  )
+);
+
+export const useWorkingDayStore = create<WorkingDayState>()(
+  persist(
+    (set) => ({
+      workingDays: [],
+      setWorkingDays: (workingDays: WorkingDay[]) => set({ workingDays }),
+    }),
+    {
+      name: 'working-days-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ workingDays: state.workingDays }),
     }
   )
 );

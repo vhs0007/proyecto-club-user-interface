@@ -1,28 +1,24 @@
 import { useEffect, useState } from "react";
-import type { DatetimeScheduledActivityRequest } from "../../entities/Entities";
+import type { DatetimeScheduledActivityRequest, WorkingDay } from "../../entities/Entities";
+import { useWorkingDayStore } from "../../store/store";
 
-export const WORKING_DAYS = [
-    { id: 1, label: "Lunes" },
-    { id: 2, label: "Martes" },
-    { id: 3, label: "Miércoles" },
-    { id: 4, label: "Jueves" },
-    { id: 5, label: "Viernes" },
-    { id: 6, label: "Sábado" },
-    { id: 7, label: "Domingo" },
-] as const;
-
-export function getWorkingDayLabel(workingDayId: number): string {
-    return WORKING_DAYS.find((d) => d.id === workingDayId)?.label ?? "-";
+export function getWorkingDayLabel(
+    workingDayId: number,
+    workingDays?: WorkingDay[],
+): string {
+    const days = workingDays ?? useWorkingDayStore.getState().workingDays;
+    return days.find((d) => d.id === workingDayId)?.dayOfWeek ?? "-";
 }
 
 export function formatSchedulesSummary(
     schedules: DatetimeScheduledActivityRequest[],
+    workingDays?: WorkingDay[],
 ): string {
     if (!schedules.length) return "";
     return schedules
         .map(
             (s) =>
-                `${getWorkingDayLabel(s.workingDayId)} ${s.hourStart} - ${s.hourEnd}`
+                `${getWorkingDayLabel(s.workingDayId, workingDays)} ${s.hourStart} - ${s.hourEnd}`
         )
         .join(", ");
 }
@@ -91,6 +87,7 @@ export default function SelectDayActivity({
     defaultHourEnd = "",
     title = "Días y horarios",
 }: SelectDayActivityProps) {
+    const workingDays = useWorkingDayStore((state) => state.workingDays);
     const [draft, setDraft] = useState<DatetimeScheduledActivityRequest[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [rowErrors, setRowErrors] = useState<Record<number, boolean>>({});
@@ -203,121 +200,128 @@ export default function SelectDayActivity({
                                 type="button"
                                 className="text-sm font-medium text-slate-700 underline hover:text-slate-900"
                                 onClick={addRow}
+                                disabled={workingDays.length === 0}
                             >
                                 + Agregar horario
                             </button>
                         </div>
 
-                        <div className="flex flex-col gap-3">
-                            {draft.map((row, index) => (
-                                <div
-                                    key={index}
-                                    className={`rounded-md border p-3 ${
-                                        rowErrors[index]
-                                            ? "border-red-300 bg-red-50/50"
-                                            : "border-slate-200 bg-slate-50/50"
-                                    }`}
-                                >
-                                    <div className="mb-2 flex items-center justify-between gap-2">
-                                        <span className="text-sm font-medium text-slate-700">
-                                            Horario {index + 1}
-                                        </span>
-                                        {draft.length > 1 && (
-                                            <button
-                                                type="button"
-                                                className="text-sm text-red-600 hover:text-red-800"
-                                                onClick={() => removeRow(index)}
-                                            >
-                                                Quitar
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="grid gap-3 sm:grid-cols-3">
-                                        <div className="space-y-1.5">
-                                            <label
-                                                htmlFor={`day-${index}`}
-                                                className="activityFormLabel"
-                                            >
-                                                Día
-                                            </label>
-                                            <select
-                                                id={`day-${index}`}
-                                                className={`activityFormControl ${errBorder(
-                                                    rowErrors[index] &&
-                                                        row.workingDayId < 1
-                                                )}`}
-                                                value={row.workingDayId}
-                                                onChange={(e) =>
-                                                    updateRow(
-                                                        index,
-                                                        "workingDayId",
-                                                        Number(e.target.value)
-                                                    )
-                                                }
-                                            >
-                                                <option value={0}>
-                                                    Seleccioná un día
-                                                </option>
-                                                {WORKING_DAYS.map((day) => (
-                                                    <option
-                                                        key={day.id}
-                                                        value={day.id}
-                                                    >
-                                                        {day.label}
+                        {workingDays.length === 0 ? (
+                            <p className="text-sm text-slate-500">
+                                No hay días laborales cargados. Sincronizá los datos del club.
+                            </p>
+                        ) : (
+                            <div className="flex flex-col gap-3">
+                                {draft.map((row, index) => (
+                                    <div
+                                        key={index}
+                                        className={`rounded-md border p-3 ${
+                                            rowErrors[index]
+                                                ? "border-red-300 bg-red-50/50"
+                                                : "border-slate-200 bg-slate-50/50"
+                                        }`}
+                                    >
+                                        <div className="mb-2 flex items-center justify-between gap-2">
+                                            <span className="text-sm font-medium text-slate-700">
+                                                Horario {index + 1}
+                                            </span>
+                                            {draft.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    className="text-sm text-red-600 hover:text-red-800"
+                                                    onClick={() => removeRow(index)}
+                                                >
+                                                    Quitar
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="grid gap-3 sm:grid-cols-3">
+                                            <div className="space-y-1.5">
+                                                <label
+                                                    htmlFor={`day-${index}`}
+                                                    className="activityFormLabel"
+                                                >
+                                                    Día
+                                                </label>
+                                                <select
+                                                    id={`day-${index}`}
+                                                    className={`activityFormControl ${errBorder(
+                                                        rowErrors[index] &&
+                                                            row.workingDayId < 1
+                                                    )}`}
+                                                    value={row.workingDayId}
+                                                    onChange={(e) =>
+                                                        updateRow(
+                                                            index,
+                                                            "workingDayId",
+                                                            Number(e.target.value)
+                                                        )
+                                                    }
+                                                >
+                                                    <option value={0}>
+                                                        Seleccioná un día
                                                     </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <label
-                                                htmlFor={`hourStart-${index}`}
-                                                className="activityFormLabel"
-                                            >
-                                                Hora de inicio
-                                            </label>
-                                            <input
-                                                type="time"
-                                                id={`hourStart-${index}`}
-                                                className={`activityFormControl ${errBorder(
-                                                    !!rowErrors[index]
-                                                )}`}
-                                                value={row.hourStart}
-                                                onChange={(e) =>
-                                                    updateRow(
-                                                        index,
-                                                        "hourStart",
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div className="space-y-1.5">
-                                            <label
-                                                htmlFor={`hourEnd-${index}`}
-                                                className="activityFormLabel"
-                                            >
-                                                Hora de fin
-                                            </label>
-                                            <input
-                                                type="time"
-                                                id={`hourEnd-${index}`}
-                                                className={`activityFormControl ${errBorder(
-                                                    !!rowErrors[index]
-                                                )}`}
-                                                value={row.hourEnd}
-                                                onChange={(e) =>
-                                                    updateRow(
-                                                        index,
-                                                        "hourEnd",
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
+                                                    {workingDays.map((day) => (
+                                                        <option
+                                                            key={day.id}
+                                                            value={day.id}
+                                                        >
+                                                            {day.dayOfWeek}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label
+                                                    htmlFor={`hourStart-${index}`}
+                                                    className="activityFormLabel"
+                                                >
+                                                    Hora de inicio
+                                                </label>
+                                                <input
+                                                    type="time"
+                                                    id={`hourStart-${index}`}
+                                                    className={`activityFormControl ${errBorder(
+                                                        !!rowErrors[index]
+                                                    )}`}
+                                                    value={row.hourStart}
+                                                    onChange={(e) =>
+                                                        updateRow(
+                                                            index,
+                                                            "hourStart",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label
+                                                    htmlFor={`hourEnd-${index}`}
+                                                    className="activityFormLabel"
+                                                >
+                                                    Hora de fin
+                                                </label>
+                                                <input
+                                                    type="time"
+                                                    id={`hourEnd-${index}`}
+                                                    className={`activityFormControl ${errBorder(
+                                                        !!rowErrors[index]
+                                                    )}`}
+                                                    value={row.hourEnd}
+                                                    onChange={(e) =>
+                                                        updateRow(
+                                                            index,
+                                                            "hourEnd",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
 
                         {error && (
                             <p className="activityFormError mt-3">{error}</p>
@@ -335,6 +339,7 @@ export default function SelectDayActivity({
                             type="button"
                             className="activityPrimaryButton"
                             onClick={handleConfirm}
+                            disabled={workingDays.length === 0}
                         >
                             Confirmar
                             {draft.length > 0 ? ` (${draft.length})` : ""}
