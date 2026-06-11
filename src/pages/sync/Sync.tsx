@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SyncBar from "../../components/sync/SyncBar";
 import AxiosInstance from "../../config/axios";
-import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore, useClubIdStore, useScheduledActivityStore } from "../../store/store";
-import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse, ScheduledActivityResponse } from "../../entities/Entities";
+import { useActivityStore, useFacilityStore, useMembershipStore, useMembershipTypeStore, useUserTypeStore, useUserStore, useClubIdStore, useScheduledActivityStore, useWorkingDayStore } from "../../store/store";
+import type { ActivityResponse, FacilityResponse, MembershipResponse, MembershipType, UserType, UserResponse, ScheduledActivityResponse, WorkingDay } from "../../entities/Entities";
 
 export default function Sync() {
   const navigate = useNavigate();
@@ -17,7 +17,9 @@ export default function Sync() {
   const [facilities, setFacilitiesState] = useState<FacilityResponse[]>([]);
   const [users, setUsersState] = useState<UserResponse[]>([]);
   const [scheduledActivities, setScheduledActivitiesState] = useState<ScheduledActivityResponse[]>([]);
+  const [workingDays, setWorkingDaysState] = useState<WorkingDay[]>([]);
   const [scheduledActivitiesProgress, setScheduledActivitiesProgress] = useState<number>(0);
+  const [workingDaysProgress, setWorkingDaysProgress] = useState<number>(0);
   const [usersProgress, setUsersProgress] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +31,7 @@ export default function Sync() {
   const setFacilities = useFacilityStore((state) => state.setFacilities);
   const setUsers = useUserStore((state) => state.setUsers);
   const setScheduledActivities = useScheduledActivityStore((state) => state.setScheduledActivities);
+  const setWorkingDays = useWorkingDayStore((state) => state.setWorkingDays);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +39,7 @@ export default function Sync() {
         setLoading(true);
         setError(null);
         const clubId = useClubIdStore.getState().clubId;
-        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers, responseScheduledActivities] = await Promise.all([
+        const [responseMembershipTypes, responseMemberships, responseActivities, responseUserTypes, responseFacilities, responseUsers, responseScheduledActivities, responseWorkingDays] = await Promise.all([
           AxiosInstance.get<MembershipType[]>(`/membership-type?clubId=${clubId}`),
           AxiosInstance.get<MembershipResponse[]>(`/membership?clubId=${clubId}`),
           AxiosInstance.get<ActivityResponse[]>(`/activities?clubId=${clubId}`),
@@ -44,12 +47,14 @@ export default function Sync() {
           AxiosInstance.get<FacilityResponse[]>(`/facilities?clubId=${clubId}`),
           AxiosInstance.get<UserResponse[]>(`/users?clubId=${clubId}`),
           AxiosInstance.get<ScheduledActivityResponse[]>(`/scheduled-activities?clubId=${clubId}`),
+          AxiosInstance.get<WorkingDay[]>(`/scheduled-activities/working-days?clubId=${clubId}`),
         ]);
 
         const dataMembershipTypes = responseMembershipTypes.data ?? [];
         const dataMemberships = responseMemberships.data ?? [];
         const dataActivities = responseActivities.data ?? [];
         const dataScheduledActivities = responseScheduledActivities.data ?? [];
+        const dataWorkingDays = responseWorkingDays.data ?? [];
         const dataUserTypes = responseUserTypes?.data ?? [];
         const dataFacilities = responseFacilities.data ?? [];
         const dataUsers = responseUsers.data ?? [];
@@ -65,6 +70,7 @@ export default function Sync() {
         setMembershipsState(dataMemberships);
         setActivitiesState(dataActivities);
         setScheduledActivitiesState(dataScheduledActivities);
+        setWorkingDaysState(dataWorkingDays);
         setMembershipTypes(dataMembershipTypes);
         setMemberships(dataMemberships);
         setActivities(dataActivities);
@@ -72,6 +78,7 @@ export default function Sync() {
         setFacilitiesState(dataFacilities);
         setUsersState(dataUsers);
         setScheduledActivities(dataScheduledActivities);
+        setWorkingDays(dataWorkingDays);
       } catch (err) {
         setError("Error al cargar los datos");
       } finally {
@@ -80,7 +87,7 @@ export default function Sync() {
     };
 
     fetchData();
-  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities, setUsers, setScheduledActivities]);
+  }, [setMembershipTypes, setMemberships, setActivities, setUserTypes, setFacilities, setUsers, setScheduledActivities, setWorkingDays]);
 
   const runSyncMembershipTypes = async (totalMembershipTypes: number, membershipTypes: MembershipType[]) => {
     console.log(totalMembershipTypes);
@@ -169,6 +176,20 @@ export default function Sync() {
     setScheduledActivitiesProgress(100);
   };
 
+  const runSyncWorkingDays = async (totalWorkingDays: number, workingDaysData: WorkingDay[]) => {
+    if (totalWorkingDays === 0) {
+      setWorkingDays([]);
+      setWorkingDaysProgress(100);
+      return;
+    }
+    for (let i = 0; i < totalWorkingDays; i++) {
+      await new Promise((r) => setTimeout(r, 1));
+      setWorkingDaysProgress(((i + 1) / totalWorkingDays) * 100);
+    }
+    setWorkingDays(workingDaysData);
+    setWorkingDaysProgress(100);
+  };
+
   useEffect(() => {
     if (loading) return;
     const totalMembershipTypes = membershipTypes.length;
@@ -177,6 +198,7 @@ export default function Sync() {
     const totalFacilities = facilities.length;
     const totalUsers = users.length;
     const totalScheduledActivities = scheduledActivities.length;
+    const totalWorkingDays = workingDays.length;
     const runSync = async () => {
       await runSyncMembershipTypes(totalMembershipTypes, membershipTypes);
       await runSyncMemberships(totalMemberships, memberships);
@@ -184,6 +206,7 @@ export default function Sync() {
       await runSyncFacilities(totalFacilities, facilities);
       await runSyncUsers(totalUsers, users);
       await runSyncScheduledActivities(totalScheduledActivities, scheduledActivities);
+      await runSyncWorkingDays(totalWorkingDays, workingDays);
       navigate('/home');
     }
     console.log("membership types", membershipTypes);
@@ -200,7 +223,7 @@ export default function Sync() {
     console.log("scheduled activities", scheduledActivities);
     console.log("scheduled activities progress", scheduledActivitiesProgress);
     runSync();
-  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate, users, setUsers, setScheduledActivities]);
+  }, [loading, membershipTypes, memberships, activities, facilities, setMembershipTypes, setMemberships, setActivities, setFacilities, navigate, users, setUsers, setScheduledActivities, setWorkingDays, workingDays]);
 
   return (
     <div className="container">
@@ -213,6 +236,7 @@ export default function Sync() {
       <SyncBar progress={facilitiesProgress} dataName="Instalaciones" />
       <SyncBar progress={usersProgress} dataName="Usuarios" />
       <SyncBar progress={scheduledActivitiesProgress} dataName="Actividades programadas" />
+      <SyncBar progress={workingDaysProgress} dataName="Días laborales" />
     </div>
   );
 }
