@@ -12,11 +12,16 @@ function formatDate(date: Date | string | null | undefined): string {
   }
 }
 
-export default function UserList() {
-  
+type MemberFilter = 'all' | 'member' | 'athlete';
+
+export default function UserList({ filter = 'all' }: { filter?: MemberFilter }) {
   const navigate = useNavigate();
   const users: UserResponse[] = useUserStore((state) => state.users);
-  const filtered = users.filter((u) => u.typeId === 2 || u.typeId === 3);
+  const filtered = users.filter((u) => {
+    if (filter === 'member') return u.typeId === 2;
+    if (filter === 'athlete') return u.typeId === 3;
+    return u.typeId === 2 || u.typeId === 3;
+  });
   return (
     <div className="user-directory">
       <div className="overflow-x-auto rounded-md border border-slate-200/80 bg-white -mx-0.5">
@@ -93,7 +98,11 @@ export default function UserList() {
       </div>
       {filtered.length === 0 && (
         <div className="mt-5 rounded-md border border-dashed border-slate-200 bg-slate-50/90 py-12 text-center text-sm text-slate-500">
-          No hay miembros registrados
+          {filter === 'athlete'
+            ? 'No hay atletas registrados'
+            : filter === 'member'
+              ? 'No hay miembros registrados'
+              : 'No hay socios registrados'}
         </div>
       )}
     </div>

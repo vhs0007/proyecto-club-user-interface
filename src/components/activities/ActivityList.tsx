@@ -14,7 +14,6 @@ function formatActivityDate(date: Date | string | null | undefined): string {
 
 export default function ActivityList({ activities }: { activities: ActivityResponse[] }) {
   const navigate = useNavigate();
-  console.log(activities);
 
   return (
     <>
@@ -28,7 +27,8 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
               <th className="listTableTh">Hora Inicio</th>
               <th className="listTableTh">Hora Fin</th>
               <th className="listTableTh">Instalación</th>
-              <th className="listTableTh">Usuario</th>
+              <th className="listTableTh">Reservado por</th>
+              <th className="listTableTh">Trabajador responsable</th>
               <th className="listTableTh">Costo</th>
               <th className="listTableTh">Estado</th>
               <th className="listTableThCenter">Acciones</th>
@@ -50,14 +50,15 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                   <span className="text-slate-800">{activity.facility?.type ?? '-'}</span>
                 </td>
                 <td className="listTableTd">{activity.user?.name ?? '-'}</td>
+                <td className="listTableTd">{activity.facility?.responsibleWorker?.name ?? '-'}</td>
                 <td className="listTableTd">
                   {typeof activity.cost === 'number'
                     ? `$${activity.cost.toLocaleString()}`
                     : '-'}
                 </td>
                 <td className="listTableTd">
-                  <span className={activity.facility?.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
-                    {activity.facility?.isActive ? 'Activa' : 'Inactiva'}
+                  <span className={activity.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
+                    {activity.isActive ? 'Activa' : 'Inactiva'}
                   </span>
                 </td>
                 <td className="listTableTd text-center">
