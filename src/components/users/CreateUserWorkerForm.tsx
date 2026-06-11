@@ -114,7 +114,7 @@ export default function CreateUserWorkerForm() {
 
             <div className="space-y-1.5">
                 <label htmlFor="startWorkAt" className="block text-sm font-medium text-slate-700">
-                    Inicio de trabajo
+                    Hora entrada
                 </label>
                 <input
                     id="startWorkAt"
@@ -127,7 +127,7 @@ export default function CreateUserWorkerForm() {
 
             <div className="space-y-1.5">
                 <label htmlFor="endWorkAt" className="block text-sm font-medium text-slate-700">
-                    Fin de trabajo
+                    Hora salida
                 </label>
                 <input
                     id="endWorkAt"

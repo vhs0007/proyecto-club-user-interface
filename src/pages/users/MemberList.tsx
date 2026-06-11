@@ -1,8 +1,18 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserList from '../../components/users/UserLIstMembers';
 
+type MemberFilter = 'all' | 'member' | 'athlete';
+
+const filterTabs: { id: MemberFilter; label: string }[] = [
+  { id: 'all', label: 'Todos' },
+  { id: 'member', label: 'Miembros' },
+  { id: 'athlete', label: 'Atletas' },
+];
+
 export default function MemberList() {
   const navigate = useNavigate();
+  const [filter, setFilter] = useState<MemberFilter>('all');
 
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
@@ -25,14 +35,22 @@ export default function MemberList() {
       <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
         <div className="p-4 md:p-6">
           <div className="mb-4 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5">
-            <button
-              type="button"
-              className='rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-800'
-            >
-              Socios
-            </button>
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilter(tab.id)}
+                className={
+                  filter === tab.id
+                    ? 'rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm'
+                    : 'rounded-md px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-800'
+                }
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-          <UserList />
+          <UserList filter={filter} />
         </div>
       </div>
     </div>

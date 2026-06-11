@@ -8,7 +8,7 @@ export default function Activities() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const activities = useActivityStore.getState().activities;
+  const activities = useActivityStore((state) => state.activities);
 
   return (
     <div className="container py-4">

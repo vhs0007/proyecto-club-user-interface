@@ -216,6 +216,7 @@ export interface ActivityResponse {
     user: UserNavigation;
     cost: number;
     facility: FacilityNavigation;
+    isActive: boolean;
 }
 
 export interface Club{
