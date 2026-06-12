@@ -3,22 +3,49 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import type { UserResponse } from "../../entities/Entities";
-import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import type { MembershipResponse, UserResponse } from "../../entities/Entities";
+import {
+  useClubIdStore,
+  useEditUserStore,
+  useMembershipStore,
+  useMembershipTypeStore,
+  useUserStore,
+} from "../../store/store";
 import AxiosInstance from "../../config/axios";
 
 const formSchema = z.object({
   name: z.string().min(1),
   typeId: z.number().min(1, "Seleccioná un tipo de usuario"),
   email: z.string().email(),
+  document: z.string().min(1, "El documento es requerido"),
+  membershipTypeId: z.number().min(1, "Seleccioná un tipo de membresía"),
   isActive: z.boolean(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
+async function updateMembershipType(
+  membershipId: number,
+  membershipTypeId: number,
+  user: UserResponse,
+  clubId: number,
+): Promise<MembershipResponse | null> {
+  const response = await AxiosInstance.patch<MembershipResponse>(
+    `/membership/${membershipId}?clubId=${clubId}`,
+    {
+      type: membershipTypeId,
+      userId: user.id,
+      userTypeId: user.typeId,
+      clubId,
+    },
+  );
+  return response.status === 200 ? response.data : null;
+}
+
 export default function EditMemberFirstStepForm({ user }: { user: UserResponse }) {
   const navigate = useNavigate();
   const clubId = useClubIdStore((state) => state.clubId);
+  const membershipTypes = useMembershipTypeStore((state) => state.membershipTypes);
   const {
     register,
     control,
@@ -31,6 +58,8 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       name: user.name ?? "",
       typeId: user.typeId,
       email: user.email ?? "",
+      document: user.document ?? "",
+      membershipTypeId: user.membership?.membershipType?.id ?? 0,
       isActive: user.isActive,
     },
   });
@@ -40,6 +69,8 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       name: user.name ?? "",
       typeId: user.typeId,
       email: user.email ?? "",
+      document: user.document ?? "",
+      membershipTypeId: user.membership?.membershipType?.id ?? 0,
       isActive: user.isActive,
     });
   }, [user, reset]);
@@ -49,34 +80,59 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
       name: data.name,
       typeId: data.typeId,
       email: data.email,
+      document: data.document,
       isActive: data.isActive,
+      membership: data.membershipTypeId,
     });
-    if(user.type?.id === 3){
+
+    if (user.type?.id === 3) {
       navigate(`/miembros/editar/${user.id}/paso-especifico-atleta`);
-    }else{
-      const response = await AxiosInstance.patch(`/users/${user.id}`, {
+      return;
+    }
+
+    try {
+      const response = await AxiosInstance.patch<UserResponse>(`/users/${user.id}`, {
         name: data.name,
         email: data.email,
+        document: data.document,
         isActive: data.isActive,
         clubId,
         typeId: user.typeId,
       });
-      if(response.status === 200){
-        useUserStore.getState().updateUser(response.data);
-        console.log(response.data);
-        const m = response.data.membership;
-        if (m) {
-          useMembershipStore.getState().updateMembership({
-            id: m.id,
-            user: response.data,
-            membershipType: m.membershipType,
-            expiration: m.expiration,
-            createdAt: m.createdAt ?? new Date(),
-            clubId: useClubIdStore.getState().clubId,
-          });
+
+      if (response.status !== 200) return;
+
+      let updatedUser = response.data;
+      const currentMembershipTypeId = user.membership?.membershipType?.id;
+      if (
+        user.membership?.id &&
+        data.membershipTypeId !== currentMembershipTypeId
+      ) {
+        const membershipResponse = await updateMembershipType(
+          user.membership.id,
+          data.membershipTypeId,
+          user,
+          clubId,
+        );
+        if (membershipResponse) {
+          useMembershipStore.getState().updateMembership(membershipResponse);
+          updatedUser = {
+            ...updatedUser,
+            membership: {
+              id: membershipResponse.id,
+              expiration: membershipResponse.expiration,
+              createdAt: membershipResponse.createdAt,
+              membershipType: membershipResponse.membershipType,
+            },
+          };
         }
-        navigate(`/miembros`);
       }
+
+      useUserStore.getState().updateUser(updatedUser);
+      navigate("/miembros");
+    } catch (error) {
+      alert("Error al actualizar el socio");
+      console.error(error);
     }
   };
 
@@ -113,6 +169,40 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
         </div>
 
         <input type="hidden" {...register("typeId", { valueAsNumber: true })} />
+
+        <div className="space-y-1.5">
+          <label htmlFor="document" className="block text-sm font-medium text-slate-700">
+            Documento
+          </label>
+          <input
+            id="document"
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("document")}
+          />
+          {errors.document && <span className="text-sm text-red-600">{errors.document.message}</span>}
+        </div>
+
+        <div className="space-y-1.5">
+          <label htmlFor="membershipTypeId" className="block text-sm font-medium text-slate-700">
+            Tipo de membresía
+          </label>
+          <select
+            id="membershipTypeId"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("membershipTypeId", { valueAsNumber: true })}
+          >
+            <option value={0}>Seleccioná un tipo de membresía</option>
+            {membershipTypes.map((membershipType) => (
+              <option key={membershipType.id} value={membershipType.id}>
+                {membershipType.name}
+              </option>
+            ))}
+          </select>
+          {errors.membershipTypeId && (
+            <span className="text-sm text-red-600">{errors.membershipTypeId.message}</span>
+          )}
+        </div>
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-sm font-medium text-slate-700">
@@ -152,7 +242,7 @@ export default function EditMemberFirstStepForm({ user }: { user: UserResponse }
           type="submit"
           className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
         >
-          Siguiente
+          {user.type?.id === 3 ? "Siguiente" : "Guardar"}
         </button>
       </form>
     </div>
