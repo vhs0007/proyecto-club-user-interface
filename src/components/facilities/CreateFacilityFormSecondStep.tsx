@@ -1,29 +1,28 @@
-import { useForm, useFieldArray } from 'react-hook-form'
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useClubIdStore, useCreateFacilityStore } from '../../store/store'
 import { useUserStore } from '../../store/store'
 import { useMembershipTypeStore } from '../../store/store'
 import { useFacilityStore } from '../../store/store'
-import type { UserResponse, Facility, FacilityResponse, MembershipType } from '../../entities/Entities'
+import type { Facility, FacilityResponse, MembershipType } from '../../entities/Entities'
 import AxiosInstance from '../../config/axios'
 import { useNavigate } from 'react-router-dom'
+import SelectActivityMembers from '../scheduledActivities/SelectActivityMembers'
 
 const formSchema = z.object({
   responsibleWorker: z.number().min(1),
-  assistantWorkers: z.array(
-    z.object({ workerId: z.number() }),
-  ),
 })
 
 type FormData = z.infer<typeof formSchema>
 
 export default function CreateFacilityFormSecondStep() {
   const [membershipTypeIds, setMembershipTypeIds] = useState<number[]>([])
+  const [assistantWorkerIds, setAssistantWorkerIds] = useState<number[]>([])
+  const [membersModalOpen, setMembersModalOpen] = useState(false)
   const {
     register,
-    control,
     handleSubmit,
     watch,
     formState: { errors },
@@ -31,30 +30,27 @@ export default function CreateFacilityFormSecondStep() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       responsibleWorker: 0,
-      assistantWorkers: [],
     },
   })
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'assistantWorkers',
-  })
+
   const responsibleWorkerId = watch('responsibleWorker')
-  const assistantRows = watch('assistantWorkers')
-  const users: UserResponse[] = useUserStore((state) => state.users)
+  const users = useUserStore((state) => state.users)
   const workerUsers = users.filter((user) => user.typeId === 1)
   const membershipTypes: MembershipType[] = useMembershipTypeStore((state) => state.membershipTypes)
   const navigate = useNavigate()
 
-  const getAssistantOptions = (currentIndex: number) => {
-    const selectedElsewhere = (assistantRows ?? [])
-      .map((row, idx) => (idx === currentIndex ? 0 : row.workerId))
-      .filter((id) => id > 0)
-    return workerUsers.filter(
-      (user) =>
-        user.id !== responsibleWorkerId &&
-        !selectedElsewhere.includes(user.id),
-    )
-  }
+  useEffect(() => {
+    if (responsibleWorkerId > 0) {
+      setAssistantWorkerIds((prev) =>
+        prev.filter((id) => id !== responsibleWorkerId),
+      )
+    }
+  }, [responsibleWorkerId])
+
+  const selectedAssistantNames = users
+    .filter((u) => u.typeId === 1 && assistantWorkerIds.includes(u.id))
+    .map((u) => u.name)
+    .join(', ')
 
   const toggleMembershipType = (id: number) => {
     setMembershipTypeIds((prev) =>
@@ -63,13 +59,9 @@ export default function CreateFacilityFormSecondStep() {
   }
 
   const onSubmit = async (data: FormData) => {
-    const assistantWorkers = data.assistantWorkers
-      .map((row) => row.workerId)
-      .filter((id) => id > 0)
-
     const secondStep = {
       responsibleWorker: data.responsibleWorker,
-      assistantWorkers,
+      assistantWorkers: assistantWorkerIds,
       membershipTypeIds,
     }
     useCreateFacilityStore.getState().setSecondStep(secondStep)
@@ -78,7 +70,7 @@ export default function CreateFacilityFormSecondStep() {
         type: useCreateFacilityStore.getState().firstStep.type,
         capacity: useCreateFacilityStore.getState().firstStep.capacity,
         responsibleWorker: data.responsibleWorker,
-        ...(assistantWorkers.length > 0 ? { assistantWorkers } : {}),
+        ...(assistantWorkerIds.length > 0 ? { assistantWorkers: assistantWorkerIds } : {}),
         membershipTypeIds,
         isActive: true,
         clubId: useClubIdStore.getState().clubId,
@@ -129,44 +121,31 @@ export default function CreateFacilityFormSecondStep() {
           )}
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <span className="block text-sm font-medium text-slate-700">Trabajadores asistentes</span>
-            <button
-              type="button"
-              onClick={() => append({ workerId: 0 })}
-              className="text-sm font-medium text-slate-700 underline hover:text-slate-900"
-            >
-              + Agregar asistente
-            </button>
-          </div>
-          {fields.length === 0 && (
-            <p className="text-sm text-slate-500">Sin asistentes (opcional)</p>
+        <div className="space-y-1.5">
+          <span className="block text-sm font-medium text-slate-700">
+            Trabajadores asistentes (opcional)
+          </span>
+          <button
+            type="button"
+            className="activityFormControl w-full text-left"
+            onClick={() => setMembersModalOpen(true)}
+          >
+            {assistantWorkerIds.length > 0
+              ? `${assistantWorkerIds.length} seleccionado(s)`
+              : 'Seleccionar asistentes'}
+          </button>
+          {selectedAssistantNames && (
+            <p className="text-sm text-slate-600">{selectedAssistantNames}</p>
           )}
-          {fields.map((field, index) => (
-            <div key={field.id} className="flex gap-2">
-              <select
-                className="min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-                {...register(`assistantWorkers.${index}.workerId`, { valueAsNumber: true })}
-              >
-                <option value={0}>Seleccionar asistente</option>
-                {getAssistantOptions(index).map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-                title="Quitar"
-              >
-                Quitar
-              </button>
-            </div>
-          ))}
         </div>
+
+        <SelectActivityMembers
+          open={membersModalOpen}
+          onClose={() => setMembersModalOpen(false)}
+          selectedIds={assistantWorkerIds}
+          onConfirm={setAssistantWorkerIds}
+          excludeUserIds={responsibleWorkerId > 0 ? [responsibleWorkerId] : []}
+        />
 
         <div className="space-y-1.5">
           <label htmlFor="membershipTypeIds" className="block text-sm font-medium text-slate-700">

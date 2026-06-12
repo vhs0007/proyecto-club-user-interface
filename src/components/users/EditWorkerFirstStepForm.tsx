@@ -10,6 +10,7 @@ const formSchema = z.object({
   name: z.string().min(1),
   typeId: z.number().min(1, "Seleccioná un tipo de usuario"),
   email: z.string().email(),
+  document: z.string().min(1, "El documento es requerido"),
   isActive: z.boolean(),
 });
 
@@ -29,6 +30,7 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
       name: user.name ?? "",
       typeId: user.type?.id ?? user.typeId ?? 0,
       email: user.email ?? "",
+      document: user.document ?? "",
       isActive: user.isActive,
     },
   });
@@ -38,6 +40,7 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
       name: user.name ?? "",
       typeId: user.type?.id ?? user.typeId ?? 0,
       email: user.email ?? "",
+      document: user.document ?? "",
       isActive: user.isActive,
     });
   }, [user, reset]);
@@ -47,6 +50,7 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
       name: data.name,
       typeId: data.typeId,
       email: data.email,
+      document: data.document,
       isActive: data.isActive,
     });
     if (!user.id) return;
@@ -86,6 +90,19 @@ export default function EditWorkerFirstStepForm({ user }: { user: UserResponse }
         </div>
 
         <input type="hidden" {...register("typeId", { valueAsNumber: true })} />
+
+        <div className="space-y-1.5">
+          <label htmlFor="document" className="block text-sm font-medium text-slate-700">
+            Documento
+          </label>
+          <input
+            id="document"
+            type="text"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            {...register("document")}
+          />
+          {errors.document && <span className="text-sm text-red-600">{errors.document.message}</span>}
+        </div>
 
         <div className="space-y-1.5">
           <label htmlFor="email" className="block text-sm font-medium text-slate-700">

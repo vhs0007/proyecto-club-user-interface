@@ -10,7 +10,7 @@ export interface DeleteUserFormProps {
 
 export default function DeleteUserForm({ user }: DeleteUserFormProps) {
   const navigate = useNavigate()
-  const deleteUser = useUserStore((state) => state.deleteUser)
+  const updateUser = useUserStore((state) => state.updateUser)
   const getUserType = useUserTypeStore((state) => state.getUserType)
   const clubId = useClubIdStore((state) => state.clubId)
 
@@ -19,21 +19,25 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
 
   const typeId = user?.type?.id ?? user?.typeId
   const userType: UserType | null = typeId != null ? getUserType(typeId) : null
-  const listPath = typeId === 2 ? '/miembros' : '/trabajadores'
+  const listPath = typeId === 1 ? '/trabajadores' : '/miembros'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user?.id || clubId <= 0) return
+    if (!user?.id || clubId <= 0 || typeId == null) return
 
     setLoading(true)
     setError(null)
 
     try {
-      await AxiosInstance.delete(`/users/${user.id}?clubId=${clubId}&typeId=${typeId}`)
-      deleteUser(user.id, user.typeId)
+      const response = await AxiosInstance.delete<UserResponse>(
+        `/users/${user.id}?clubId=${clubId}&typeId=${typeId}`,
+      )
+      if (response.data) {
+        updateUser(response.data)
+      }
       navigate(listPath)
     } catch {
-      setError('No se pudo eliminar el usuario. Intentá de nuevo.')
+      setError('No se pudo dar de baja el usuario. Intentá de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -44,7 +48,9 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
   return (
     <div className="mx-auto w-full max-w-2xl">
       <form onSubmit={handleSubmit} className="space-y-4 rounded-md border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-slate-700">¿Estás seguro de que querés eliminar este usuario?</p>
+        <p className="text-sm text-slate-700">
+          ¿Estás seguro de que querés dar de baja este usuario? Quedará en estado inactivo.
+        </p>
 
         <div className="space-y-1.5">
           <label htmlFor="delete-user-id" className="block text-sm font-medium text-slate-700">ID</label>
@@ -90,7 +96,7 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
             className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 disabled:cursor-not-allowed disabled:opacity-70"
             disabled={loading}
           >
-            {loading ? 'Eliminando...' : 'Eliminar'}
+            {loading ? 'Procesando...' : 'Dar de baja'}
           </button>
           <button
             type="button"
@@ -104,4 +110,3 @@ export default function DeleteUserForm({ user }: DeleteUserFormProps) {
     </div>
   )
 }
-

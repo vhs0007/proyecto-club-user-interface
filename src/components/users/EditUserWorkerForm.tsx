@@ -55,6 +55,7 @@ export default function EditUserWorkerForm({ user }: { user: UserResponse }) {
       const payload = {
         name: firstStep.name,
         email: firstStep.email,
+        document: firstStep.document,
         typeId: firstStep.typeId,
         isActive: firstStep.isActive,
         salary: data.salary,
