@@ -3,7 +3,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import type { UserResponse } from "../../entities/Entities";
-import { useClubIdStore, useEditUserStore, useUserStore } from "../../store/store";
+import { useClubIdStore, useEditUserStore, useMembershipStore, useUserStore } from "../../store/store";
+import type { MembershipResponse } from "../../entities/Entities";
 import AxiosInstance from "../../config/axios";
 
 function toDateInput(d: Date | string | null | undefined): string {
@@ -26,7 +27,14 @@ const athleteSchema = z.object({
   medicalConditions: z.string(),
 });
 
-type FirstStep = { name: string; typeId: number; email: string; isActive: boolean };
+type FirstStep = {
+  name: string;
+  typeId: number;
+  email: string;
+  isActive: boolean;
+  document: string;
+  membership?: number;
+};
 
 export default function EditUserAthleteForm({ user }: { user: UserResponse }) {
   const { id: idParam } = useParams<{ id: string }>();
@@ -81,6 +89,7 @@ function EditAthleteFields({
       const payload = {
         name: firstStep.name,
         email: firstStep.email,
+        document: firstStep.document,
         typeId: firstStep.typeId,
         isActive: firstStep.isActive,
         clubId,
@@ -96,7 +105,37 @@ function EditAthleteFields({
       };
       const response = await AxiosInstance.patch<UserResponse>(`/users/${user.id}`, payload);
       if (response?.data) {
-        useUserStore.getState().updateUser(response.data);
+        let updatedUser = response.data;
+        const membershipTypeId = firstStep.membership;
+        const currentMembershipTypeId = user.membership?.membershipType?.id;
+        if (
+          user.membership?.id &&
+          membershipTypeId &&
+          membershipTypeId !== currentMembershipTypeId
+        ) {
+          const membershipResponse = await AxiosInstance.patch<MembershipResponse>(
+            `/membership/${user.membership.id}?clubId=${clubId}`,
+            {
+              type: membershipTypeId,
+              userId: user.id,
+              userTypeId: user.typeId,
+              clubId,
+            },
+          );
+          if (membershipResponse.status === 200 && membershipResponse.data) {
+            useMembershipStore.getState().updateMembership(membershipResponse.data);
+            updatedUser = {
+              ...updatedUser,
+              membership: {
+                id: membershipResponse.data.id,
+                expiration: membershipResponse.data.expiration,
+                createdAt: membershipResponse.data.createdAt,
+                membershipType: membershipResponse.data.membershipType,
+              },
+            };
+          }
+        }
+        useUserStore.getState().updateUser(updatedUser);
         alert("Usuario actualizado correctamente");
         navigate(listPath);
       }

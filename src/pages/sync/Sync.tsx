@@ -65,6 +65,7 @@ export default function Sync() {
         console.log("data de Activities", dataActivities);
         console.log("data de users", dataUsers);
         console.log("data de scheduled activities", dataScheduledActivities);
+        console.log("data de working days", dataWorkingDays);
 
         setMembershipTypesState(dataMembershipTypes);
         setMembershipsState(dataMemberships);
