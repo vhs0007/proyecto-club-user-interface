@@ -98,11 +98,6 @@ export default function AssignWorkerFacilitiesForm({
     )
   }
 
-  const refreshFacilities = async () => {
-    if (!clubId) return
-    setFacilities(useFacilityStore.getState().facilities)
-  }
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!clubId) return
@@ -124,14 +119,12 @@ export default function AssignWorkerFacilitiesForm({
 
     setLoading(true)
     try {
-      debugger
       const response = await AxiosInstance.post<FacilityWorkerResponse>(
         '/facility-workers',
         request,
       )
       console.log(response.data)
       assignWorkerFacilities(response.data)
-      await refreshFacilities()
       setSelectedFacilityIds([0])
       alert(
         facilityId.length === 1

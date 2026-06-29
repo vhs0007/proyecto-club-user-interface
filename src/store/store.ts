@@ -12,6 +12,23 @@ import type {
   DatetimeScheduledActivityRequest,
   WorkingDay,
 } from '../entities/Entities';
+import {
+  propagateActivityCreate,
+  propagateActivityDelete,
+  propagateActivityUpdate,
+  propagateFacilityCreate,
+  propagateFacilityDelete,
+  propagateFacilityUpdate,
+  propagateMembershipDelete,
+  propagateMembershipToUser,
+  propagateMembershipTypeDelete,
+  propagateMembershipTypeUpdate,
+  propagateScheduledActivityCreate,
+  propagateScheduledActivityDelete,
+  propagateScheduledActivityUpdate,
+  propagateUserChange,
+  propagateWorkerFacilitiesAssign,
+} from './propagation';
 
 
 interface AuthState {
@@ -324,12 +341,16 @@ export const useMembershipTypeStore = create<MembershipTypeState>()(
       setMembershipTypes: (membershipTypes: MembershipType[]) => set({ membershipTypes }),
       setMembershipType: (membershipType: MembershipType) =>
         set((state) => ({ membershipTypes: [...state.membershipTypes, membershipType] })),
-      deleteMembershipType: (id: number) =>
-        set((state) => ({ membershipTypes: state.membershipTypes.filter((mt) => mt.id !== id) })),
-      updateMembershipType: (membershipType: MembershipType) =>
+      deleteMembershipType: (id: number) => {
+        set((state) => ({ membershipTypes: state.membershipTypes.filter((mt) => mt.id !== id) }));
+        propagateMembershipTypeDelete(id);
+      },
+      updateMembershipType: (membershipType: MembershipType) => {
         set((state) => ({
           membershipTypes: state.membershipTypes.map((mt) => (mt.id === membershipType.id ? membershipType : mt)),
-        })),
+        }));
+        propagateMembershipTypeUpdate(membershipType);
+      },
       getMembershipType: (id: number) => get().membershipTypes.find((mt) => mt.id === id) ?? null,
     }),
     {
@@ -368,15 +389,24 @@ export const useMembershipStore = create<MembershipState>()(
     (set, get) => ({
       memberships: [],
       setMemberships: (memberships: MembershipResponse[]) => set({ memberships }),
-      setMembership: (membership: MembershipResponse) =>
+      setMembership: (membership: MembershipResponse) => {
         set((state) => ({
           memberships: state.memberships.some((m) => m.id === membership.id)
             ? state.memberships.map((m) => (m.id === membership.id ? membership : m))
             : [...state.memberships, membership],
-        })),
+        }));
+        propagateMembershipToUser(membership);
+      },
       getMembership: (id: number) => get().memberships.find((m) => m.id === id) ?? null,
-      deleteMembership: (id: number) => set((state) => ({ memberships: state.memberships.filter((m) => m.id !== id) })),
-      updateMembership: (membership: MembershipResponse) => set((state) => ({ memberships: state.memberships.map((m) => m.id === membership.id ? membership : m) })),
+      deleteMembership: (id: number) => {
+        const membership = get().getMembership(id);
+        set((state) => ({ memberships: state.memberships.filter((m) => m.id !== id) }));
+        if (membership) propagateMembershipDelete(membership);
+      },
+      updateMembership: (membership: MembershipResponse) => {
+        set((state) => ({ memberships: state.memberships.map((m) => m.id === membership.id ? membership : m) }));
+        propagateMembershipToUser(membership);
+      },
     }),
     {
       name: 'memberships-storage',
@@ -391,15 +421,23 @@ export const useActivityStore = create<ActivityState>()(
     (set, get) => ({
       activities: [],
       setActivities: (activities: ActivityResponse[]) => set({ activities }),
-      setActivity: (activity: ActivityResponse) =>
-        set((state) => ({ activities: [...state.activities, activity] })),
+      setActivity: (activity: ActivityResponse) => {
+        set((state) => ({ activities: [...state.activities, activity] }));
+        propagateActivityCreate(activity);
+      },
       getActivity: (id: number) => get().activities.find((a) => a.id === id) ?? null,
-      deleteActivity: (id: number) =>
-        set((state) => ({ activities: state.activities.filter((a) => a.id !== id) })),
-      updateActivity: (activity: ActivityResponse) =>
+      deleteActivity: (id: number) => {
+        const activity = get().getActivity(id);
+        set((state) => ({ activities: state.activities.filter((a) => a.id !== id) }));
+        propagateActivityDelete(id, activity?.facility?.id);
+      },
+      updateActivity: (activity: ActivityResponse) => {
+        const previous = get().getActivity(activity.id);
         set((state) => ({
           activities: state.activities.map((a) => (a.id === activity.id ? activity : a)),
-        })),
+        }));
+        propagateActivityUpdate(activity, previous?.facility?.id);
+      },
     }),
     {
       name: 'activities-storage',
@@ -414,11 +452,19 @@ export const useFacilityStore = create<FacilityState>()(
     (set, get) => ({
       facilities: [],
       setFacilities: (facilities: FacilityResponse[]) => set({ facilities }),
-      setFacility: (facility: FacilityResponse) =>
-        set((state) => ({ facilities: [...state.facilities, facility] })),
+      setFacility: (facility: FacilityResponse) => {
+        set((state) => ({ facilities: [...state.facilities, facility] }));
+        propagateFacilityCreate(facility);
+      },
       getFacility: (id: number) => get().facilities.find((f) => f.id === id) ?? null,
-      deleteFacility: (id: number) => set((state) => ({ facilities: state.facilities.filter((f) => f.id !== id) })),
-      updateFacility: (facility: FacilityResponse) => set((state) => ({ facilities: state.facilities.map((f) => f.id === facility.id ? facility : f) })),
+      deleteFacility: (id: number) => {
+        set((state) => ({ facilities: state.facilities.filter((f) => f.id !== id) }));
+        propagateFacilityDelete(id);
+      },
+      updateFacility: (facility: FacilityResponse) => {
+        set((state) => ({ facilities: state.facilities.map((f) => f.id === facility.id ? facility : f) }));
+        propagateFacilityUpdate(facility);
+      },
     }),
     {
       name: 'facilities-storage',
@@ -449,41 +495,25 @@ export const useUserStore = create<UserState>()(
     (set, get) => ({
       users: [],
       setUsers: (users: UserResponse[]) => set({ users }),
-      setUser: (user: UserResponse) =>
+      setUser: (user: UserResponse) => {
         set((state) => ({
           users: state.users.some((u) => u.id === user.id && u.typeId === user.typeId)
             ? state.users.map((u) => (u.id === user.id && u.typeId === user.typeId ? user : u))
             : [...state.users, user],
-        })),
+        }));
+        propagateUserChange(user);
+      },
       getUser: (id: number, typeId: number) => get().users.find((u) => u.id === id && u.typeId === typeId) ?? null,
       deleteUser: (id: number, typeId: number) =>
         set((state) => ({
           users: state.users.filter((u) => !(u.id === id && u.typeId === typeId)),
         })),
-      updateUser: (user: UserResponse) => set((state) => ({ users: state.users.map((u) => u.id === user.id && u.typeId === user.typeId ? user : u) })),
+      updateUser: (user: UserResponse) => {
+        set((state) => ({ users: state.users.map((u) => u.id === user.id && u.typeId === user.typeId ? user : u) }));
+        propagateUserChange(user);
+      },
       assignWorkerFacilities: (response: FacilityWorkerResponse) => {
-        debugger
-        const worker = get().getUser(
-          response.userNavigation.id,
-          response.userNavigation.typeId ?? 0,
-        );
-        if (!worker) return;
-        response.facilityNavigation.map((nav) => {
-          const auxiliar = useFacilityStore.getState().getFacility(nav.id);
-          if (auxiliar){
-           auxiliar.assistantWorkers = nav.assistantWorkers;
-           useFacilityStore.getState().updateFacility(auxiliar);        
-          }
-        });
-
-
-        get().updateUser({
-          ...worker,
-          facilities: response.facilityNavigation.map((nav) => ({
-            ...nav,
-            clubId: response.clubId,
-          })),
-        });
+        propagateWorkerFacilitiesAssign(response);
       },
     }),
     {
@@ -545,10 +575,19 @@ export const useScheduledActivityStore = create<ScheduledActivityState>()(
     (set, get) => ({
       scheduledActivities: [],
       setScheduledActivities: (scheduledActivities: ScheduledActivityResponse[]) => set({ scheduledActivities }),
-      setScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => set((state) => ({ scheduledActivities: [...state.scheduledActivities, scheduledActivity] })),
+      setScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => {
+        set((state) => ({ scheduledActivities: [...state.scheduledActivities, scheduledActivity] }));
+        propagateScheduledActivityCreate(scheduledActivity);
+      },
       getScheduledActivity: (id: number) => get().scheduledActivities.find((sa) => sa.id === id) ?? null,
-      deleteScheduledActivity: (id: number) => set((state) => ({ scheduledActivities: state.scheduledActivities.filter((sa) => sa.id !== id) })),
-      updateScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => set((state) => ({ scheduledActivities: state.scheduledActivities.map((sa) => sa.id === scheduledActivity.id ? scheduledActivity : sa) })),
+      deleteScheduledActivity: (id: number) => {
+        propagateScheduledActivityDelete(id);
+        set((state) => ({ scheduledActivities: state.scheduledActivities.filter((sa) => sa.id !== id) }));
+      },
+      updateScheduledActivity: (scheduledActivity: ScheduledActivityResponse) => {
+        set((state) => ({ scheduledActivities: state.scheduledActivities.map((sa) => sa.id === scheduledActivity.id ? scheduledActivity : sa) }));
+        propagateScheduledActivityUpdate(scheduledActivity);
+      },
     }),
     {
       name: 'scheduled-activities-storage',
