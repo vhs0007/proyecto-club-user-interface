@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserList from '../../components/users/UserLIstMembers';
 import { useUserStore } from '../../store/store';
@@ -14,13 +14,15 @@ const filterTabs: { id: MemberFilter; label: string }[] = [
 export default function MemberList() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<MemberFilter>('all');
-  const members = useUserStore((s) =>
-    s.users.filter((u) => u.typeId === 2 || u.typeId === 3),
+  const users = useUserStore((s) => s.users);
+  const members = useMemo(
+    () => users.filter((u) => u.typeId === 2 || u.typeId === 3),
+    [users],
   );
 
   useEffect(() => {
     console.log('[MemberList] members', members);
-  }, []);
+  }, [members]);
 
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
