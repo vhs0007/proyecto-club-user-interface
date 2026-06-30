@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ScheduledActivityList from '../../components/scheduledActivities/ScheduledActivityList';
 import { useScheduledActivityStore } from '../../store/store';
@@ -8,6 +8,11 @@ export default function ScheduledActivities() {
   const navigate = useNavigate();
 
   const scheduledActivities = useScheduledActivityStore.getState().scheduledActivities;
+
+  useEffect(() => {
+    const items = useScheduledActivityStore.getState().scheduledActivities;
+    console.log('[ScheduledActivities] scheduledActivities', items);
+  }, []);
 
   return (
     <div className="container py-4">

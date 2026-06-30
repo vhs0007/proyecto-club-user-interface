@@ -11,7 +11,9 @@ export default function FacilitiesList() {
     useEffect(() => {
         setLoading(true);
         try {
-            setFacilitiesList(useFacilityStore.getState().facilities);
+            const facilities = useFacilityStore.getState().facilities;
+            console.log('[FacilitiesList] facilities', facilities);
+            setFacilitiesList(facilities);
         }
         catch {
             setError('Error al obtener las instalaciones');

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActivityList from '../../components/activities/ActivityList';
 import { useActivityStore } from '../../store/store';
@@ -9,6 +9,10 @@ export default function Activities() {
   const navigate = useNavigate();
 
   const activities = useActivityStore((state) => state.activities);
+
+  useEffect(() => {
+    console.log('[Activities] activities', activities);
+  }, []);
 
   return (
     <div className="container py-4">

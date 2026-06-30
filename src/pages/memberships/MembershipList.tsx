@@ -10,9 +10,11 @@ export default function Membership() {
   const memberships = useMembershipStore((state) => state.memberships);
   const [membershipsList, setMembershipsList] = useState<MembershipResponse[]>([]);
   useEffect(() => {
-    setMembershipsList(memberships);
-    console.log(memberships);
+    console.log('[MembershipList] memberships', memberships);
+  }, []);
 
+  useEffect(() => {
+    setMembershipsList(memberships);
   }, [memberships]);
   return (
     <MembershipLayout>

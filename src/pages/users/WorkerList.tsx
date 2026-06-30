@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import UserListWorkers from '../../components/users/UserListWorkers';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store/store';
 
 export default function WorkerList() {
   const navigate = useNavigate();
+  const workers = useUserStore((s) => s.users.filter((u) => u.typeId === 1));
+
+  useEffect(() => {
+    console.log('[WorkerList] workers', workers);
+  }, []);
 
   return (
     <div className="container max-w-7xl mx-auto py-4 px-3 md:py-5 md:px-4">
