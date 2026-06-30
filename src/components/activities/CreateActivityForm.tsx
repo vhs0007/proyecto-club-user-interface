@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import AxiosInstance from "../../config/axios";
 import { useActivityStore } from "../../store/store";
 import type { ActivityResponse } from "../../entities/Entities";
+import { ACTIVITY_STATES } from "../../entities/Entities";
 
 const schema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
@@ -14,7 +15,7 @@ const schema = z.object({
   userId: z.number().min(1, "Usuario requerido"),
   cost: z.number().min(0, "El costo debe ser mayor o igual a 0"),
   facilityId: z.number().min(1, "Seleccioná una instalación"),
-  isActive: z.boolean().optional(),
+  state: z.enum(ACTIVITY_STATES).optional(),
 });
 
 export type CreateActivityFormData = z.infer<typeof schema>;
@@ -40,7 +41,7 @@ export default function CreateActivityForm() {
       userId: 0,
       cost: 0,
       facilityId: 0,
-      isActive: true,
+      state: 'PENDIENTE',
     },
   });
 
@@ -54,7 +55,7 @@ export default function CreateActivityForm() {
         userId: data.userId,
         cost: data.cost,
         facilityId: data.facilityId,
-        ...(data.isActive !== undefined && { isActive: data.isActive }),
+        ...(data.state !== undefined && { state: data.state }),
       };
       const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;
@@ -162,16 +163,19 @@ export default function CreateActivityForm() {
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-300"
-            id="isActive"
-            {...register("isActive")}
-          />
-          <label className="text-sm font-medium text-slate-700" htmlFor="isActive">
-            Activa
-          </label>
+        <div>
+          <label className="activityFormLabel" htmlFor="state">Estado</label>
+          <select
+            id="state"
+            className="activityFormControl"
+            {...register("state")}
+          >
+            {ACTIVITY_STATES.map((stateOption) => (
+              <option key={stateOption} value={stateOption}>
+                {stateOption}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-center gap-2 pt-2">

@@ -84,7 +84,7 @@ function toActivitiesNavigation(activity: ActivityResponse): ActivitiesNavigatio
     hourEnd: activity.hourEnd,
     user: activity.user,
     cost: activity.cost,
-    isActive: activity.isActive,
+    state: activity.state,
   };
 }
 

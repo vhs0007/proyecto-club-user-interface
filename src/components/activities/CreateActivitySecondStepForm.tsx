@@ -56,7 +56,7 @@ export default function CreateActivitySecondStepForm() {
         userTypeId,
         cost: data.cost,
         facilityId: data.facilityId,
-        isActive: firstStep.isActive,
+        state: firstStep.state,
       };
       const response = await AxiosInstance.post<ActivityResponse>("/activities", payload);
       const created = response.data;

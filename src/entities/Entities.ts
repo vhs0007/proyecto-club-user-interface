@@ -139,6 +139,16 @@ export interface UserNavigation {
     isActive: boolean;
 }
 
+export const ACTIVITY_STATES = [
+    'PENDIENTE',
+    'CONFIRMADO',
+    'CANCELADO',
+    'COMPLETADO',
+    'SEÑADA',
+] as const;
+
+export type ActivityState = (typeof ACTIVITY_STATES)[number];
+
 /** Navegación: actividad en respuesta de instalación */
 export interface ActivitiesNavigation {
     id: number;
@@ -150,7 +160,7 @@ export interface ActivitiesNavigation {
     hourEnd: string;
     user: UserNavigation;
     cost: number;
-    isActive: boolean;
+    state: ActivityState;
 }
 
 /** Navegación: tipo de membresía en respuesta de instalación */
@@ -202,7 +212,7 @@ export interface Activity {
     userId: number;
     cost: number;
     facilityId: number;
-    isActive?: boolean;
+    state?: ActivityState;
 }
 
 export interface ActivityResponse {
@@ -216,7 +226,7 @@ export interface ActivityResponse {
     user: UserNavigation;
     cost: number;
     facility: FacilityNavigation;
-    isActive: boolean;
+    state: ActivityState;
 }
 
 export interface Club{

@@ -49,7 +49,7 @@ export default function CreateActivityFirstStepForm() {
       date: new Date(data.date),
       hourStart: data.hourStart,
       hourEnd: data.hourEnd,
-      isActive: true,
+      state: 'PENDIENTE',
       clubId: useClubIdStore.getState().clubId,
     });
     navigate("/reservas/crear/paso-2");

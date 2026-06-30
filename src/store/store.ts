@@ -86,7 +86,7 @@ interface CreateActivityFirstStep {
   hourStart: string;
   hourEnd: string;
   date: Date;
-  isActive: boolean;
+  state: string;
 }
 
 interface CreateActivitySecondStep {
@@ -240,7 +240,7 @@ interface EditActivityFirstStep {
   hourStart: string;
   hourEnd: string;
   date: Date;
-  isActive: boolean;
+  state: string;
   clubId: number;
 }
 
@@ -285,7 +285,7 @@ const initialEditActivityFirstStep: EditActivityFirstStep = {
   hourStart: '',
   hourEnd: '',
   date: new Date(),
-  isActive: true,
+  state: 'PENDIENTE',
   clubId: 0,
 };
 
@@ -544,7 +544,7 @@ export const useCreateUserStore = create<CreateUserState>()(
 export const useCreateActivityStore = create<CreateActivityState>()(
   persist(
     (set) => ({
-      firstStep: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), isActive: true, clubId: 0 },
+      firstStep: { name: '', type: '', hourStart: '', hourEnd: '', date: new Date(), state: 'PENDIENTE', clubId: 0 },
       secondStep: { facilityId: 0, userId: 0, cost: 0, userTypeId: 0 },
       setFirstStep: (firstStep: CreateActivityFirstStep) => set({ firstStep }),
       setSecondStep: (secondStep: CreateActivitySecondStep) => set({ secondStep }),

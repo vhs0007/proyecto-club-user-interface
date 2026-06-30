@@ -255,6 +255,26 @@ h2.mb-0, h2.mb-4 {
     @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-slate-200 text-slate-700;
   }
 
+  .listBadgeActivityPending {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800;
+  }
+
+  .listBadgeActivityConfirmed {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-700;
+  }
+
+  .listBadgeActivityCancelled {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-rose-100 text-rose-700;
+  }
+
+  .listBadgeActivityCompleted {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-slate-200 text-slate-700;
+  }
+
+  .listBadgeActivityReserved {
+    @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-sky-100 text-sky-700;
+  }
+
   .listBadgeTypeInfo {
     @apply inline-flex rounded-md px-2 py-1 text-xs font-medium bg-sky-100 text-sky-700;
   }

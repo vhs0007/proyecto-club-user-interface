@@ -82,7 +82,7 @@ export default function EditActivityFormSecondStep({ activity }: { activity: Act
         userTypeId,
         cost: data.cost,
         facilityId: data.facilityId,
-        isActive: fs.isActive ?? true,
+        state: fs.state ?? 'PENDIENTE',
       };
       const response = await AxiosInstance.patch<ActivityResponse>(
         `/activities/${id}?clubId=${resolvedClubId}`,

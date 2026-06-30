@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import type { ActivityResponse } from '../../entities/Entities';
+import type { ActivityResponse, ActivityState } from '../../entities/Entities';
 
 function formatActivityDate(date: Date | string | null | undefined): string {
   if (date == null) return '-';
@@ -9,6 +9,23 @@ function formatActivityDate(date: Date | string | null | undefined): string {
     return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
   } catch {
     return '-';
+  }
+}
+
+function getActivityStateBadgeClass(state: ActivityState): string {
+  switch (state) {
+    case 'PENDIENTE':
+      return 'listBadgeActivityPending';
+    case 'CONFIRMADO':
+      return 'listBadgeActivityConfirmed';
+    case 'CANCELADO':
+      return 'listBadgeActivityCancelled';
+    case 'COMPLETADO':
+      return 'listBadgeActivityCompleted';
+    case 'SEÑADA':
+      return 'listBadgeActivityReserved';
+    default:
+      return 'listBadgeStatusInactive';
   }
 }
 
@@ -57,8 +74,8 @@ export default function ActivityList({ activities }: { activities: ActivityRespo
                     : '-'}
                 </td>
                 <td className="listTableTd">
-                  <span className={activity.isActive ? 'listBadgeStatusActive' : 'listBadgeStatusInactive'}>
-                    {activity.isActive ? 'Activa' : 'Inactiva'}
+                  <span className={getActivityStateBadgeClass(activity.state)}>
+                    {activity.state}
                   </span>
                 </td>
                 <td className="listTableTd text-center">

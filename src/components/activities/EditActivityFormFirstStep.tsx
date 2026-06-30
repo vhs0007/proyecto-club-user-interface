@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ActivityResponse } from "../../entities/Entities";
+import { ACTIVITY_STATES } from "../../entities/Entities";
 import { useEditActivityStore } from "../../store/store";
 
 const toMinutes = (value: string) => {
@@ -18,7 +19,7 @@ const formSchema = z
     date: z.string().min(1, "Fecha requerida"),
     hourStart: z.string().min(1, "Hora de inicio requerida"),
     hourEnd: z.string().min(1, "Hora de fin requerida"),
-    isActive: z.boolean(),
+    state: z.enum(ACTIVITY_STATES),
   })
   .refine((data) => toMinutes(data.hourEnd) > toMinutes(data.hourStart), {
     message: "La hora de fin debe ser posterior al inicio",
@@ -54,7 +55,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
       date: toDateInputValue(activity.date),
       hourStart: activity.hourStart ?? "",
       hourEnd: activity.hourEnd ?? "",
-      isActive: (activity as ActivityResponse & { isActive?: boolean }).isActive ?? true,
+      state: activity.state ?? "PENDIENTE",
     },
   });
 
@@ -67,7 +68,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
         date: toDateInputValue(store.firstStep.date),
         hourStart: store.firstStep.hourStart,
         hourEnd: store.firstStep.hourEnd,
-        isActive: store.firstStep.isActive,
+        state: store.firstStep.state as FormData["state"],
       });
       return;
     }
@@ -78,7 +79,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
       date: toDateInputValue(activity.date),
       hourStart: activity.hourStart ?? "",
       hourEnd: activity.hourEnd ?? "",
-      isActive: (activity as ActivityResponse & { isActive?: boolean }).isActive ?? true,
+      state: activity.state ?? "PENDIENTE",
     });
     useEditActivityStore.getState().setEditingActivityId(activity.id);
     useEditActivityStore.getState().setFirstStep({
@@ -87,7 +88,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
       date: d,
       hourStart: activity.hourStart ?? "",
       hourEnd: activity.hourEnd ?? "",
-      isActive: (activity as ActivityResponse & { isActive?: boolean }).isActive ?? true,
+      state: activity.state ?? "PENDIENTE",
       clubId: activity.clubId,
     });
   }, [activity, reset]);
@@ -99,7 +100,7 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
       date: new Date(data.date),
       hourStart: data.hourStart,
       hourEnd: data.hourEnd,
-      isActive: data.isActive,
+      state: data.state,
       clubId: activity.clubId,
     });
     useEditActivityStore.getState().setEditingActivityId(activity.id);
@@ -194,25 +195,29 @@ export default function EditActivityFormFirstStep({ activity }: { activity: Acti
           {errors.hourEnd && <span className="activityFormError">{errors.hourEnd.message}</span>}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="space-y-1.5">
+          <label htmlFor="state" className="activityFormLabel">
+            Estado
+          </label>
           <Controller
-            name="isActive"
+            name="state"
             control={control}
             render={({ field }) => (
-              <>
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-300"
-                  id="isActive"
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                />
-                <label className="text-sm font-medium text-slate-700" htmlFor="isActive">
-                  Activa
-                </label>
-              </>
+              <select
+                id="state"
+                className={`activityFormControl ${errBorder(!!errors.state)}`}
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+              >
+                {ACTIVITY_STATES.map((stateOption) => (
+                  <option key={stateOption} value={stateOption}>
+                    {stateOption}
+                  </option>
+                ))}
+              </select>
             )}
           />
+          {errors.state && <span className="activityFormError">{errors.state.message}</span>}
         </div>
 
         <button type="submit" className="activityPrimaryButton">
